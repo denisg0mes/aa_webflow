@@ -1,43 +1,46 @@
 // bundle.js
 ;(function() {
   document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('div.w-richtext').forEach(root => {
-      const raw = root.innerHTML;
-      const parts = raw.split(/(\{gallery:[\w-]+\})/g);
-      root.innerHTML = '';
-
-      parts.forEach(part => {
-        const m = part.match(/^\{gallery:([\w-]+)\}$/);
-        if (m) {
-          const slug = m[1];
-          const wrapper = document.createElement('div');
-          wrapper.className = 'custom-gallery-wrapper';
-          wrapper.innerHTML = `
-            <div class="custom-gallery"></div>
-            <div class="custom-gallery-pagination"></div>
-          `;
-          root.appendChild(wrapper);
-          loadAndInitGallery(wrapper, slug);
-        } else {
-          root.insertAdjacentHTML('beforeend', part);
-        }
-      });
-    });
+    // Ищем все Rich Text-блоки с плейсхолдерами
+    document.querySelectorAll('div.w-richtext').forEach(processRichText);
   });
+
+  function processRichText(root) {
+    const raw = root.innerHTML;
+    const parts = raw.split(/(\{gallery:[\w-]+\})/g);
+    root.innerHTML = '';
+
+    parts.forEach(part => {
+      const match = part.match(/^\{gallery:([\w-]+)\}$/);
+      if (match) {
+        const slug = match[1];
+        const wrapper = document.createElement('div');
+        wrapper.className = 'custom-gallery-wrapper';
+        wrapper.innerHTML = `
+          <div class="custom-gallery"></div>
+          <div class="custom-gallery-pagination"></div>
+        `;
+        root.appendChild(wrapper);
+        loadAndInitGallery(wrapper, slug);
+      } else {
+        root.insertAdjacentHTML('beforeend', part);
+      }
+    });
+  }
 
   function loadAndInitGallery(wrapper, slug) {
     fetch(`https://n8n.denisgomes.me/webhook/getGallery?slug=${slug}`)
       .then(res => res.json())
       .then(data => {
         const gallery = wrapper.querySelector('.custom-gallery');
-        data.images.forEach(src => {
+        (data.images || []).forEach(src => {
           const img = document.createElement('img');
           img.src = src;
           gallery.appendChild(img);
         });
         initScrollGallery(wrapper);
       })
-      .catch(console.error);
+      .catch(err => console.error('Gallery load error:', err));
   }
 
   function initScrollGallery(wrapper) {
@@ -48,7 +51,10 @@
     let offsets = [];
     let currentIndex = 0;
 
-    function computeOffsets() { offsets = imgs.map(i => i.offsetLeft); }
+    function computeOffsets() {
+      offsets = imgs.map(img => img.offsetLeft);
+    }
+
     function initPagination() {
       pagination.innerHTML = '';
       for (let i = 0; i < count; i++) {
@@ -57,12 +63,14 @@
         pagination.appendChild(dot);
       }
     }
+
     function updatePagination() {
       const scrollX = gallery.scrollLeft;
-      let best = 0, bd = Infinity;
+      let best = 0;
+      let bestDiff = Infinity;
       offsets.forEach((off, i) => {
-        const d = Math.abs(off - scrollX);
-        if (d < bd) { bd = d; best = i; }
+        const diff = Math.abs(off - scrollX);
+        if (diff < bestDiff) { bestDiff = diff; best = i; }
       });
       if (best !== currentIndex) {
         pagination.children[currentIndex].classList.remove('active');
@@ -70,6 +78,7 @@
         currentIndex = best;
       }
     }
+
     function adjustHeight() {
       if (window.innerWidth > 768) {
         gallery.style.height = '800px';
@@ -82,58 +91,42 @@
         gallery.style.height = `${Math.round(window.innerWidth / maxRatio)}px`;
       }
     }
+
     function attachDrag() {
+      gallery.style.touchAction = 'pan-x';
+      gallery.style.scrollBehavior = 'smooth';
       let isDown = false;
       let startX = 0;
       let scrollStart = 0;
 
-      gallery.addEventListener('mousedown', e => {
+      gallery.addEventListener('pointerdown', e => {
         isDown = true;
         gallery.style.scrollBehavior = 'auto';
-        startX = e.pageX - gallery.offsetLeft;
+        startX = e.clientX;
         scrollStart = gallery.scrollLeft;
+        gallery.setPointerCapture(e.pointerId);
         gallery.classList.add('dragging');
       });
-      ['mouseleave', 'mouseup'].forEach(evt =>
-        gallery.addEventListener(evt, () => {
-          if (!isDown) return;
-          isDown = false;
-          gallery.classList.remove('dragging');
-          computeOffsets();
-          updatePagination();
-          gallery.style.scrollBehavior = 'smooth';
-          gallery.scrollTo({ left: offsets[currentIndex], behavior: 'smooth' });
-        })
-      );
-      gallery.addEventListener('mousemove', e => {
+
+      gallery.addEventListener('pointermove', e => {
         if (!isDown) return;
-        e.preventDefault();
-        const delta = e.pageX - gallery.offsetLeft - startX;
+        const delta = e.clientX - startX;
         gallery.scrollLeft = scrollStart - delta;
       });
 
-      gallery.addEventListener('touchstart', e => {
-        isDown = true;
-        gallery.style.scrollBehavior = 'auto';
-        startX = e.touches[0].pageX - gallery.offsetLeft;
-        scrollStart = gallery.scrollLeft;
-      });
-      ['touchend', 'touchcancel'].forEach(evt =>
-        gallery.addEventListener(evt, () => {
-          if (!isDown) return;
-          isDown = false;
-          gallery.classList.remove('dragging');
-          computeOffsets();
-          updatePagination();
-          gallery.style.scrollBehavior = 'smooth';
-          gallery.scrollTo({ left: offsets[currentIndex], behavior: 'smooth' });
-        })
-      );
-      gallery.addEventListener('touchmove', e => {
+      function finishDrag(e) {
         if (!isDown) return;
-        const delta = e.touches[0].pageX - gallery.offsetLeft - startX;
-        gallery.scrollLeft = scrollStart - delta;
-      });
+        isDown = false;
+        gallery.releasePointerCapture(e.pointerId);
+        gallery.classList.remove('dragging');
+        computeOffsets();
+        updatePagination();
+        gallery.style.scrollBehavior = 'smooth';
+        gallery.scrollTo({ left: offsets[currentIndex], behavior: 'smooth' });
+      }
+
+      gallery.addEventListener('pointerup', finishDrag);
+      gallery.addEventListener('pointercancel', finishDrag);
     }
 
     computeOffsets();
@@ -141,6 +134,9 @@
     adjustHeight();
     attachDrag();
     gallery.addEventListener('scroll', updatePagination);
-    window.addEventListener('resize', () => { computeOffsets(); adjustHeight(); });
+    window.addEventListener('resize', () => {
+      computeOffsets();
+      adjustHeight();
+    });
   }
 })();
