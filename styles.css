@@ -32,7 +32,7 @@
 .custom-gallery-pagination {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   margin-top: 12px; /* можно подкорректировать */
 }
 .custom-gallery-pagination .pagination-dot {
