@@ -58,54 +58,91 @@
     const count = imgs.length;
     let offsets = [], currentIndex = 0;
 
-    // всё, что вы написали ранее, но замените прямые селекторы
-    function computeOffsets() { offsets = imgs.map(i=>i.offsetLeft); }
+    function computeOffsets() { offsets = imgs.map(i => i.offsetLeft); }
     function initPagination() {
       pagination.innerHTML = '';
-      for (let i=0;i<count;i++){
+      for (let i = 0; i < count; i++) {
         const dot = document.createElement('div');
-        dot.className = 'pagination-dot'+(i===0?' active':'');
+        dot.className = 'pagination-dot' + (i === 0 ? ' active' : '');
         pagination.appendChild(dot);
       }
     }
-    function updatePagination(){
+    function updatePagination() {
       const scrollX = gallery.scrollLeft;
-      let best=0,bd=Infinity;
-      offsets.forEach((off,i)=>{
-        const d=Math.abs(off-scrollX);
-        if(d<bd){bd=d;best=i;}
+      let best = 0, bd = Infinity;
+      offsets.forEach((off, i) => {
+        const d = Math.abs(off - scrollX);
+        if (d < bd) { bd = d; best = i; }
       });
-      if(best!==currentIndex){
+      if (best !== currentIndex) {
         pagination.children[currentIndex].classList.remove('active');
         pagination.children[best].classList.add('active');
-        currentIndex=best;
+        currentIndex = best;
       }
     }
-    function adjustHeight(){
+    function adjustHeight() {
       const isMobile = window.innerWidth <= 768;
-      if(!isMobile){ gallery.style.height='800px'; return; }
-      let maxRatio=1;
-      imgs.forEach(img=> {
-        const r=img.naturalWidth/img.naturalHeight;
-        if(r>maxRatio) maxRatio=r;
+      if (!isMobile) {
+        gallery.style.height = '800px';
+        return;
+      }
+      let maxRatio = 1;
+      imgs.forEach(img => {
+        const r = img.naturalWidth / img.naturalHeight;
+        if (r > maxRatio) maxRatio = r;
       });
-      gallery.style.height=`${Math.round(window.innerWidth/maxRatio)}px`;
+      gallery.style.height = `${Math.round(window.innerWidth / maxRatio)}px`;
     }
-    function attachDrag(){
-      let isDown=false,sx,sl;
-      gallery.addEventListener('mousedown',e=>{isDown=true; sx=e.pageX-gallery.offsetLeft; sl=gallery.scrollLeft; gallery.classList.add('dragging');});
-      ['mouseleave','mouseup'].forEach(ev=>gallery.addEventListener(ev,()=>{isDown=false;gallery.classList.remove('dragging');updatePagination();}));
-      gallery.addEventListener('mousemove',e=>{ if(!isDown)return;e.preventDefault(); gallery.scrollLeft=sl-(e.pageX-gallery.offsetLeft-sx); });
-      gallery.addEventListener('touchstart',e=>{isDown=true;sx=e.touches[0].pageX-gallery.offsetLeft;sl=gallery.scrollLeft;});
-      ['touchend','touchcancel'].forEach(ev=>gallery.addEventListener(ev,()=>{isDown=false;updatePagination();}));
-      gallery.addEventListener('touchmove',e=>{ if(!isDown)return;gallery.scrollLeft=sl-(e.touches[0].pageX-gallery.offsetLeft-sx); });
+    function attachDrag() {
+      const dragSpeed = 1.5;
+      let isDown = false, sx, sl;
+      gallery.addEventListener('mousedown', e => {
+        isDown = true;
+        sx = e.pageX - gallery.offsetLeft;
+        sl = gallery.scrollLeft;
+        gallery.classList.add('dragging');
+      });
+      ['mouseleave', 'mouseup'].forEach(ev =>
+        gallery.addEventListener(ev, () => {
+          if (!isDown) return;
+          isDown = false;
+          gallery.classList.remove('dragging');
+          updatePagination();
+          gallery.scrollTo({ left: offsets[currentIndex], behavior: 'smooth' });
+        })
+      );
+      gallery.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const delta = (e.pageX - gallery.offsetLeft - sx);
+        gallery.scrollLeft = sl - delta * dragSpeed;
+      });
+
+      gallery.addEventListener('touchstart', e => {
+        isDown = true;
+        sx = e.touches[0].pageX - gallery.offsetLeft;
+        sl = gallery.scrollLeft;
+      });
+      ['touchend', 'touchcancel'].forEach(ev =>
+        gallery.addEventListener(ev, () => {
+          if (!isDown) return;
+          isDown = false;
+          updatePagination();
+          gallery.scrollTo({ left: offsets[currentIndex], behavior: 'smooth' });
+        })
+      );
+      gallery.addEventListener('touchmove', e => {
+        if (!isDown) return;
+        const delta = (e.touches[0].pageX - gallery.offsetLeft - sx);
+        gallery.scrollLeft = sl - delta * dragSpeed;
+      });
     }
 
     computeOffsets();
     initPagination();
     adjustHeight();
     attachDrag();
-    gallery.addEventListener('scroll',updatePagination);
-    window.addEventListener('resize',()=>{ computeOffsets(); adjustHeight(); });
+    gallery.addEventListener('scroll', updatePagination);
+    window.addEventListener('resize', () => { computeOffsets(); adjustHeight(); });
   }
 })();
