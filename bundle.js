@@ -1,18 +1,15 @@
 // bundle.js
 ;(function() {
   document.addEventListener('DOMContentLoaded', () => {
-    // 1) находим все Rich Text-контейнеры
     document.querySelectorAll('div.w-richtext').forEach(root => {
       const raw = root.innerHTML;
-      // разбиваем на HTML-куски и маркеры
       const parts = raw.split(/(\{gallery:[\w-]+\})/g);
-      root.innerHTML = ''; // очищаем
+      root.innerHTML = '';
 
       parts.forEach(part => {
         const m = part.match(/^\{gallery:([\w-]+)\}$/);
         if (m) {
           const slug = m[1];
-          // 2) вставляем шаблон-обёртку
           const wrapper = document.createElement('div');
           wrapper.className = 'custom-gallery-wrapper';
           wrapper.innerHTML = `
@@ -20,10 +17,8 @@
             <div class="custom-gallery-pagination"></div>
           `;
           root.appendChild(wrapper);
-          // 3) грузим данные и рендерим
           loadAndInitGallery(wrapper, slug);
         } else {
-          // просто HTML
           root.insertAdjacentHTML('beforeend', part);
         }
       });
@@ -31,21 +26,15 @@
   });
 
   function loadAndInitGallery(wrapper, slug) {
-    const gallery = wrapper.querySelector('.custom-gallery');
-    const pagination = wrapper.querySelector('.custom-gallery-pagination');
-
-    // fetch URL-ов
     fetch(`https://n8n.denisgomes.me/webhook/getGallery?slug=${slug}`)
       .then(res => res.json())
       .then(data => {
-        const urls = data.images || [];
-        // вставляем <img>
-        urls.forEach(src => {
+        const gallery = wrapper.querySelector('.custom-gallery');
+        data.images.forEach(src => {
           const img = document.createElement('img');
           img.src = src;
-          wrapper.querySelector('.custom-gallery').appendChild(img);
+          gallery.appendChild(img);
         });
-        // инициализируем вашу existing-логику
         initScrollGallery(wrapper);
       })
       .catch(console.error);
@@ -56,7 +45,8 @@
     const pagination = wrapper.querySelector('.custom-gallery-pagination');
     const imgs = Array.from(gallery.querySelectorAll('img'));
     const count = imgs.length;
-    let offsets = [], currentIndex = 0;
+    let offsets = [];
+    let currentIndex = 0;
 
     function computeOffsets() { offsets = imgs.map(i => i.offsetLeft); }
     function initPagination() {
@@ -81,60 +71,68 @@
       }
     }
     function adjustHeight() {
-      const isMobile = window.innerWidth <= 768;
-      if (!isMobile) {
+      if (window.innerWidth > 768) {
         gallery.style.height = '800px';
-        return;
+      } else {
+        let maxRatio = 1;
+        imgs.forEach(img => {
+          const r = img.naturalWidth / img.naturalHeight;
+          if (r > maxRatio) maxRatio = r;
+        });
+        gallery.style.height = `${Math.round(window.innerWidth / maxRatio)}px`;
       }
-      let maxRatio = 1;
-      imgs.forEach(img => {
-        const r = img.naturalWidth / img.naturalHeight;
-        if (r > maxRatio) maxRatio = r;
-      });
-      gallery.style.height = `${Math.round(window.innerWidth / maxRatio)}px`;
     }
     function attachDrag() {
-      const dragSpeed = 1.5;
-      let isDown = false, sx, sl;
+      let isDown = false;
+      let startX = 0;
+      let scrollStart = 0;
+
       gallery.addEventListener('mousedown', e => {
         isDown = true;
-        sx = e.pageX - gallery.offsetLeft;
-        sl = gallery.scrollLeft;
+        gallery.style.scrollBehavior = 'auto';
+        startX = e.pageX - gallery.offsetLeft;
+        scrollStart = gallery.scrollLeft;
         gallery.classList.add('dragging');
       });
-      ['mouseleave', 'mouseup'].forEach(ev =>
-        gallery.addEventListener(ev, () => {
+      ['mouseleave', 'mouseup'].forEach(evt =>
+        gallery.addEventListener(evt, () => {
           if (!isDown) return;
           isDown = false;
           gallery.classList.remove('dragging');
+          computeOffsets();
           updatePagination();
+          gallery.style.scrollBehavior = 'smooth';
           gallery.scrollTo({ left: offsets[currentIndex], behavior: 'smooth' });
         })
       );
       gallery.addEventListener('mousemove', e => {
         if (!isDown) return;
         e.preventDefault();
-        const delta = (e.pageX - gallery.offsetLeft - sx);
-        gallery.scrollLeft = sl - delta * dragSpeed;
+        const delta = e.pageX - gallery.offsetLeft - startX;
+        gallery.scrollLeft = scrollStart - delta;
       });
 
       gallery.addEventListener('touchstart', e => {
         isDown = true;
-        sx = e.touches[0].pageX - gallery.offsetLeft;
-        sl = gallery.scrollLeft;
+        gallery.style.scrollBehavior = 'auto';
+        startX = e.touches[0].pageX - gallery.offsetLeft;
+        scrollStart = gallery.scrollLeft;
       });
-      ['touchend', 'touchcancel'].forEach(ev =>
-        gallery.addEventListener(ev, () => {
+      ['touchend', 'touchcancel'].forEach(evt =>
+        gallery.addEventListener(evt, () => {
           if (!isDown) return;
           isDown = false;
+          gallery.classList.remove('dragging');
+          computeOffsets();
           updatePagination();
+          gallery.style.scrollBehavior = 'smooth';
           gallery.scrollTo({ left: offsets[currentIndex], behavior: 'smooth' });
         })
       );
       gallery.addEventListener('touchmove', e => {
         if (!isDown) return;
-        const delta = (e.touches[0].pageX - gallery.offsetLeft - sx);
-        gallery.scrollLeft = sl - delta * dragSpeed;
+        const delta = e.touches[0].pageX - gallery.offsetLeft - startX;
+        gallery.scrollLeft = scrollStart - delta;
       });
     }
 
