@@ -10,9 +10,9 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  /* высота на десктопе */
   height: 800px;
   cursor: grab;
+  scroll-behavior: smooth;
 }
 .custom-gallery.dragging {
   cursor: grabbing;
