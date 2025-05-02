@@ -72,9 +72,7 @@
 .w-richtext > p img[alt="horizontal"],
 .w-richtext > figure img[alt="horizontal"] {
   display: block;
-  width: 60%;
   height: auto;
-  margin: 1em auto;
 }
 
 .w-richtext figure.w-richtext-align-fullwidth > div {padding: 0 0 0 20%;}
