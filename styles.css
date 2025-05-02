@@ -46,3 +46,31 @@
   opacity: 1;
 }
 
+/* ============================= */
+/* 2) Стили для картинок в Rich Text по alt  */
+/* ============================= */
+
+/* 2.1) На всю ширину */
+.w-richtext img[alt="wide"] {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 2em 0;
+}
+
+/* 2.2) Вертикальная, плавающая справа */
+.w-richtext img[alt="vertical"] {
+  float: right;
+  width: 30%;
+  height: auto;
+  margin: 0 0 1em 1em;
+}
+
+/* 2.3) Горизонтальная, центрированная */
+.w-richtext img[alt="horizontal"] {
+  display: block;
+  width: 60%;
+  height: auto;
+  margin: 1em auto;
+}
+
