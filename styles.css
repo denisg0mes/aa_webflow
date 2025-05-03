@@ -89,3 +89,27 @@
 .project_content p {
   margin: 40px 0 40px 30%; 
 }
+
+/*---MENU---*/  
+.menu_item,
+.footer_item{
+  display:inline-block;
+}
+
+.label{
+  display:inline-block;
+  transition:color .2s ease, transform .2s ease;
+  will-change:color, transform;
+}
+
+.menu_item:hover .label,
+.menu_item:focus .label{
+  transform:translateX(16px);
+}
+
+.footer_item:hover .label {
+  color:rgba(255,255,255,.6);
+}
+
+-webkit-font-smoothing: antialiased !important;
+
