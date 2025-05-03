@@ -62,6 +62,8 @@
             prevNextButtons: false,
             selectedAttraction: 0.03,
             friction: 0.9
+            cellAlign: 'left',
+            contain: true   
           });
         }
       })
