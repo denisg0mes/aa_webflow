@@ -115,5 +115,11 @@
   color:rgba(255,255,255,.6);
 }
 
+blockquote {
+  font-size: var(--h2--size);
+  line-height: var(--h2--line-height);
+  letter-spacing: var(--h2--letter-spacing);
+}
+
 -webkit-font-smoothing: antialiased !important;
 
