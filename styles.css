@@ -1,4 +1,8 @@
 /* styles.css */
+:root {
+  --pad-left:   28%;
+}
+
 /* 1. Скрываем родной скролл */
 .custom-gallery::-webkit-scrollbar { display: none; }
 .custom-gallery { -ms-overflow-style: none; scrollbar-width: none; }
@@ -79,15 +83,15 @@
 }
 
 .rt-wrapper--vertical {
-  padding: 0 20% 0 30%;
+  padding: 0 20% 0 var(--pad-left);
 }
 
 .rt-wrapper--horizontal {
-  padding: 0 0 0 30%;
+  padding: 0 0 0 var(--pad-left);
 }
 
 .project_content p {
-  margin: 40px 0 40px 30%; 
+  margin: 40px 0 40px var(--pad-left); 
 }
 
 /*---MENU---*/  
