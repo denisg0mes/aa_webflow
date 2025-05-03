@@ -3,52 +3,24 @@
   --pad-left:   28%;
 }
 
-/* 1. Скрываем родной скролл */
+/* базовый контейнер */
+.custom-gallery {
+  width: 100%;
+  height: 800px;      /* подсаживайте медиазапросами, если нужно */
+}
+
+/* карточка‑ячейка Flickity */
+.gallery-cell {
+  height: 100%;
+  width: auto;        /* сохраняем оригинальное соотношение сторон */
+  margin-right: 20px; /* тот же gap, что был раньше */
+  user-select: none;
+}
+
+/* скрываем нативный скролл на случай fallback */
 .custom-gallery::-webkit-scrollbar { display: none; }
 .custom-gallery { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* 2. Контейнер и прокрутка с прилипающим snap */
-.custom-gallery {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  height: 800px;
-  cursor: grab;
-  scroll-behavior: smooth;
-}
-.custom-gallery.dragging {
-  cursor: grabbing;
-}
-
-/* 3. Изображения: высота 100%, auto-width, snap-start */
-.custom-gallery img {
-  height: 100%;
-  width: auto;
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-  user-select: none;
-  pointer-events: none;
-}
-
-/* 4. Пагинация */
-.custom-gallery-pagination {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 12px; /* можно подкорректировать */
-}
-.custom-gallery-pagination .pagination-dot {
-  width: 20px;
-  height: 4px;
-  background-color: black;
-  opacity: 0.2;
-  transition: opacity 0.3s;
-}
-.custom-gallery-pagination .pagination-dot.active {
-  opacity: 1;
-}
 
 /* ============================= */
 /* 2) Стили для картинок в Rich Text по alt  */
