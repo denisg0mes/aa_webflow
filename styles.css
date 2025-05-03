@@ -55,6 +55,7 @@
 .w-richtext > figure img[alt="wide"] {
   display: block;
   width: 100%;
+  max-width: 3000px;
   height: auto;
 }
 
@@ -62,6 +63,7 @@
 .w-richtext > p img[alt="vertical"],
 .w-richtext > figure img[alt="vertical"] {
   height: auto;
+  max-width: 3000px;
 }
 
 /* 2.3) Центрированные горизонтальные */
@@ -69,6 +71,7 @@
 .w-richtext > figure img[alt="horizontal"] {
   display: block;
   height: auto;
+  max-width: 3000px;
 }
 
 .rt-wrapper--wide {
