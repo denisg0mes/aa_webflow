@@ -56,7 +56,7 @@
             cellSelector: '.gallery-cell',
             draggable: true,
             freeScroll: true,
-            wrapAround: true,
+            wrapAround: false,
             imagesLoaded: true,
             pageDots: true,
             prevNextButtons: false,
