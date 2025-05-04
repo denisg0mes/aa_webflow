@@ -2,6 +2,7 @@
   --pad-left:   28%;
   --spacer:     30px;
   --pad-side:   4px;
+  --menu-color: rgba(255,255,255,.5);
 }
 -webkit-font-smoothing: antialiased !important;
 
@@ -108,7 +109,7 @@ blockquote {
   display:inline-block;
   transition:color .2s ease, transform .2s ease;
   will-change:color, transform;
-  color:rgba(255,255,255,.6);
+  color:var(--menu-color);
 }
 
 .menu_item:hover .label,
@@ -124,7 +125,7 @@ blockquote {
 
 .nav_menu:hover .w--current .label {
   transform: translateX(0);
-  color:rgba(255,255,255,.6);
+  color:var(--menu-color);
 }
 
 .nav_menu .w--current:hover .label {
