@@ -122,6 +122,16 @@ blockquote {
   transform:translateX(16px);
 }
 
+.nav_menu:hover .w--current .label {
+  transform: translateX(0);
+  color:rgba(255,255,255,.6);
+}
+
+.nav_menu .w--current:hover .label {
+  transform: translateX(16px);
+  color:rgba(255,255,255,1);
+}
+
 /*---FOOTER NAVIGATION---*/ 
 .footer_item:hover .label {
   color:rgba(255,255,255,1);
