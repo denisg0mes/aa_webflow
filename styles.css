@@ -116,6 +116,10 @@ blockquote {
   color:rgba(255,255,255,1);
 }
 
+.menu_item[aria-current="page"] {
+  color: red;
+}
+
 /*---FOOTER NAVIGATION---*/ 
 .footer_item:hover .label {
   color:rgba(255,255,255,1);
