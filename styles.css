@@ -1,21 +1,22 @@
-/* styles.css */
 :root {
   --pad-left:   28%;
   --spacer:     30px;
   --pad-side:   4px;
 }
 
-/* базовый контейнер */
+/* ============================= */
+/*            Gallery            */
+/* ============================= */
 .custom-gallery {
   width: 100%;
-  height: 800px;      /* подсаживайте медиазапросами, если нужно */
+  height: 800px;
 }
 
-/* карточка‑ячейка Flickity */
+/* card Flickity */
 .gallery-cell {
   height: 100%;
-  width: auto;        /* сохраняем оригинальное соотношение сторон */
-  margin-right: 20px; /* тот же gap, что был раньше */
+  width: auto;   
+  margin-right: 20px; /* GAP */
   user-select: none;
 }
 
@@ -23,27 +24,27 @@
 .custom-gallery::-webkit-scrollbar { display: none; }
 .custom-gallery { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* позиция блока с точками — при необходимости сдвиньте */
+/*---GALLERY DOTS---*/  
 .custom-gallery .flickity-page-dots{
-  bottom:-16px;          /* опустить/поднять относит. галереи */
+  bottom:-16px;    /* SPACER */
 }
 
-/* одна «точка» — делаем её прямоугольной */
+
 .custom-gallery .flickity-page-dots .dot{
-  width:20px;            /* та же ширина, что была */
-  height:4px;            /* высота полоски */
-  margin:0 3px;          /* интервал между полосками */
-  border-radius:0;       /* убираем кружочки */
+  width:20px; 
+  height:4px;
+  margin:0 3px; 
+  border-radius:0;
   background:#000;
   opacity:.2;
   transition:opacity .3s;
 }
 
 /* ============================= */
-/* 2) Стили для картинок в Rich Text по alt  */
+/*      Rich Text with alt       */
 /* ============================= */
 
-/* 2.1) Full-width в тексте */
+/* WIDE */
 .w-richtext > p img[alt="wide"],
 .w-richtext > figure img[alt="wide"] {
   display: block;
@@ -52,14 +53,14 @@
   height: auto;
 }
 
-/* 2.2) Вертикальные в тексте (плавают справа) */
+/* VERICAL */
 .w-richtext > p img[alt="vertical"],
 .w-richtext > figure img[alt="vertical"] {
   height: auto;
   max-width: 3000px;
 }
 
-/* 2.3) Центрированные горизонтальные */
+/* HORIZONTAL */
 .w-richtext > p img[alt="horizontal"],
 .w-richtext > figure img[alt="horizontal"] {
   display: block;
@@ -78,7 +79,7 @@
 .rt-wrapper--horizontal {
   padding: 0 0 0 var(--pad-left);
 }
-
+/*---PROJECT and ARTICLE---*/  
 .project_content p {
   margin: var(--spacer) 0 var(--spacer) var(--pad-left);
   max-width: 700px;
@@ -106,6 +107,7 @@ blockquote {
   display:inline-block;
   transition:color .2s ease, transform .2s ease;
   will-change:color, transform;
+  color:rgba(255,255,255,.6);
 }
 
 .menu_item:hover .label,
@@ -114,7 +116,7 @@ blockquote {
 }
 
 .footer_item:hover .label {
-  color:rgba(255,255,255,.6);
+  color:rgba(255,255,255,1);
 }
 
 -webkit-font-smoothing: antialiased !important;
