@@ -21,6 +21,26 @@
 .custom-gallery::-webkit-scrollbar { display: none; }
 .custom-gallery { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* позиция блока с точками — при необходимости сдвиньте */
+.flickity-page-dots{
+  bottom:-16px;          /* опустить/поднять относит. галереи */
+}
+
+/* одна «точка» — делаем её прямоугольной */
+.flickity-page-dots .dot{
+  width:20px;            /* та же ширина, что была */
+  height:4px;            /* высота полоски */
+  margin:0 3px;          /* интервал между полосками */
+  border-radius:0;       /* убираем кружочки */
+  background:#000;
+  opacity:.2;
+  transition:opacity .3s;
+}
+
+/* активная */
+.flickity-page-dots .dot.is-selected{
+  opacity:1;
+}
 
 /* ============================= */
 /* 2) Стили для картинок в Rich Text по alt  */
