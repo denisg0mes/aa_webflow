@@ -1,6 +1,8 @@
 /* styles.css */
 :root {
   --pad-left:   28%;
+  --spacer:     30px;
+  --pad-side:   4px;
 }
 
 /* базовый контейнер */
@@ -78,7 +80,7 @@
 }
 
 .project_content p {
-  margin: 60px 0 0 var(--pad-left);
+  margin: var(--spacer) 0 var(--spacer) var(--pad-left);
   max-width: 700px;
 }
 
@@ -86,7 +88,7 @@ blockquote {
   font-size: var(--h2--size);
   line-height: var(--h2--line-height);
   letter-spacing: var(--h2--letter-spacing);
-  padding: 40px 0 40px 4px;
+  padding: calc(var(--spacer) + 20px) 0 calc(var(--spacer) + 20px) var(--pad-side);
   max-width: 1200px;
 }
 
