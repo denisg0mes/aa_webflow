@@ -132,6 +132,13 @@ blockquote {
   color:rgba(255,255,255,1);
 }
 
+/*--home menu container--*/
+.container_home .label,
+.footer_home .label {
+  color:rgba(255,255,255,1);
+}
+
+
 /*---FOOTER NAVIGATION---*/ 
 .footer_item:hover .label {
   color:rgba(255,255,255,1);
