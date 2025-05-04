@@ -37,7 +37,7 @@
 
   /** Запрашиваем изображения и инициализируем Flickity */
   function loadGallery(container, slug) {
-    fetch(`https://n8n.denisgomes.me/webhook/getGallery?slug=${encodeURIComponent(slug)}`)
+    fetch(`https://n8n.arrivedaliens.com/webhook/getGallery?slug=${encodeURIComponent(slug)}`)
       .then(r => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
