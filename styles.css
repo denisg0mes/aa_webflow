@@ -113,6 +113,7 @@ blockquote {
 .menu_item:hover .label,
 .menu_item:focus .label{
   transform:translateX(16px);
+  color:rgba(255,255,255,1);
 }
 
 .footer_item:hover .label {
