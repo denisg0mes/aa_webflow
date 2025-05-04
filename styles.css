@@ -3,7 +3,7 @@
   --spacer:     30px;
   --pad-side:   4px;
 }
-
+-webkit-font-smoothing: antialiased !important;
 /* ============================= */
 /*            Gallery            */
 /* ============================= */
@@ -97,7 +97,7 @@ blockquote {
   max-width: 1200px;
 }
 
-/*---MENU---*/  
+/*---MAIN NAVIGATION---*/  
 .menu_item,
 .footer_item{
   display:inline-block;
@@ -116,9 +116,8 @@ blockquote {
   color:rgba(255,255,255,1);
 }
 
+/*---FOOTER NAVIGATION---*/ 
 .footer_item:hover .label {
   color:rgba(255,255,255,1);
 }
-
--webkit-font-smoothing: antialiased !important;
 
