@@ -78,7 +78,7 @@
 }
 
 .project_content p {
-  margin: 40px 0 40px var(--pad-left);
+  margin: 60px 0 0 var(--pad-left);
   max-width: 700px;
 }
 
