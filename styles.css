@@ -116,7 +116,7 @@ blockquote {
   color:rgba(255,255,255,1);
 }
 
-.menu_item .w--current .label {
+.nav_menu .w--current .label {
   color: red;
 }
 
