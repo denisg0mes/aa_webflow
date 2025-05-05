@@ -172,14 +172,3 @@ blockquote {
   color:var(--menu-clr-black);
 }
 
-/*--home menu container--*/
-.container_light .label,
-.footer_home .label {
-  color:var(--menu-clr-white);
-}
-
-/*---footer navigation---*/ 
-.footer_light .footer_item:hover .label {
-  color:var(--menu-clr-black);
-}
-
