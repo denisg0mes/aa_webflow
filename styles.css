@@ -2,7 +2,10 @@
   --pad-left:   28%;
   --spacer:     30px;
   --pad-side:   4px;
-  --menu-color: rgba(255,255,255,.5);
+  --menu-clr-white: rgba(255,255,255,1);
+  --menu-clr-white-alfa: rgba(255,255,255,.5);
+  --menu-clr-black: rgba(0,0,0,1);
+  --menu-clr-black-alfa: rgba(0,0,0,.5);
 }
 -webkit-font-smoothing: antialiased !important;
 
@@ -99,7 +102,7 @@ blockquote {
   max-width: 1200px;
 }
 
-/*---MAIN NAVIGATION---*/  
+/*---MAIN NAVIGATION white---*/  
 .menu_item,
 .footer_item{
   display:inline-block;
@@ -109,39 +112,74 @@ blockquote {
   display:inline-block;
   transition:color .2s ease, transform .2s ease;
   will-change:color, transform;
-  color:var(--menu-color);
+  color:var(--menu-clr-white-alfa);
 }
 
 .menu_item:hover .label,
 .menu_item:focus .label{
   transform:translateX(16px);
-  color:rgba(255,255,255,1);
+  color:var(--menu-clr-white);
 }
 
 .nav_menu .w--current .label {
-  color:rgba(255,255,255,1);
+  color:var(--menu-clr-white);
   transform:translateX(16px);
 }
 
 .nav_menu:hover .w--current .label {
   transform: translateX(0);
-  color:var(--menu-color);
+  color:var(--menu-clr-white-alfa);
 }
 
 .nav_menu .w--current:hover .label {
   transform: translateX(16px);
-  color:rgba(255,255,255,1);
+  color:var(--menu-clr-white);
 }
 
 /*--home menu container--*/
 .container_home .label,
 .footer_home .label {
-  color:rgba(255,255,255,1);
+  color:var(--menu-clr-white);
 }
 
-
-/*---FOOTER NAVIGATION---*/ 
+/*---footer navigation---*/ 
 .footer_item:hover .label {
-  color:rgba(255,255,255,1);
+  color:var(--menu-clr-white);
+}
+
+/*---MAIN NAVIGATION black---*/  
+.container_light .label{
+  display:inline-block;
+  transition:color .2s ease, transform .2s ease;
+  will-change:color, transform;
+  color:var(--menu-clr-black-alfa);
+}
+
+.container_light .menu_item:hover .label,
+.container_light .menu_item:focus .label{
+  color:var(--menu-clr-black);
+}
+
+.container_light .nav_menu .w--current .label {
+  color:var(--menu-clr-black);
+}
+
+.container_light .nav_menu:hover .w--current .label {
+  color:var(--menu-clr-black-alfa);
+}
+
+.container_light .nav_menu .w--current:hover .label {
+  color:var(--menu-clr-black);
+}
+
+/*--home menu container--*/
+.container_light .label,
+.footer_home .label {
+  color:var(--menu-clr-white);
+}
+
+/*---footer navigation---*/ 
+.footer_light .footer_item:hover .label {
+  color:var(--menu-clr-black);
 }
 
