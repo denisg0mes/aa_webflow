@@ -136,19 +136,20 @@ blockquote {
   color:var(--menu-clr-white);
 }
 
-/*--home menu container--*/
+/*--home menu containe whiter--*/
 .container_home .label,
 .footer_home .label {
   color:var(--menu-clr-white);
 }
 
-/*---footer navigation---*/ 
+/*---footer navigation white---*/ 
 .footer_item:hover .label {
   color:var(--menu-clr-white);
 }
 
 /*---MAIN NAVIGATION black---*/  
-.container_light .label{
+.container_light .label,
+.footer_light .label {
   display:inline-block;
   transition:color .2s ease, transform .2s ease;
   will-change:color, transform;
@@ -172,3 +173,6 @@ blockquote {
   color:var(--menu-clr-black);
 }
 
+/*---footer navigation black---*/ 
+.footer_item:hover .label {
+  color:var(--menu-clr-black);
