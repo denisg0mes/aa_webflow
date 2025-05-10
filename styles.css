@@ -174,5 +174,5 @@ blockquote {
 }
 
 /*---footer navigation black---*/ 
-.footer_lightbg .footer_item:hover .label {
+.footer_light .footer_item:hover .label {
   color:var(--menu-clr-black);
