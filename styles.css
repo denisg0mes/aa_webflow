@@ -176,3 +176,5 @@ blockquote {
 /*---footer navigation black---*/ 
 .footer_light .footer_item:hover .label {
   color:var(--menu-clr-black);
+
+.container_light { color: red; } 
