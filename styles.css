@@ -182,3 +182,7 @@ blockquote {
 .container_light .w-nav-brand {
   color:var(--menu-clr-black);
 } 
+
+.about_wrapper p {
+  max-width: 600px;
+}
