@@ -192,4 +192,5 @@ blockquote {
 /* ============================= */
 .about_wrapper p {
   max-width: 600px;
+  padding: 0 110px 0 0;
 }
