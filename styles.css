@@ -179,6 +179,6 @@ blockquote {
   color:var(--menu-clr-black);
 }
 
-.container_light .navigation .w-nav-brand {
+.container_light .w-nav-brand {
   color:var(--menu-clr-black);
 } 
