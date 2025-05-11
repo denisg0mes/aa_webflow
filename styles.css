@@ -102,7 +102,9 @@ blockquote {
   max-width: 1200px;
 }
 
-/*---MAIN NAVIGATION white---*/  
+/* ============================= */
+/*    Main navigation: white     */
+/* ============================= */
 .menu_item,
 .footer_item{
   display:inline-block;
@@ -148,7 +150,9 @@ blockquote {
   color:var(--menu-clr-white);
 }
 
-/*---MAIN NAVIGATION black---*/  
+/* ============================= */
+/*    Main navigation: black     */
+/* ============================= */ 
 .container_light .label,
 .footer_light .label {
   display:inline-block;
@@ -183,6 +187,9 @@ blockquote {
   color:var(--menu-clr-black);
 } 
 
+/* ============================= */
+/*          Text styles          */
+/* ============================= */
 .about_wrapper p {
   max-width: 600px;
 }
