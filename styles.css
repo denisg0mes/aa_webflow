@@ -194,3 +194,12 @@ blockquote {
   max-width: 600px;
   padding: 0 110px 0 0;
 }
+.article_preview_image h1 {
+  width: 45%;
+}
+.article_preview_image .date {
+  width: 15%
+}
+.article_preview_image .description {
+  
+}
