@@ -199,7 +199,8 @@ blockquote {
 }
 .article_preview_content .date {
   width: 15%
+  padding: 34px 0 0 0;
 }
 .article_preview_content .description {
-  padding: 0 5% 0 0;
+  padding: 34px 5% 0 0;
 }
