@@ -196,6 +196,7 @@ blockquote {
 }
 .article_preview_content h1 {
   width: 55%;
+  max-width: 700px;
 }
 .article_preview_content .date {
   width: 15%;
@@ -203,5 +204,5 @@ blockquote {
 }
 .article_preview_content .description {
   padding: 34px 5% 0 0;
-  max-width: 300px;
+  max-width: 450px;
 }
