@@ -197,7 +197,7 @@ blockquote {
 
 /*--- article preview ---*/ 
 .article_preview_content h1 {
-  width: 55%;
+  width: 60%;
   max-width: 800px;
 }
 .article_preview_content .date {
