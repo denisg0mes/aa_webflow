@@ -197,14 +197,15 @@ blockquote {
 
 /*--- article preview ---*/ 
 .article_preview_content h1 {
-  width: 60%;
+  width: 45%;
   max-width: 800px;
 }
 .article_preview_content .date {
-  width: 15%;
+  width: 20%;
   padding: 34px 0 0 0;
 }
 .article_preview_content .description {
+  width: 25%;
   padding: 34px 0 0 0;
   max-width: 500px;
 }
