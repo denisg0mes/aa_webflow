@@ -1,7 +1,8 @@
 :root {
-  --pad-left:   28%;
-  --spacer:     30px;
-  --pad-side:   4px;
+  --pad-left-big: 28%;
+  --pad-left-small: 18%;
+  --spacer: 30px;
+  --pad-side: 4px;
   --menu-clr-white: rgba(255,255,255,1);
   --menu-clr-white-alfa: rgba(255,255,255,.5);
   --menu-clr-black: rgba(0,0,0,1);
@@ -78,15 +79,15 @@
 }
 
 .rt-wrapper--vertical {
-  padding: 0 20% 0 var(--pad-left);
+  padding: 0 20% 0 var(--pad-left-big);
 }
 
 .rt-wrapper--horizontal {
-  padding: 0 0 0 var(--pad-left);
+  padding: 0 0 0 var(--pad-left-big);
 }
 /*---PROJECT and ARTICLE---*/  
 .cms_content p {
-  margin: var(--spacer) 0 var(--spacer) var(--pad-left);
+  margin: var(--spacer) 0 var(--spacer) var(--pad-left-big);
   max-width: 700px;
 }
 
@@ -98,7 +99,7 @@ blockquote {
   font-size: var(--h2--size);
   line-height: var(--h2--line-height);
   letter-spacing: var(--h2--letter-spacing);
-  padding: calc(var(--spacer) + 20px) 0 calc(var(--spacer) + 20px) var(--pad-side);
+  padding: calc(var(--spacer) + 20px) 0 calc(var(--spacer) + 20px) var(--pad-left-small);
   max-width: 1200px;
 }
 
