@@ -95,7 +95,7 @@
 }
 
 .w-richtext figure img {
-  padding: var(--spacer) 0 var(--spacer);
+  /*padding: var(--spacer) 0 var(--spacer);*/
 }
 
 blockquote {
