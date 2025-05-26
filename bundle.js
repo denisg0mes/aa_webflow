@@ -112,7 +112,7 @@
       const flickityInstance = new Flickity(container, {
         cellSelector: '.gallery-cell',
         draggable: true,
-        freeScroll: true,
+        // freeScroll: true,
         wrapAround: false,
         pageDots: true,
         prevNextButtons: false,
