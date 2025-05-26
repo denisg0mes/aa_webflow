@@ -1,77 +1,46 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Скрипт загружен');
+  console.log('=== ОПРЕДЕЛЯЕМ СТРУКТУРУ МЕНЮ ===');
   
-  const currentPath = window.location.pathname;
-  console.log('Текущий путь:', currentPath);
-  
-  const menuItems = document.querySelectorAll('.menu_item a');
-  console.log('Найдено пунктов меню:', menuItems.length);
-  
-  // Выводим все найденные пункты меню
-  menuItems.forEach((item, index) => {
-    const href = item.getAttribute('href');
-    console.log(`Пункт меню ${index}: href="${href}"`);
-  });
-  
-  // Определяем родительские разделы (БЕЗ слешей в конце)
-  const sections = [
-    '/projects',
-    '/about', 
-    '/services',
-    '/blog',
-    '/team'
+  // Пробуем разные селекторы для поиска меню
+  const possibleSelectors = [
+    '.menu_item a',
+    '.nav_link',
+    '.nav-link', 
+    'nav a',
+    '.navbar a',
+    '.navigation a',
+    '.menu a',
+    '.nav_menu a',
+    '[class*="nav"] a',
+    '[class*="menu"] a'
   ];
   
-  console.log('Проверяемые разделы:', sections);
-  
-  // Проверяем каждый раздел
-  sections.forEach(sectionPath => {
-    console.log(`\n--- Проверяем раздел: ${sectionPath} ---`);
+  possibleSelectors.forEach(selector => {
+    const elements = document.querySelectorAll(selector);
+    console.log(`Селектор "${selector}": найдено ${elements.length} элементов`);
     
-    // Проверяем, является ли текущая страница вложенной страницей этого раздела
-    const isSubpage = currentPath.startsWith(sectionPath + '/');
-    const isMainPage = currentPath === sectionPath;
-    
-    console.log(`Это подстраница ${sectionPath}?`, isSubpage);
-    console.log(`Это главная страница ${sectionPath}?`, isMainPage);
-    
-    if (isSubpage && !isMainPage) {
-      console.log(`✓ Найдена подстраница раздела: ${sectionPath}`);
-      
-      // Ищем соответствующий пункт меню
-      let found = false;
-      menuItems.forEach((item, index) => {
-        const href = item.getAttribute('href');
-        console.log(`  Проверяем пункт ${index}: "${href}" === "${sectionPath}"?`, href === sectionPath);
-        
-        if (href === sectionPath) {
-          const menuItem = item.closest('.menu_item');
-          if (menuItem) {
-            console.log('  ✓ Пункт меню найден, добавляем класс section-active');
-            menuItem.classList.add('section-active');
-            
-            // Проверяем, что класс добавился
-            const hasClass = menuItem.classList.contains('section-active');
-            console.log('  Класс section-active добавлен?', hasClass);
-            found = true;
-          } else {
-            console.log('  ✗ Не найден родительский .menu_item');
-          }
-        }
+    if (elements.length > 0) {
+      elements.forEach((el, i) => {
+        console.log(`  ${i}: href="${el.getAttribute('href')}" text="${el.textContent.trim()}"`);
       });
-      
-      if (!found) {
-        console.log(`  ✗ Не найден пункт меню для раздела: ${sectionPath}`);
-      }
     }
   });
   
-  // Дополнительная проверка: выводим все элементы с классом section-active
-  setTimeout(() => {
-    const activeItems = document.querySelectorAll('.menu_item.section-active');
-    console.log('\nЭлементы с классом section-active:', activeItems.length);
-    activeItems.forEach((item, index) => {
-      console.log(`Активный элемент ${index}:`, item);
-    });
-  }, 100);
+  console.log('\n=== СТРУКТУРА НАВИГАЦИИ ===');
+  
+  // Ищем все ссылки на странице
+  const allLinks = document.querySelectorAll('a[href^="/"]');
+  console.log(`Все внутренние ссылки: ${allLinks.length}`);
+  
+  allLinks.forEach((link, i) => {
+    const href = link.getAttribute('href');
+    const text = link.textContent.trim();
+    const classes = link.className;
+    const parent = link.parentElement;
+    const parentClasses = parent ? parent.className : 'no parent';
+    
+    console.log(`${i}: "${text}" → ${href}`);
+    console.log(`    Классы ссылки: ${classes}`);
+    console.log(`    Классы родителя: ${parentClasses}`);
+  });
 });
