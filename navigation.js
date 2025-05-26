@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Определяем родительские разделы и их пути
   const sections = {
     'projects': ['/projects', '/project/'], // все страницы проектов
+    'explorations': ['/explorations', '/exploration/'], // все страницы проектов
     'about': ['/about', '/team/', '/history/'], // все страницы о компании
     'services': ['/services', '/service/'] // все страницы услуг
   };
