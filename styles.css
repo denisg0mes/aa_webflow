@@ -165,19 +165,18 @@ blockquote {
   color:var(--menu-clr-white);
 }
 
-/* Стили для активных разделов */
+
+
+/* Очень заметный временный стиль для отладки */
+.menu_item.section-active {
+  background-color: red !important;
+  border: 3px solid yellow !important;
+}
+
 .menu_item.section-active .label {
-  color: rgba(255,255,255,1);
-  transform: translateX(0); /* На исходном месте для вложенных страниц */
-}
-
-/* При ховере на меню */
-.nav_menu:hover .section-active .label {
-  transform: translateX(0);
-}
-
-.nav_menu .section-active:hover .label {
-  transform: translateX(16px);
+  background-color: lime !important;
+  color: black !important;
+  transform: translateX(0) !important;
 }
 
 /* ============================= */
