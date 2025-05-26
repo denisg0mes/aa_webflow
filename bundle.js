@@ -48,17 +48,24 @@
         
         let loadedCount = 0;
         const totalImages = images.length;
+        const imageElements = [];
         
-        // Создаем все изображения
-        images.forEach(src => {
+        // Сначала создаем ВСЕ элементы изображений
+        images.forEach((src, index) => {
           const img = document.createElement('img');
           img.className = 'gallery-cell';
-          img.src = src; // убираем loading="lazy" для галерей
+          img.src = src;
+          imageElements[index] = img;
           
           // Обработчик загрузки каждого изображения
           const onImageLoad = () => {
             loadedCount++;
             if (loadedCount === totalImages) {
+              // Добавляем ВСЕ изображения СРАЗУ в правильном порядке
+              imageElements.forEach(imgEl => {
+                container.appendChild(imgEl);
+              });
+              // Только потом инициализируем Flickity
               initializeFlickity(container);
             }
           };
@@ -73,17 +80,21 @@
               onImageLoad(); // тоже считаем как "обработанное"
             };
           }
-          
-          container.appendChild(img);
         });
         
         // Таймаут безопасности на случай, если что-то пойдет не так
         setTimeout(() => {
-          if (loadedCount < totalImages && container.children.length > 0) {
+          if (loadedCount < totalImages && imageElements.length > 0) {
             console.warn(`Gallery "${slug}": timeout reached, initializing with ${loadedCount}/${totalImages} loaded images`);
+            // Добавляем загруженные изображения
+            imageElements.forEach(imgEl => {
+              if (imgEl.complete || imgEl.src) {
+                container.appendChild(imgEl);
+              }
+            });
             initializeFlickity(container);
           }
-        }, 10000); // 10 секунд таймаут
+        }, 5000); // уменьшаем таймаут до 5 секунд
       })
       .catch(err => {
         console.error(`Gallery "${slug}" load error:`, err);
