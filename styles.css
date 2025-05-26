@@ -8,7 +8,10 @@
   --menu-clr-black: rgba(0,0,0,1);
   --menu-clr-black-alfa: rgba(0,0,0,.5);
 }
--webkit-font-smoothing: antialiased !important;
+
+body {
+  -webkit-font-smoothing: antialiased !important;
+}
 
 /* ============================= */
 /*            Gallery            */
