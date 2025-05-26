@@ -153,16 +153,31 @@ blockquote {
   color:var(--menu-clr-white);
 }
 
-/*--home menu containe whiter--*/
+/*--- home menu containe white ---*/
 .container_home .label,
 .footer_home .label {
   color:var(--menu-clr-white);
 }
 
-/*---footer navigation white---*/ 
+/*--- footer navigation white ---*/ 
 .footer_item:hover .label,
 .w-nav-brand {
   color:var(--menu-clr-white);
+}
+
+/* Стили для активных разделов */
+.menu_item.section-active .label {
+  color: rgba(255,255,255,1);
+  transform: translateX(0); /* На исходном месте для вложенных страниц */
+}
+
+/* При ховере на меню */
+.nav_menu:hover .section-active .label {
+  transform: translateX(0);
+}
+
+.nav_menu .section-active:hover .label {
+  transform: translateX(16px);
 }
 
 /* ============================= */
