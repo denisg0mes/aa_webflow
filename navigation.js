@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const sections = [
     '/projects',
     '/explorations',
-    '/about', 
-    '/services',
     '/collection'
   ];
   
