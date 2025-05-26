@@ -35,7 +35,6 @@
   bottom:-16px;    /* SPACER */
 }
 
-
 .custom-gallery .flickity-page-dots .dot{
   width:20px; 
   height:4px;
@@ -44,6 +43,10 @@
   background:#000;
   opacity:.2;
   transition:opacity .3s;
+}
+
+.custom-gallery .flickity-page-dots .dot.is-selected {
+  opacity: 1;
 }
 
 /* ============================= */
