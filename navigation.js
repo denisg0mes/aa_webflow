@@ -8,14 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const menuItems = document.querySelectorAll('.menu_item');
   console.log('Найдено пунктов меню:', menuItems.length);
   
-  // Выводим все найденные пункты меню
-  menuItems.forEach((item, index) => {
-    const href = item.getAttribute('href');
-    const text = item.textContent.trim();
-    console.log(`Пункт меню ${index}: href="${href}" text="${text}"`);
-  });
-  
-  // Определяем родительские разделы (ваши реальные пути!)
+  // Определяем родительские разделы
   const sections = [
     '/projects',
     '/explorations', 
@@ -29,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
   sections.forEach(sectionPath => {
     console.log(`\n--- Проверяем раздел: ${sectionPath} ---`);
     
-    // Проверяем, является ли текущая страница вложенной страницей этого раздела
     const isSubpage = currentPath.startsWith(sectionPath + '/');
     const isMainPage = currentPath === sectionPath;
     
@@ -46,12 +38,35 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`  Проверяем пункт ${index}: "${href}" === "${sectionPath}"?`, href === sectionPath);
         
         if (href === sectionPath) {
-          console.log('  ✓ Пункт меню найден, добавляем класс section-active');
-          item.classList.add('section-active');
+          console.log('  ✓ Пункт меню найден, запускаем анимацию');
           
-          // Проверяем, что класс добавился
-          const hasClass = item.classList.contains('section-active');
-          console.log('  Класс section-active добавлен?', hasClass);
+          // ===== АНИМАЦИЯ ЗАГРУЗКИ =====
+          
+          // 1. Добавляем класс для увеличенного времени перехода
+          const navMenu = document.querySelector('.nav_menu');
+          if (navMenu) {
+            navMenu.classList.add('menu-loading-animation');
+          }
+          
+          // 2. Временно ставим пункт в позицию "сдвинут" (как будто он активный)
+          item.classList.add('section-active-loading');
+          
+          // 3. Через небольшую задержку убираем временный класс и добавляем финальный
+          setTimeout(() => {
+            item.classList.remove('section-active-loading');
+            item.classList.add('section-active');
+            
+            console.log('  Анимация завершена, класс section-active добавлен');
+          }, 100); // Небольшая задержка для срабатывания CSS
+          
+          // 4. Возвращаем обычное время перехода через 1 секунду
+          setTimeout(() => {
+            if (navMenu) {
+              navMenu.classList.remove('menu-loading-animation');
+            }
+            console.log('  Время перехода возвращено к стандартному');
+          }, 700);
+          
           found = true;
         }
       });
@@ -62,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Дополнительная проверка: выводим все элементы с классом section-active
+  // Дополнительная проверка
   setTimeout(() => {
     const activeItems = document.querySelectorAll('.menu_item.section-active');
     console.log('\nЭлементы с классом section-active:', activeItems.length);
@@ -71,5 +86,5 @@ document.addEventListener('DOMContentLoaded', function() {
       const text = item.textContent.trim();
       console.log(`Активный элемент ${index}: "${text}" → ${href}`);
     });
-  }, 100);
+  }, 800);
 });
