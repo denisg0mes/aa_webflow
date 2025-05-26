@@ -32,8 +32,8 @@
 
 /*---GALLERY DOTS---*/  
 .custom-gallery .flickity-page-dots{
-  /*bottom:-16px;     SPACER */
-  padding: 20px 0 40px 0;
+  bottom:-16px;    /* SPACER */
+  padding: 0 0 40px 0;
 }
 
 .custom-gallery .flickity-page-dots .dot{
