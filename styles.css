@@ -88,6 +88,10 @@
 .rt-wrapper--horizontal {
   padding: 0 0 0 var(--pad-left-big);
 }
+
+figure {
+  margin: 40px 0;
+}
 /*---PROJECT and ARTICLE---*/  
 .cms_content p {
   margin: var(--spacer) 0 var(--spacer) var(--pad-left-big);
