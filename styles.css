@@ -105,6 +105,7 @@ blockquote {
   margin: calc(var(--spacer) + 20px) 0 calc(var(--spacer) + 20px) var(--pad-left-small);
   max-width: 1200px;
   padding: 0;
+  border: none;
 }
 
 /* ============================= */
