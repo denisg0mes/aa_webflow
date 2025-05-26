@@ -90,7 +90,7 @@
 }
 
 figure {
-  margin: 40px 0;
+  margin: 60px 0;
 }
 /*---PROJECT and ARTICLE---*/  
 .cms_content p {
@@ -106,7 +106,7 @@ blockquote {
   font-size: var(--h2--size);
   line-height: var(--h2--line-height);
   letter-spacing: var(--h2--letter-spacing);
-  margin: calc(var(--spacer) + 20px) 0 calc(var(--spacer) + 20px) var(--pad-left-small);
+  margin: calc(var(--spacer) + 40px) 0 calc(var(--spacer) + 40px) var(--pad-left-small);
   max-width: 1200px;
   padding: 0;
   border: none;
