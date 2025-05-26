@@ -121,19 +121,33 @@ blockquote {
 /*    АНИМАЦИЯ ПРИ ЗАГРУЗКЕ       */
 /* ============================= */
 
-/* Класс для плавного перехода активного пункта */
-.menu-loading-animation .section-active .label {
-  transition: color .2s ease, transform .8s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
+/* ОТКЛЮЧАЕМ все transition до готовности JS */
+.nav_menu:not(.js-ready) .label {
+  transition: none !important;
 }
 
-/* Начальное состояние - пункт сдвинут как активный */
-.section-active.section-active-loading .label {
+/* Скрываем section-active стили до готовности JS */
+.nav_menu:not(.js-ready) .section-active .label {
+  color: var(--menu-clr-white-alfa) !important;
+  transform: translateX(0) !important;
+}
+
+.container_light .nav_menu:not(.js-ready) .section-active .label {
+  color: var(--menu-clr-black-alfa) !important;
+}
+
+/* Класс для плавного перехода при анимации */
+.nav_menu.js-animating .section-active .label {
+  transition: color .3s ease, transform .8s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
+}
+
+/* Начальное состояние анимации - как активный пункт */
+.section-active-start .label {
   transform: translateX(16px) !important;
   color: var(--menu-clr-white) !important;
 }
 
-/* Для светлого фона */
-.container_light .section-active.section-active-loading .label {
+.container_light .section-active-start .label {
   color: var(--menu-clr-black) !important;
 }
 
