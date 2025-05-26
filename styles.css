@@ -145,23 +145,23 @@ blockquote {
 /* Родительские разделы на вложенных страницах (белый фон) */
 .menu_item.section-active .label {
   color:var(--menu-clr-white);
-  transform:translateX(0); /* На исходном месте для вложенных страниц */
+  transform:translateX(0);
 }
 
-/* Поведение при ховере на меню */
-.nav_menu:hover .w--current .label {
+/* ИСПРАВЛЕННОЕ поведение при ховере на меню */
+/* Убираем стили для .nav_menu:hover и используем только прямое наведение */
+
+/* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
+.nav_menu .menu_item:hover ~ .w--current .label,
+.nav_menu .menu_item:hover ~ .section-active .label {
   transform: translateX(0);
   color:var(--menu-clr-white-alfa);
 }
+
+/* Прямое наведение на активный пункт возвращает его стили */
 .nav_menu .w--current:hover .label {
   transform: translateX(16px);
   color:var(--menu-clr-white);
-}
-
-/* Поведение родительских разделов при ховере на меню (белый фон) */
-.nav_menu:hover .section-active .label {
-  transform: translateX(0);
-  color:var(--menu-clr-white-alfa);
 }
 .nav_menu .section-active:hover .label {
   transform: translateX(16px);
@@ -202,21 +202,21 @@ blockquote {
 /* Родительские разделы на вложенных страницах (светлый фон) */
 .container_light .menu_item.section-active .label {
   color:var(--menu-clr-black);
-  transform:translateX(0); /* На исходном месте для вложенных страниц */
+  transform:translateX(0);
 }
 
-/* Поведение при ховере на меню (светлый фон) */
-.container_light .nav_menu:hover .w--current .label {
+/* ИСПРАВЛЕННОЕ поведение при ховере на меню (светлый фон) */
+
+/* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
+.container_light .nav_menu .menu_item:hover ~ .w--current .label,
+.container_light .nav_menu .menu_item:hover ~ .section-active .label {
   color:var(--menu-clr-black-alfa);
+  transform: translateX(0);
 }
+
+/* Прямое наведение на активный пункт возвращает его стили */
 .container_light .nav_menu .w--current:hover .label {
   color:var(--menu-clr-black);
-}
-
-/* Поведение родительских разделов при ховере на меню (светлый фон) */
-.container_light .nav_menu:hover .section-active .label {
-  transform: translateX(0);
-  color:var(--menu-clr-black-alfa);
 }
 .container_light .nav_menu .section-active:hover .label {
   transform: translateX(16px);
