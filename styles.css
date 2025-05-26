@@ -102,7 +102,7 @@ blockquote {
   font-size: var(--h2--size);
   line-height: var(--h2--line-height);
   letter-spacing: var(--h2--letter-spacing);
-  padding: calc(var(--spacer) + 20px) 0 calc(var(--spacer) + 20px) var(--pad-left-small);
+  margin: calc(var(--spacer) + 20px) 0 calc(var(--spacer) + 20px) var(--pad-left-small);
   max-width: 1200px;
 }
 
