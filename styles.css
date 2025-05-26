@@ -118,40 +118,6 @@ blockquote {
 }
 
 /* ============================= */
-/*    АНИМАЦИЯ ПРИ ЗАГРУЗКЕ       */
-/* ============================= */
-
-/* ОТКЛЮЧАЕМ все transition до готовности JS */
-.nav_menu:not(.js-ready) .label {
-  transition: none !important;
-}
-
-/* Скрываем section-active стили до готовности JS */
-.nav_menu:not(.js-ready) .section-active .label {
-  color: var(--menu-clr-white-alfa) !important;
-  transform: translateX(0) !important;
-}
-
-.container_light .nav_menu:not(.js-ready) .section-active .label {
-  color: var(--menu-clr-black-alfa) !important;
-}
-
-/* Класс для плавного перехода при анимации */
-.nav_menu.js-animating .section-active .label {
-  transition: color .3s ease, transform .8s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
-}
-
-/* Начальное состояние анимации - как активный пункт */
-.section-active-start .label {
-  transform: translateX(16px) !important;
-  color: var(--menu-clr-white) !important;
-}
-
-.container_light .section-active-start .label {
-  color: var(--menu-clr-black) !important;
-}
-
-/* ============================= */
 /*    Main navigation: white     */
 /* ============================= */
 .menu_item,
@@ -181,6 +147,9 @@ blockquote {
   color:var(--menu-clr-white);
   transform:translateX(0);
 }
+
+/* ИСПРАВЛЕННОЕ поведение при ховере на меню */
+/* Убираем стили для .nav_menu:hover и используем только прямое наведение */
 
 /* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
 .nav_menu .menu_item:hover ~ .w--current .label,
@@ -235,6 +204,8 @@ blockquote {
   color:var(--menu-clr-black);
   transform:translateX(0);
 }
+
+/* ИСПРАВЛЕННОЕ поведение при ховере на меню (светлый фон) */
 
 /* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
 .container_light .nav_menu .menu_item:hover ~ .w--current .label,
