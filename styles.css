@@ -118,6 +118,20 @@ blockquote {
 }
 
 /* ============================= */
+/*    АНИМАЦИЯ ПРИ ЗАГРУЗКЕ       */
+/* ============================= */
+
+/* Класс для плавного перехода активного пункта */
+.menu-loading-animation .label {
+  transition: color .2s ease, transform .6s ease !important;
+}
+
+/* Временный класс для начального состояния */
+.section-active-loading .label {
+  transform: translateX(16px) !important;
+}
+
+/* ============================= */
 /*    Main navigation: white     */
 /* ============================= */
 .menu_item,
@@ -147,9 +161,6 @@ blockquote {
   color:var(--menu-clr-white);
   transform:translateX(0);
 }
-
-/* ИСПРАВЛЕННОЕ поведение при ховере на меню */
-/* Убираем стили для .nav_menu:hover и используем только прямое наведение */
 
 /* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
 .nav_menu .menu_item:hover ~ .w--current .label,
@@ -204,8 +215,6 @@ blockquote {
   color:var(--menu-clr-black);
   transform:translateX(0);
 }
-
-/* ИСПРАВЛЕННОЕ поведение при ховере на меню (светлый фон) */
 
 /* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
 .container_light .nav_menu .menu_item:hover ~ .w--current .label,
