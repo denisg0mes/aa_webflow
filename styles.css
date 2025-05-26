@@ -124,59 +124,59 @@ blockquote {
 .footer_item{
   display:inline-block;
 }
-
 .label{
   display:inline-block;
   transition:color .2s ease, transform .2s ease;
   will-change:color, transform;
   color:var(--menu-clr-white-alfa);
 }
-
 .menu_item:hover .label,
 .menu_item:focus .label{
   transform:translateX(16px);
   color:var(--menu-clr-white);
 }
 
+/* Стандартный активный пункт (точное совпадение страницы) */
 .nav_menu .w--current .label {
   color:var(--menu-clr-white);
   transform:translateX(16px);
 }
 
+/* Родительские разделы на вложенных страницах (белый фон) */
+.menu_item.section-active .label {
+  color:var(--menu-clr-white);
+  transform:translateX(0); /* На исходном месте для вложенных страниц */
+}
+
+/* Поведение при ховере на меню */
 .nav_menu:hover .w--current .label {
   transform: translateX(0);
   color:var(--menu-clr-white-alfa);
 }
-
 .nav_menu .w--current:hover .label {
   transform: translateX(16px);
   color:var(--menu-clr-white);
 }
 
-/*--- home menu containe white ---*/
+/* Поведение родительских разделов при ховере на меню (белый фон) */
+.nav_menu:hover .section-active .label {
+  transform: translateX(0);
+  color:var(--menu-clr-white-alfa);
+}
+.nav_menu .section-active:hover .label {
+  transform: translateX(16px);
+  color:var(--menu-clr-white);
+}
+
+/*--- home menu container white ---*/
 .container_home .label,
 .footer_home .label {
   color:var(--menu-clr-white);
 }
-
 /*--- footer navigation white ---*/ 
 .footer_item:hover .label,
 .w-nav-brand {
   color:var(--menu-clr-white);
-}
-
-
-
-/* Очень заметный временный стиль для отладки */
-.menu_item.section-active {
-  background-color: red !important;
-  border: 3px solid yellow !important;
-}
-
-.menu_item.section-active .label {
-  background-color: lime !important;
-  color: black !important;
-  transform: translateX(0) !important;
 }
 
 /* ============================= */
@@ -189,21 +189,37 @@ blockquote {
   will-change:color, transform;
   color:var(--menu-clr-black-alfa);
 }
-
 .container_light .menu_item:hover .label,
 .container_light .menu_item:focus .label{
   color:var(--menu-clr-black);
 }
 
+/* Стандартный активный пункт (светлый фон) */
 .container_light .nav_menu .w--current .label {
   color:var(--menu-clr-black);
 }
 
+/* Родительские разделы на вложенных страницах (светлый фон) */
+.container_light .menu_item.section-active .label {
+  color:var(--menu-clr-black);
+  transform:translateX(0); /* На исходном месте для вложенных страниц */
+}
+
+/* Поведение при ховере на меню (светлый фон) */
 .container_light .nav_menu:hover .w--current .label {
   color:var(--menu-clr-black-alfa);
 }
-
 .container_light .nav_menu .w--current:hover .label {
+  color:var(--menu-clr-black);
+}
+
+/* Поведение родительских разделов при ховере на меню (светлый фон) */
+.container_light .nav_menu:hover .section-active .label {
+  transform: translateX(0);
+  color:var(--menu-clr-black-alfa);
+}
+.container_light .nav_menu .section-active:hover .label {
+  transform: translateX(16px);
   color:var(--menu-clr-black);
 }
 
@@ -211,10 +227,9 @@ blockquote {
 .footer_light .footer_item:hover .label {
   color:var(--menu-clr-black);
 }
-
 .container_light .w-nav-brand {
   color:var(--menu-clr-black);
-} 
+}
 
 /* ============================= */
 /*          Text styles          */
