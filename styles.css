@@ -122,13 +122,19 @@ blockquote {
 /* ============================= */
 
 /* Класс для плавного перехода активного пункта */
-.menu-loading-animation .label {
-  transition: color .2s ease, transform .6s ease !important;
+.menu-loading-animation .section-active .label {
+  transition: color .2s ease, transform .8s cubic-bezier(0.4, 0.0, 0.2, 1) !important;
 }
 
-/* Временный класс для начального состояния */
-.section-active-loading .label {
+/* Начальное состояние - пункт сдвинут как активный */
+.section-active.section-active-loading .label {
   transform: translateX(16px) !important;
+  color: var(--menu-clr-white) !important;
+}
+
+/* Для светлого фона */
+.container_light .section-active.section-active-loading .label {
+  color: var(--menu-clr-black) !important;
 }
 
 /* ============================= */
