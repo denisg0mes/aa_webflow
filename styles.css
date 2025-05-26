@@ -22,7 +22,7 @@
 .gallery-cell {
   height: 100%;
   width: auto;   
-  margin-right: 20px; /* GAP */
+  margin-right: 8px; /* GAP */
   user-select: none;
 }
 
