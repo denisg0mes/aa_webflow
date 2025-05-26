@@ -32,12 +32,13 @@
 
 /*---GALLERY DOTS---*/  
 .custom-gallery .flickity-page-dots{
-  bottom:-16px;    /* SPACER */
+  /*bottom:-16px;     SPACER */
+  padding: 20px 0 40px 0;
 }
 
 .custom-gallery .flickity-page-dots .dot{
-  width:20px; 
-  height:4px;
+  width:26px; 
+  height:3px;
   margin:0 3px; 
   border-radius:0;
   background:#000;
