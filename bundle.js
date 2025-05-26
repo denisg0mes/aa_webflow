@@ -123,15 +123,8 @@
         // убираем imagesLoaded: true - делаем это вручную
       });
       
-      // ФИКС: принудительно устанавливаем высоту после инициализации
-      setTimeout(() => {
-        container.style.height = '800px';
-        const viewport = container.querySelector('.flickity-viewport');
-        if (viewport) {
-          viewport.style.height = '800px';
-        }
-        flickityInstance.resize(); // пересчитываем размеры
-      }, 100);
+      // CSS должен управлять высотой
+      flickityInstance.resize(); // пересчитываем размеры
       
       console.log('Gallery initialized successfully');
     } catch (err) {
