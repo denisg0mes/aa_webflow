@@ -42,30 +42,31 @@ document.addEventListener('DOMContentLoaded', function() {
           
           // ===== АНИМАЦИЯ ЗАГРУЗКИ =====
           
-          // 1. Добавляем класс для увеличенного времени перехода
+          // 1. Сначала добавляем класс для плавного перехода
           const navMenu = document.querySelector('.nav_menu');
           if (navMenu) {
             navMenu.classList.add('menu-loading-animation');
           }
           
-          // 2. Временно ставим пункт в позицию "сдвинут" (как будто он активный)
-          item.classList.add('section-active-loading');
+          // 2. Сразу добавляем финальный класс section-active, но с начальной позицией
+          item.classList.add('section-active', 'section-active-loading');
           
-          // 3. Через небольшую задержку убираем временный класс и добавляем финальный
+          // 3. Принудительно применяем стили (reflow)
+          item.offsetHeight;
+          
+          // 4. Через небольшую задержку убираем класс начальной позиции
           setTimeout(() => {
             item.classList.remove('section-active-loading');
-            item.classList.add('section-active');
-            
-            console.log('  Анимация завершена, класс section-active добавлен');
-          }, 100); // Небольшая задержка для срабатывания CSS
+            console.log('  Анимация завершена');
+          }, 50);
           
-          // 4. Возвращаем обычное время перехода через 1 секунду
+          // 5. Возвращаем обычное время перехода
           setTimeout(() => {
             if (navMenu) {
               navMenu.classList.remove('menu-loading-animation');
             }
             console.log('  Время перехода возвращено к стандартному');
-          }, 700);
+          }, 650);
           
           found = true;
         }
