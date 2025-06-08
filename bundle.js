@@ -1,5 +1,4 @@
-<script>
-// bundle.js — галерея на Flickity v2 с alt-тегами
+// bundle.js — галерея на Flickity v2 с поддержкой старого и нового форматов
 ;(function () {
   /** {gallery:my-slug} */
   const TOKEN_RE = /\{gallery:([\w-]+)\}/;
@@ -10,7 +9,7 @@
       .forEach(processRichText);
   });
 
-  /** парсим один RichText-блок */
+  /** Парсим один Rich Text-блок */
   function processRichText(root) {
     const parts = root.innerHTML.split(/(\{gallery:[\w-]+\})/g);
     root.innerHTML = '';
@@ -34,7 +33,7 @@
     });
   }
 
-  /** грузим картинки и, когда все готовы, стартуем Flickity */
+  /** Грузим картинки и, когда все готовы, стартуем Flickity */
   function loadGallery(container, slug) {
     fetch(`https://n8n.arrivedaliens.com/webhook/getGallery?slug=${encodeURIComponent(slug)}`)
       .then(r => {
@@ -51,7 +50,13 @@
         const total = images.length;
         const imgEls = new Array(total);
 
-        images.forEach(({ url, alt = '' }, idx) => {
+        images.forEach((item, idx) => {
+          // поддерживаем два формата: строка или { url, alt }
+          const url = typeof item === 'string' ? item : item.url;
+          const alt = (item && typeof item === 'object' && 'alt' in item)
+            ? (item.alt || '')
+            : '';
+
           const img = document.createElement('img');
           img.className = 'gallery-cell';
           img.src = url;
@@ -75,19 +80,21 @@
         setTimeout(() => {
           if (loaded < total) {
             console.warn(`Gallery "${slug}": таймаут, загружено ${loaded}/${total}`);
-            finish();           // инициализируем тем, что есть
+            finish(); // инициализируем тем, что успели загрузить
           }
         }, 5000);
 
         function finish () {
-          imgEls.forEach(el => container.appendChild(el));
+          imgEls.forEach(el => {
+            if (el && el.src) container.appendChild(el);
+          });
           initFlickity(container);
         }
       })
       .catch(err => console.error(`Gallery "${slug}" error:`, err));
   }
 
-  /** запускаем Flickity один раз */
+  /** Запускаем Flickity один раз */
   function initFlickity(container) {
     if (container.classList.contains('flickity-enabled')) return;
 
@@ -109,4 +116,3 @@
     }
   }
 })();
-</script>
