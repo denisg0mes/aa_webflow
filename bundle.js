@@ -1,134 +1,112 @@
-// bundle.js — галерея на Flickity 2 (исправленная версия)
+<script>
+// bundle.js — галерея на Flickity v2 с alt-тегами
 ;(function () {
-  /** Регэкс вида {gallery:my-slug} */
+  /** {gallery:my-slug} */
   const TOKEN_RE = /\{gallery:([\w-]+)\}/;
-  
-  /** Стартуем, когда DOM готов */
+
   document.addEventListener('DOMContentLoaded', () => {
     document
       .querySelectorAll('div.w-richtext')
-      .forEach(parseRichTextBlock);
+      .forEach(processRichText);
   });
-  
-  /** Ищем плейсхолдеры в Rich Text и заменяем их на галереи */
-  function parseRichTextBlock(root) {
+
+  /** парсим один RichText-блок */
+  function processRichText(root) {
     const parts = root.innerHTML.split(/(\{gallery:[\w-]+\})/g);
     root.innerHTML = '';
-    
+
     parts.forEach(part => {
       const m = part.match(TOKEN_RE);
       if (m) {
         const slug = m[1];
-        const wrapper = document.createElement('div');
-        wrapper.className = 'custom-gallery-wrapper';
+        const wrap = document.createElement('div');
+        wrap.className = 'custom-gallery-wrapper';
+
         const container = document.createElement('div');
         container.className = 'custom-gallery';
-        wrapper.appendChild(container);
-        root.appendChild(wrapper);
+        wrap.appendChild(container);
+
+        root.appendChild(wrap);
         loadGallery(container, slug);
       } else {
         root.insertAdjacentHTML('beforeend', part);
       }
     });
   }
-  
-  /** Запрашиваем изображения и инициализируем Flickity после их загрузки */
+
+  /** грузим картинки и, когда все готовы, стартуем Flickity */
   function loadGallery(container, slug) {
     fetch(`https://n8n.arrivedaliens.com/webhook/getGallery?slug=${encodeURIComponent(slug)}`)
       .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       })
-      .then(data => {
-        const images = data.images || [];
+      .then(({ images = [] }) => {
         if (!images.length) {
-          console.warn(`Gallery "${slug}" has no images`);
+          console.warn(`Gallery "${slug}" пустая`);
           return;
         }
-        
-        let loadedCount = 0;
-        const totalImages = images.length;
-        const imageElements = [];
-        
-        // Сначала создаем ВСЕ элементы изображений
-        images.forEach((src, index) => {
+
+        let loaded = 0;
+        const total = images.length;
+        const imgEls = new Array(total);
+
+        images.forEach(({ url, alt = '' }, idx) => {
           const img = document.createElement('img');
           img.className = 'gallery-cell';
-          img.src = src;
-          imageElements[index] = img;
-          
-          // Обработчик загрузки каждого изображения
-          const onImageLoad = () => {
-            loadedCount++;
-            if (loadedCount === totalImages) {
-              // Добавляем ВСЕ изображения СРАЗУ в правильном порядке
-              imageElements.forEach(imgEl => {
-                container.appendChild(imgEl);
-              });
-              // Только потом инициализируем Flickity
-              initializeFlickity(container);
-            }
+          img.src = url;
+          img.alt = alt;
+          imgEls[idx] = img;
+
+          const done = () => {
+            loaded++;
+            if (loaded === total) finish();
           };
-          
-          // Проверяем, не загружено ли уже (из кэша)
-          if (img.complete && img.naturalWidth > 0) {
-            onImageLoad();
+
+          if (img.complete && img.naturalWidth) {
+            done();
           } else {
-            img.onload = onImageLoad;
-            img.onerror = () => {
-              console.warn(`Failed to load image: ${src}`);
-              onImageLoad(); // тоже считаем как "обработанное"
-            };
+            img.onload  = done;
+            img.onerror = done;
           }
         });
-        
-        // Таймаут безопасности на случай, если что-то пойдет не так
+
+        // fallback-таймаут (5 с)
         setTimeout(() => {
-          if (loadedCount < totalImages && imageElements.length > 0) {
-            console.warn(`Gallery "${slug}": timeout reached, initializing with ${loadedCount}/${totalImages} loaded images`);
-            // Добавляем загруженные изображения
-            imageElements.forEach(imgEl => {
-              if (imgEl.complete || imgEl.src) {
-                container.appendChild(imgEl);
-              }
-            });
-            initializeFlickity(container);
+          if (loaded < total) {
+            console.warn(`Gallery "${slug}": таймаут, загружено ${loaded}/${total}`);
+            finish();           // инициализируем тем, что есть
           }
-        }, 5000); // уменьшаем таймаут до 5 секунд
+        }, 5000);
+
+        function finish () {
+          imgEls.forEach(el => container.appendChild(el));
+          initFlickity(container);
+        }
       })
-      .catch(err => {
-        console.error(`Gallery "${slug}" load error:`, err);
-      });
+      .catch(err => console.error(`Gallery "${slug}" error:`, err));
   }
-  
-  /** Инициализируем Flickity после загрузки всех изображений */
-  function initializeFlickity(container) {
-    // Проверяем, не инициализирована ли уже галерея
-    if (container.classList.contains('flickity-enabled')) {
-      return;
-    }
-    
+
+  /** запускаем Flickity один раз */
+  function initFlickity(container) {
+    if (container.classList.contains('flickity-enabled')) return;
+
     try {
-      const flickityInstance = new Flickity(container, {
-        cellSelector: '.gallery-cell',
-        draggable: true,
-        // freeScroll: true,
-        wrapAround: false,
-        pageDots: true,
-        prevNextButtons: false,
-        selectedAttraction: 0.1,
-        friction: 0.9,
-        cellAlign: 'left',
-        contain: true
-        // убираем imagesLoaded: true - делаем это вручную
+      const flkty = new Flickity(container, {
+        cellSelector       : '.gallery-cell',
+        cellAlign          : 'left',
+        contain            : true,
+        draggable          : true,
+        wrapAround         : false,
+        pageDots           : true,
+        prevNextButtons    : false,
+        selectedAttraction : 0.1,
+        friction           : 0.9
       });
-      
-      // CSS должен управлять высотой
-      flickityInstance.resize(); // пересчитываем размеры
-      
-      console.log('Gallery initialized successfully');
-    } catch (err) {
-      console.error('Flickity initialization error:', err);
+      flkty.resize();
+    } catch (e) {
+      console.error('Flickity init failed:', e);
     }
   }
 })();
+</script>
