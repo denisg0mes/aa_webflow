@@ -1,20 +1,28 @@
 // richtext-content.js
-// Скрипт для управления классами обёрток картинок в Rich Text и удаления inline-стилей fullwidth-фигур
-
 document.addEventListener('DOMContentLoaded', () => {
-  // 1) Убираем inline max-width у fullwidth-figures
+  // 1) Убираем inline max-width у fullwidth-figur
   document.querySelectorAll('.w-richtext figure.w-richtext-align-fullwidth')
     .forEach(fig => {
       fig.removeAttribute('style');
     });
 
-  // 2) Добавляем класс на обёртки картинок согласно alt-типа
+  // 2) Готовим регулярку для поиска тега в alt
+  const TAG_RE = /\{(wide|horizontal|vertical)\}/i;
+
+  // 3) Обрабатываем все картинки в Rich Text
   document.querySelectorAll('.w-richtext img').forEach(img => {
     // пропускаем картинки из галереи
     if (img.closest('.custom-gallery')) return;
-    const type = img.alt.trim().toLowerCase();
-    if (!['wide', 'vertical', 'horizontal'].includes(type)) return;
-    // Обёртка — <div> внутри <figure>
+
+    const alt = img.alt;
+    const match = alt.match(TAG_RE);
+    if (!match) return;                       // нет тега — ничего не делаем
+    const type = match[1].toLowerCase();      // извлекаем тип из {…}
+
+    // удаляем сам тег из alt, оставляя описание
+    img.alt = alt.replace(match[0], '').trim();
+    
+    // 4) Добавляем класс на обёртку — <div> внутри <figure>
     const wrapper = img.parentElement;
     if (wrapper && wrapper.tagName === 'DIV') {
       wrapper.classList.add(`rt-wrapper--${type}`);
