@@ -235,7 +235,7 @@ blockquote {
 /*          Mobile menu          */
 /* ============================= */
 
-/* 1) .menu-trigger (логотип) */
+/* .menu-trigger (логотип) */
 .menu-trigger {
   position: fixed;
   left: 50%;
@@ -245,7 +245,7 @@ blockquote {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 2) .menu-overlay (контейнер) */
+/* .menu-overlay (контейнер) */
 .menu-overlay {
   position: fixed;
   inset: 0;
@@ -257,7 +257,7 @@ blockquote {
   padding-bottom: 130px;          /* смещение над логотипом */
 }
 
-/* 3) .overlay-bg (SVG-фон) */
+/* .overlay-bg (SVG-фон) */
 .menu-overlay .overlay-bg {
   position: absolute;
   bottom: 20px;
@@ -270,7 +270,7 @@ blockquote {
   z-index: 0;                          /* фон под меню */
 }
 
-/* 4) .menu-container (весь блок с пунктами) */
+/* .menu-container (весь блок с пунктами) */
 /* — базовое состояние: мгновенно спрятано */
 .menu-overlay .menu-container {
   display: flex;
@@ -297,15 +297,15 @@ blockquote {
   transform: translateX(-50%) scale(20);
 }
 
-/* — появление меню с delay ровно 0.45s */
+/* — появление меню с delay ровно 0.4s */
 .menu-overlay.open .menu-container {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
-  transition-delay: 0.45s;            /* задержка перед появлением */
+  transition-delay: 0.4s;            /* задержка перед появлением */
 }
 
-/* 2) Основные пункты */
+/* Основные пункты */
 .menu-main {
   display: flex;
   flex-direction: column;
@@ -319,7 +319,7 @@ blockquote {
   text-decoration: none;
 }
 
-/* 3) Дополнительные блоки в две колонки */
+/* Дополнительные блоки в две колонки */
 .menu-extra {
   display: flex;
   gap: 30px;
@@ -335,4 +335,9 @@ blockquote {
   font-size: 1rem;
   color: #444;
   text-decoration: none;
+}
+
+/* Активный пункт меню */
+.menu-container .w--current {
+  text-decoration: underline;
 }
