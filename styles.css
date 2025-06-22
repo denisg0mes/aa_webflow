@@ -288,7 +288,7 @@ blockquote {
   padding: 0 8px;
 
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(40px);
   pointer-events: none;
 
   transition:
