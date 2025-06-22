@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.contains('open') ? closeMenu() : openMenu();
   });
 
-  overlay.querySelectorAll('.menu-container a').forEach(link =>
-    link.addEventListener('click', closeMenu)
-  );
+  //overlay.querySelectorAll('.menu-container a').forEach(link =>
+   // link.addEventListener('click', closeMenu)
+ // );
 });
