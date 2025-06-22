@@ -342,7 +342,7 @@ blockquote {
 .menu-extra .column {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 8px;
 }
 .menu-extra .column a p {
   font-size: 1rem;
