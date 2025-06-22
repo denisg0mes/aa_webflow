@@ -250,6 +250,7 @@ blockquote {
   bottom: 23px;
   transform: translateX(-50%);
   z-index: 100;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* 2) .menu-overlay (контейнер) */
