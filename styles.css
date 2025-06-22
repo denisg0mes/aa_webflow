@@ -232,14 +232,6 @@ blockquote {
 }
 
 /* ============================= */
-/*          Text styles          */
-/* ============================= */
-.about_wrapper p {
-  max-width: 600px;
-  padding: 0 110px 0 0;
-}
-
-/* ============================= */
 /*          Mobile menu          */
 /* ============================= */
 
@@ -286,11 +278,9 @@ blockquote {
   align-items: flex-start;
   width: 100%;
   padding: 0 8px;
-
   opacity: 0;
   transform: translateY(40px);
   pointer-events: none;
-
   transition:
     opacity 0.25s ease 0s,
     transform 0.25s ease 0s;          /* сразу, без delay */
@@ -312,7 +302,6 @@ blockquote {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
-
   transition-delay: 0.45s;            /* задержка перед появлением */
 }
 
