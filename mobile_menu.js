@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const trigger = document.querySelector('.menu-trigger');
-  const overlay = document.querySelector('.menu-overlay');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  const trigger    = mobileMenu.querySelector('.menu-trigger');
+  const overlay    = mobileMenu.querySelector('.menu-overlay');
 
-  // Сбрасываем меню в закрытое состояние (без анимаций)
+  // Сброс в закрытое состояние (без анимаций)
   function resetMenu() {
     overlay.classList.remove('open');
     document.body.style.overflow = '';
@@ -11,12 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // При первой загрузке
   resetMenu();
 
-  // При возврате через кнопку «Назад» (bfcache)
+  // При возврате «Назад» из bfcache
   window.addEventListener('pageshow', event => {
     if (event.persisted) resetMenu();
   });
 
-  // Открыть/закрыть по клику на логотип
+  // Открыть/закрыть по клику внутри этого компонента
   trigger.addEventListener('click', () => {
     const isOpen = overlay.classList.toggle('open');
     document.body.style.overflow = isOpen ? 'hidden' : '';
