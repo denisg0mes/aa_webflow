@@ -294,7 +294,7 @@ blockquote {
 /* растягиваем фон до full-screen */
 .menu-overlay.open .overlay-bg {
   /* scaleFactor = (sqrt(viewWidth²+viewHeight²) / sqrt(93²+76²)) примерно 15 */
-  transform: translateX(-50%) scale(15);
+  transform: translateX(-50%) scale(20);
 }
 
 /* показываем текст меню */
