@@ -311,7 +311,7 @@ blockquote {
   flex-direction: column;
   gap: 1.5rem;            /* отступ между ссылками */
 }
-.menu-main a p {
+.menu-main a {
   font-size: 60px;
   letter-spacing: -2px;
   line-height: 40px;
@@ -331,7 +331,7 @@ blockquote {
   flex-direction: column;
   gap: 4px;
 }
-.menu-extra .column a p {
+.menu-extra .column a {
   font-size: 1rem;
   color: #444;
   text-decoration: none;
