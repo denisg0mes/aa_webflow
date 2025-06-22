@@ -285,7 +285,7 @@ blockquote {
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  padding: 0 20px;
+  padding: 0 8px;
 
   opacity: 0;
   transform: translateY(20px);
@@ -316,16 +316,6 @@ blockquote {
   transition-delay: 0.45s;            /* задержка перед появлением */
 }
 
-
-/* 1) Вся колонка меню — слева, вертикально */
-.menu-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  padding: 0 8px;
-}
-
 /* 2) Основные пункты */
 .menu-main {
   display: flex;
@@ -354,7 +344,6 @@ blockquote {
 }
 .menu-extra .column a p {
   font-size: 1rem;
-  font-weight: 300;
   color: #444;
   text-decoration: none;
 }
