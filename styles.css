@@ -249,7 +249,7 @@ blockquote {
   left: 50%;
   bottom: 23px;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 100;  /* логотип всегда над всем */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -257,47 +257,51 @@ blockquote {
 .menu-overlay {
   position: fixed;
   inset: 0;
-  pointer-events: none;    /* перекрывает всю страницу, но «не кликабелен» */
-  z-index: 99;
+  pointer-events: none;
+  z-index: 99;    /* чуть ниже логотипа */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* 3) .overlay-bg (SVG-фон): под логотипом, изначально маленький */
+/* 3) .overlay-bg (SVG-фон) */
 .menu-overlay .overlay-bg {
   position: absolute;
-  bottom: 20px;            /* тот же отступ, что и логотип */
+  bottom: 23px;               /* совпадает с bottom у меню-триггера */
   left: 50%;
-  width: 93px;             /* исходный размер вашей SVG-фигуры */
+  width: 93px;
   height: 76px;
   transform: translateX(-50%) scale(1);
   transform-origin: center center;
   transition: transform .45s ease;
+  z-index: 0;                  /* фон под меню */
 }
 
-/* 4) .menu-links (текст меню): прячем через opacity */
+/* 4) .menu-container (весь блок с пунктами) */
 .menu-overlay .menu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;     /* выравнивание по левому краю */
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
   transition:
-    opacity .25s ease .3s,    /* delay = время анимации фона */
-    transform .25s ease .3s;
+    opacity 0.25s ease 0.45s,  /* DELAY = 0.45s (время expand SVG-фона) */
+    transform 0.25s ease 0.45s;
+  z-index: 1;                  /* над фоном, под логотипом */
 }
 
 /* === Открытое состояние === */
 .menu-overlay.open {
-  pointer-events: auto;    /* теперь клики по меню обрабатываются */
+  pointer-events: auto;
 }
 
 /* растягиваем фон до full-screen */
 .menu-overlay.open .overlay-bg {
-  /* scaleFactor = (sqrt(viewWidth²+viewHeight²) / sqrt(93²+76²)) примерно 15 */
   transform: translateX(-50%) scale(20);
 }
 
-/* показываем текст меню */
+/* показываем меню сразу после expand */
 .menu-overlay.open .menu-container {
   opacity: 1;
   transform: translateY(0);
