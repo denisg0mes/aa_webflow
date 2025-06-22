@@ -262,7 +262,7 @@ blockquote {
   display: flex;
   justify-content: center;
   align-items: flex-end;          /* прижать к низу */
-  padding-bottom: 116px;          /* смещение над логотипом */
+  padding-bottom: 130px;          /* смещение над логотипом */
 }
 
 /* 3) .overlay-bg (SVG-фон) */
