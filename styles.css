@@ -243,55 +243,60 @@ blockquote {
 /*          Mobile menu          */
 /* ============================= */
 
+/* 1) .menu-trigger (логотип) */
 .menu-trigger {
   position: fixed;
   left: 50%;
   bottom: 20px;
   transform: translateX(-50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 100;
 }
 
+/* 2) .menu-overlay (контейнер) */
 .menu-overlay {
   position: fixed;
-  inset: 0;                /* top:0; right:0; bottom:0; left:0 */
+  inset: 0;
+  pointer-events: none;    /* перекрывает всю страницу, но «не кликабелен» */
+  z-index: 99;
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: none;    /* пока закрыт — клики мимо */
-  opacity: 0;
-  transition: opacity .3s ease;
-  z-index: 9;
 }
 
+/* 3) .overlay-bg (SVG-фон): под логотипом, изначально маленький */
 .menu-overlay .overlay-bg {
   position: absolute;
-  width: 100vmax;
-  height: 100vmax;
-  transform: scale(0);
-  transform-origin: center bottom;
+  bottom: 20px;            /* тот же отступ, что и логотип */
+  left: 50%;
+  width: 93px;             /* исходный размер вашей SVG-фигуры */
+  height: 76px;
+  transform: translateX(-50%) scale(1);
+  transform-origin: center center;
   transition: transform .45s ease;
 }
 
+/* 4) .menu-links (текст меню): прячем через opacity */
 .menu-overlay .menu-links {
-  position: relative;
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity .25s ease .2s, transform .25s ease .2s;
   pointer-events: none;
+  transition:
+    opacity .25s ease .45s,    /* delay = время анимации фона */
+    transform .25s ease .45s;
 }
 
-/* Open State */
-
+/* === Открытое состояние === */
 .menu-overlay.open {
-  pointer-events: auto;
-  opacity: 1;
+  pointer-events: auto;    /* теперь клики по меню обрабатываются */
 }
+
+/* растягиваем фон до full-screen */
 .menu-overlay.open .overlay-bg {
-  transform: scale(1);
+  /* scaleFactor = (sqrt(viewWidth²+viewHeight²) / sqrt(93²+76²)) примерно 15 */
+  transform: translateX(-50%) scale(15);
 }
+
+/* показываем текст меню */
 .menu-overlay.open .menu-links {
   opacity: 1;
   transform: translateY(0);
