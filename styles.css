@@ -249,7 +249,7 @@ blockquote {
   left: 50%;
   bottom: 23px;
   transform: translateX(-50%);
-  z-index: 100;  /* логотип всегда над всем */
+  z-index: 10;  /* логотип всегда над всем */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -258,7 +258,7 @@ blockquote {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 99;    /* чуть ниже логотипа */
+  z-index: 9;    /* чуть ниже логотипа */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -267,7 +267,7 @@ blockquote {
 /* 3) .overlay-bg (SVG-фон) */
 .menu-overlay .overlay-bg {
   position: absolute;
-  bottom: 23px;               /* совпадает с bottom у меню-триггера */
+  bottom: 20px;
   left: 50%;
   width: 93px;
   height: 76px;
