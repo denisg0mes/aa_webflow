@@ -3,10 +3,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.querySelector('.menu-overlay');
   const links   = overlay.querySelector('.menu-container');
 
+  // Функция сброса меню
+  function resetMenu() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    links.style.transition = '';
+    links.style.opacity = '';
+    links.style.transform = '';
+    links.style.pointerEvents = '';
+  }
+
+  // Сброс при первой загрузке
+  resetMenu();
+
+  // Сброс при возврате из bfcache
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) resetMenu();
+  });
+
   function openMenu() {
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    // вернём пункты в исходное состояние (на случай повторных открытий)
     links.style.transition = '';
     links.style.opacity = '';
     links.style.transform = '';
@@ -14,12 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function closeMenu() {
-    // 1) Прячем пункты меню мгновенно
     links.style.transition = 'opacity .2s ease, transform .2s ease';
     links.style.opacity = '0';
     links.style.transform = 'translateY(20px)';
     links.style.pointerEvents = 'none';
-    // 2) Сразу же сворачиваем фон
     overlay.classList.remove('open');
     document.body.style.overflow = '';
   }
@@ -27,8 +42,4 @@ document.addEventListener('DOMContentLoaded', () => {
   trigger.addEventListener('click', () => {
     overlay.classList.contains('open') ? closeMenu() : openMenu();
   });
-
-  //overlay.querySelectorAll('.menu-container a').forEach(link =>
-   // link.addEventListener('click', closeMenu)
- // );
 });
