@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const trigger = document.querySelector('.menu-trigger');
   const overlay = document.querySelector('.menu-overlay');
-  const links   = overlay.querySelector('.menu-links');
+  const links   = overlay.querySelector('.menu-container');
 
   function openMenu() {
     overlay.classList.add('open');
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.classList.contains('open') ? closeMenu() : openMenu();
   });
 
-  overlay.querySelectorAll('.menu-links a').forEach(link =>
+  overlay.querySelectorAll('.menu-container a').forEach(link =>
     link.addEventListener('click', closeMenu)
   );
 });
