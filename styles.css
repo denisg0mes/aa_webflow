@@ -282,8 +282,8 @@ blockquote {
   transform: translateY(20px);
   pointer-events: none;
   transition:
-    opacity .25s ease .45s,    /* delay = время анимации фона */
-    transform .25s ease .45s;
+    opacity .25s ease .3s,    /* delay = время анимации фона */
+    transform .25s ease .3s;
 }
 
 /* === Открытое состояние === */
