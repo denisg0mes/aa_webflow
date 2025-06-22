@@ -261,7 +261,8 @@ blockquote {
   z-index: 9;    /* чуть ниже логотипа */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+  padding-bottom: 116px;
 }
 
 /* 3) .overlay-bg (SVG-фон) */
