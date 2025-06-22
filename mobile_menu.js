@@ -6,32 +6,29 @@ document.addEventListener('DOMContentLoaded', () => {
   function openMenu() {
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    // пункты покажутся по CSS-задержке
+    // вернём пункты в исходное состояние (на случай повторных открытий)
+    links.style.transition = '';
+    links.style.opacity = '';
+    links.style.transform = '';
+    links.style.pointerEvents = '';
   }
 
   function closeMenu() {
-    // 1. Сразу прячем пункты
-    links.style.opacity = 0;
+    // 1) Прячем пункты меню мгновенно
+    links.style.transition = 'opacity .2s ease, transform .2s ease';
+    links.style.opacity = '0';
     links.style.transform = 'translateY(20px)';
     links.style.pointerEvents = 'none';
-
-    // 2. Через 250мс (равно длительности transition-скрытия) сворачиваем фон
-    setTimeout(() => {
-      overlay.classList.remove('open');
-      document.body.style.overflow = '';
-      // сброс inline-стилей, чтобы пункты снова были готовы к следующему открытию
-      links.style.opacity = '';
-      links.style.transform = '';
-      links.style.pointerEvents = '';
-    }, 250);
+    // 2) Сразу же сворачиваем фон
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
   }
 
   trigger.addEventListener('click', () => {
-    if (!overlay.classList.contains('open')) openMenu();
-    else closeMenu();
+    overlay.classList.contains('open') ? closeMenu() : openMenu();
   });
 
-  overlay.querySelectorAll('a').forEach(a =>
-    a.addEventListener('click', closeMenu)
+  overlay.querySelectorAll('.menu-links a').forEach(link =>
+    link.addEventListener('click', closeMenu)
   );
 });
