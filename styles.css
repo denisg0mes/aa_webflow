@@ -249,7 +249,7 @@ blockquote {
   left: 50%;
   bottom: 23px;
   transform: translateX(-50%);
-  z-index: 10;  /* логотип всегда над всем */
+  z-index: 10;                    /* логотип над всем */
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -258,11 +258,11 @@ blockquote {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 9;    /* чуть ниже логотипа */
+  z-index: 9;                     /* чуть ниже логотипа */
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  padding-bottom: 116px;
+  align-items: flex-end;          /* прижать к низу */
+  padding-bottom: 116px;          /* смещение над логотипом */
 }
 
 /* 3) .overlay-bg (SVG-фон) */
@@ -274,22 +274,27 @@ blockquote {
   height: 76px;
   transform: translateX(-50%) scale(1);
   transform-origin: center center;
-  transition: transform .45s ease;
-  z-index: 0;                  /* фон под меню */
+  transition: transform .45s ease 0s;  /* без delay */
+  z-index: 0;                          /* фон под меню */
 }
 
 /* 4) .menu-container (весь блок с пунктами) */
+/* — базовое состояние: мгновенно спрятано */
 .menu-overlay .menu-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;     /* выравнивание по левому краю */
+  align-items: flex-start;
+  width: 100%;
+  padding: 0 20px;
+
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
+
   transition:
-    opacity 0.25s ease 0.45s,  /* DELAY = 0.45s (время expand SVG-фона) */
-    transform 0.25s ease 0.45s;
-  z-index: 1;                  /* над фоном, под логотипом */
+    opacity 0.25s ease 0s,
+    transform 0.25s ease 0s;          /* сразу, без delay */
+  z-index: 1;                          /* над фоном, под логотипом */
 }
 
 /* === Открытое состояние === */
@@ -297,17 +302,20 @@ blockquote {
   pointer-events: auto;
 }
 
-/* растягиваем фон до full-screen */
+/* — растягиваем фон сразу при open */
 .menu-overlay.open .overlay-bg {
   transform: translateX(-50%) scale(20);
 }
 
-/* показываем меню сразу после expand */
+/* — появление меню с delay ровно 0.45s */
 .menu-overlay.open .menu-container {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+
+  transition-delay: 0.45s;            /* задержка перед появлением */
 }
+
 
 /* 1) Вся колонка меню — слева, вертикально */
 .menu-container {
