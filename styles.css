@@ -117,6 +117,14 @@ blockquote {
   border: none;
 }
 
+/*-------------Mobile-------------*/  
+@media (max-width: 768px) {
+  .cms_content p {
+    margin: var(--spacer) 0 var(--spacer) 20%;
+    max-width: 700px;
+  }
+}
+
 /* ============================= */
 /*    Main navigation: white     */
 /* ============================= */
