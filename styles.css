@@ -122,6 +122,11 @@ blockquote {
 /*-----------------------------------------------Mobile-----------------------------------------------*/  
 
 @media (max-width: 768px) {
+  .w-richtext .custom-gallery-wrapper .custom-gallery {
+    width: 100%;
+    height: 320px;
+    margin: 40px 0;
+  }
   .cms_content p {
     margin: var(--spacer) var(--pad-right-small) var(--spacer) var(--pad-left-small);
     max-width: 700px;
