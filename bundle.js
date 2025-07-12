@@ -108,7 +108,9 @@
         pageDots           : true,
         prevNextButtons    : false,
         selectedAttraction : 0.1,
-        friction           : 0.9
+        friction           : 0.9,
+        resize             : true,
+        setGallerySize     : true
       });
       flkty.resize();
     } catch (e) {
