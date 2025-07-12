@@ -22,6 +22,8 @@ body {
   width: 100%;
   height: 800px;
   margin: 60px 0;
+  /* fixingmobile */
+  overflow: hidden;
 }
 
 /* card Flickity */
@@ -30,6 +32,11 @@ body {
   width: auto;   
   margin-right: 4px; /* GAP */
   user-select: none;
+  /* fixingmobile */
+  object-fit: none;
+  flex-shrink: 0;
+  min-width: auto;
+  max-width: none;
 }
 
 /* скрываем нативный скролл на случай fallback */
