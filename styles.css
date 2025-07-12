@@ -1,6 +1,7 @@
 :root {
   --pad-left-big: 28%;
   --pad-left-small: 15%;
+  --pad-right-small: 20px;
   --spacer: 30px;
   --pad-side: 4px;
   --menu-clr-white: rgba(255,255,255,1);
@@ -122,14 +123,14 @@ blockquote {
 
 @media (max-width: 768px) {
   .cms_content p {
-    margin: var(--spacer) 0 var(--spacer) var(--pad-left-small);
+    margin: var(--spacer) var(--pad-right-small) var(--spacer) var(--pad-left-small);
     max-width: 700px;
   }
   .rt-wrapper--vertical {
-    padding: 0 0 0 var(--pad-left-small);
+    padding: 0 var(--pad-right-small) 0 var(--pad-left-small);
   }
   .rt-wrapper--horizontal {
-    padding: 0 0 0 var(--pad-left-small);
+    padding: 0 var(--pad-right-small) 0 var(--pad-left-small);
   }
 }
 
