@@ -119,7 +119,7 @@ blockquote {
   border: none;
 }
 
-/*-------------Mobile-------------*/  
+/*-----------------------------------------------Mobile-----------------------------------------------*/  
 
 @media (max-width: 768px) {
   .cms_content p {
@@ -127,10 +127,10 @@ blockquote {
     max-width: 700px;
   }
   .rt-wrapper--vertical {
-    padding: 0 var(--pad-right-small) 0 var(--pad-left-small);
+    padding: 0 0 0 var(--pad-left-small);
   }
   .rt-wrapper--horizontal {
-    padding: 0 var(--pad-right-small) 0 var(--pad-left-small);
+    padding: 0 0 0 var(--pad-left-small);
   }
 }
 
@@ -221,8 +221,6 @@ blockquote {
   color:var(--menu-clr-black);
   transform:translateX(0);
 }
-
-/* ИСПРАВЛЕННОЕ поведение при ховере на меню (светлый фон) */
 
 /* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
 .container_light .nav_menu .menu_item:hover ~ .w--current .label,
