@@ -119,14 +119,18 @@ blockquote {
 }
 
 /*-------------Mobile-------------*/  
+
 @media (max-width: 768px) {
   .cms_content p {
     margin: var(--spacer) 0 var(--spacer) var(--pad-left-small);
     max-width: 700px;
   }
   .rt-wrapper--vertical {
-  padding: 0 0 0 var(--pad-left-small);
-}
+    padding: 0 0 0 var(--pad-left-small);
+  }
+  .rt-wrapper--horizontal {
+    padding: 0 0 0 var(--pad-left-small);
+  }
 }
 
 /* ============================= */
