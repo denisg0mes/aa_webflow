@@ -97,6 +97,7 @@ body {
 figure {
   margin: 60px 0;
 }
+
 /*---PROJECT and ARTICLE---*/  
 .cms_content p {
   margin: var(--spacer) 0 var(--spacer) var(--pad-left-big);
@@ -123,6 +124,9 @@ blockquote {
     margin: var(--spacer) 0 var(--spacer) var(--pad-left-small);
     max-width: 700px;
   }
+  .rt-wrapper--vertical {
+  padding: 0 0 0 var(--pad-left-small);
+}
 }
 
 /* ============================= */
