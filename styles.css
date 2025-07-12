@@ -329,7 +329,7 @@ blockquote {
 .menu-main {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;            /* отступ между ссылками */
+  gap: 1.8rem;            /* отступ между ссылками */
 }
 .menu-main a {
   font-size: 60px;
