@@ -261,10 +261,15 @@ blockquote {
 }
 
 /*---footer navigation black---*/ 
-.footer_light .footer_item:hover .label {
+
+.footer_light .footer_item:hover .label
+{
   color:var(--menu-clr-black);
 }
-.container_light .w-nav-brand {
+
+.container_light .w-nav-brand,
+.container-info .w-nav-brand
+{
   color:var(--menu-clr-black);
 }
 
