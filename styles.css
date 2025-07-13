@@ -205,40 +205,57 @@ blockquote {
 /*    Main navigation: black     */
 /* ============================= */ 
 .container_light .label,
-.footer_light .label {
+.container-info .label,
+.footer_light .label 
+{
   display:inline-block;
   transition:color .2s ease, transform .2s ease;
   will-change:color, transform;
   color:var(--menu-clr-black-alfa);
 }
 .container_light .menu_item:hover .label,
-.container_light .menu_item:focus .label{
+.container_light .menu_item:focus .label,
+.container-info .menu_item:hover .label,
+.container-info .menu_item:focus .label
+{
   color:var(--menu-clr-black);
 }
 
 /* Стандартный активный пункт (светлый фон) */
-.container_light .nav_menu .w--current .label {
+.container_light .nav_menu .w--current .label,
+.container-info .nav_menu .w--current .label 
+{
   color:var(--menu-clr-black);
 }
 
 /* Родительские разделы на вложенных страницах (светлый фон) */
-.container_light .menu_item.section-active .label {
+.container_light .menu_item.section-active .label, 
+.container-info .menu_item.section-active .label
+{
   color:var(--menu-clr-black);
   transform:translateX(0);
 }
 
 /* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
 .container_light .nav_menu .menu_item:hover ~ .w--current .label,
-.container_light .nav_menu .menu_item:hover ~ .section-active .label {
+.container_light .nav_menu .menu_item:hover ~ .section-active .label, 
+.container-info .nav_menu .menu_item:hover ~ .w--current .label,
+.container-info .nav_menu .menu_item:hover ~ .section-active .label
+{
   color:var(--menu-clr-black-alfa);
   transform: translateX(0);
 }
 
 /* Прямое наведение на активный пункт возвращает его стили */
-.container_light .nav_menu .w--current:hover .label {
+.container_light .nav_menu .w--current:hover .label,
+.container-info .nav_menu .w--current:hover .label
+{
   color:var(--menu-clr-black);
 }
-.container_light .nav_menu .section-active:hover .label {
+
+.container_light .nav_menu .section-active:hover .label, 
+.container-info .nav_menu .section-active:hover .label
+{
   transform: translateX(16px);
   color:var(--menu-clr-black);
 }
