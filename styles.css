@@ -106,7 +106,7 @@ figure {
 }
 
 .cms_content h3 {
-  margin: var(--spacer) 0 var(--spacer) var(--pad-left-big);
+  margin-left: var(--pad-left-big);
 }
 .w-richtext figure img {
   /*padding: var(--spacer) 0 var(--spacer);*/
