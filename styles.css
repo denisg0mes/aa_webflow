@@ -105,6 +105,9 @@ figure {
   max-width: 700px;
 }
 
+.cms_content h3 {
+  margin: var(--spacer) 0 var(--spacer) var(--pad-left-big);
+}
 .w-richtext figure img {
   /*padding: var(--spacer) 0 var(--spacer);*/
 }
