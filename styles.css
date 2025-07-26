@@ -447,3 +447,4 @@ blockquote {
 .chat-container .chat-input {
   margin-top: 1rem;
 }
+.menu-trigger { touch-action: none; }
