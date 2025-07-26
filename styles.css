@@ -448,3 +448,12 @@ blockquote {
   margin-top: 1rem;
 }
 .menu-trigger { touch-action: none; }
+
+/* логотип и фон должны возвращаться плавно */
+.menu-trigger,
+.overlay-bg {
+  will-change: transform;
+  /* transition задаётся скриптом после drag,
+     но fallback можно оставить:            */
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+}
