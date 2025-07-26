@@ -1,84 +1,97 @@
 document.addEventListener('DOMContentLoaded', () => {
+  /* ---------- элементы ---------- */
+  const mobileMenu = document.querySelector('.mobile-menu');
+  if (!mobileMenu) return;
 
-  /* ---- Находим ВСЕ мобильные меню (если их несколько) ---- */
-  const allMenus = document.querySelectorAll('.mobile-menu');
-  if (!allMenus.length) return;
+  const trigger    = mobileMenu.querySelector('.menu-trigger');
+  const overlay    = mobileMenu.querySelector('.menu-overlay');
+  const overlayBg  = mobileMenu.querySelector('.overlay-bg');
 
-  /* ---- Цикл по каждому компоненту ---- */
-  allMenus.forEach(mobileMenu => {
-    const trigger = mobileMenu.querySelector('.menu-trigger');
-    const overlay = mobileMenu.querySelector('.menu-overlay');
+  /* ---------- утилиты ---------- */
+  const isMenuOpen = () => overlay.classList.contains('open');
+  const isChatOpen = () => mobileMenu.classList.contains('chat-open');
 
-    if (!trigger || !overlay) return;
+  const reset = () => {
+    overlay.classList.remove('open');
+    mobileMenu.classList.remove('chat-open');
+    document.body.style.overflow = '';
+  };
 
-    /* helpers */
-    const isMenuOpen = () => overlay.classList.contains('open');
-    const isChatOpen = () => mobileMenu.classList.contains('chat-open');
+  /* ---------- состояния ---------- */
+  const openMenu  = () => { overlay.classList.add('open');  mobileMenu.classList.remove('chat-open'); document.body.style.overflow='hidden'; };
+  const closeMenu = () => { overlay.classList.remove('open');                                   document.body.style.overflow='';        };
+  const openChat  = () => { mobileMenu.classList.add('chat-open'); overlay.classList.add('open'); document.body.style.overflow='hidden';  };
+  const closeChat = () => { mobileMenu.classList.remove('chat-open'); overlay.classList.remove('open'); document.body.style.overflow=''; };
 
-    /* базовые действия */
-    const reset = () => {
-      overlay.classList.remove('open');
-      mobileMenu.classList.remove('chat-open');
-      document.body.style.overflow = '';
-    };
-    const openMenu  = () => { overlay.classList.add('open');  mobileMenu.classList.remove('chat-open'); document.body.style.overflow='hidden'; };
-    const closeMenu = () => { overlay.classList.remove('open');                                   document.body.style.overflow='';        };
-    const openChat  = () => { mobileMenu.classList.add('chat-open'); overlay.classList.add('open'); document.body.style.overflow='hidden';  };
-    const closeChat = () => { mobileMenu.classList.remove('chat-open'); overlay.classList.remove('open'); document.body.style.overflow=''; };
+  /* ---------- инициализация / bfcache ---------- */
+  reset();
+  window.addEventListener('pageshow', e => { if (e.persisted) reset(); });
 
-    /* при загрузке / bfcache */
-    reset();
-    window.addEventListener('pageshow', e => { if (e.persisted) reset(); });
-
-    /* ---------- КЛИК ---------- */
-    trigger.addEventListener('click', () => {
-      if (dragged) { dragged=false; console.log('tap cancelled (drag)'); return; }
-
-      if (isChatOpen())      { console.log('close chat'); closeChat(); }
-      else if (isMenuOpen()) { console.log('close menu'); closeMenu(); }
-      else                   { console.log('open menu');  openMenu();  }
-    });
-
-    /* ---------- DRAG ---------- */
-    const UP_THRESHOLD = -70;   // px
-    const DOWN_MAX     =  40;
-
-    let startY  = null;
-    let deltaY  = 0;
-    let dragged = false;
-
-    trigger.addEventListener('pointerdown', e => {
-      startY = e.clientY;
-      deltaY = 0;
-      dragged = false;
-      trigger.style.transition = 'none';
-    });
-
-    /* pointermove */
-    window.addEventListener('pointermove', e => {
-      if (startY === null) return;
-
-      deltaY = e.clientY - startY;
-
-      /* разрешаем скролл страницы, если палец идёт по горизонтали —
-         иначе preventDefault делаем только когда реально двигаем вверх/вниз */
-      if (Math.abs(deltaY) > 2) e.preventDefault();
-
-      if (deltaY >  DOWN_MAX) deltaY =  DOWN_MAX;
-      trigger.style.transform = `translate(-50%, ${deltaY}px)`;
-      dragged = true;
-    }, { passive:false });
-
-    window.addEventListener('pointerup', () => {
-      if (startY === null) return;
-      trigger.style.transition = 'transform .3s cubic-bezier(.16,1,.3,1)';
-      trigger.style.transform  = 'translate(-50%, 0)';
-      if (deltaY < UP_THRESHOLD && !isChatOpen()) {
-        console.log('open chat');
-        openChat();
-      }
-      startY = null;
-    });
+  /* ---------- click ---------- */
+  let dragged = false;
+  trigger.addEventListener('click', () => {
+    if (dragged) { dragged = false; return; }          // игнор клика после drag
+    if (isChatOpen())      closeChat();
+    else if (isMenuOpen()) closeMenu();
+    else                   openMenu();
   });
 
+  /* ---------- DRAG ---------- */
+  const UP_THRESHOLD  = -70;     // открыть чат
+  const DOWN_LIMIT    =  40;     // макс. физический ход вниз
+
+  let startY  = null;
+  let deltaY  = 0;
+
+  /* helper: «вязкий» вниз */
+  function viscous(dy) {
+    if (dy <= DOWN_LIMIT) return dy;
+    // за границей 40 px двигаемся медленнее
+    return DOWN_LIMIT + (dy - DOWN_LIMIT) * 0.3;
+  }
+
+  /* pointerdown */
+  trigger.addEventListener('pointerdown', e => {
+    startY = e.clientY;
+    deltaY = 0;
+    dragged = false;
+    // отключаем переходы, чтобы не мешали во время перетягивания
+    trigger.style.transition   = 'none';
+    overlayBg.style.transition = 'none';
+  });
+
+  /* pointermove */
+  window.addEventListener('pointermove', e => {
+    if (startY === null) return;
+
+    deltaY = e.clientY - startY;
+    const effDY = deltaY > 0 ? viscous(deltaY) : deltaY;   // вниз вязко
+
+    /* блокируем скролл, если палец реально двигает по вертикали */
+    if (Math.abs(effDY) > 3) e.preventDefault();
+
+    trigger   .style.transform = `translate(-50%, ${effDY}px)`;
+    overlayBg.style.transform  = `translate(-50%, ${effDY}px) scale(1)`;
+
+    dragged = true;
+  }, { passive:false });
+
+  /* pointerup */
+  window.addEventListener('pointerup', () => {
+    if (startY === null) return;
+
+    // возвращаем пружину
+    const spring = 'transform .3s cubic-bezier(.16,1,.3,1)';
+    trigger  .style.transition = spring;
+    overlayBg.style.transition = spring;
+
+    trigger  .style.transform = 'translate(-50%, 0)';
+    overlayBg.style.transform = 'translate(-50%, 0) scale(1)';
+
+    // открытие чата при достаточном подъёме
+    if (deltaY < UP_THRESHOLD && !isChatOpen()) openChat();
+
+    /* сброс */
+    startY = null;
+  });
 });
