@@ -1,24 +1,23 @@
+<script>
 document.addEventListener('DOMContentLoaded', () => {
-  const mobileMenu = document.querySelector('.mobile-menu');   // обёртка-компонент
-  const trigger    = mobileMenu.querySelector('.menu-trigger');
-  const overlay    = mobileMenu.querySelector('.menu-overlay');
+  /* ---------- базовые ссылки на элементы ---------- */
+  const mobileMenu = document.querySelector('.mobile-menu');
+  if (!mobileMenu) return;                     // компонент отсутствует
+  const trigger = mobileMenu.querySelector('.menu-trigger');
+  const overlay = mobileMenu.querySelector('.menu-overlay');
 
-  /* ---------- helpers ---------- */
+  /* ---------- вспомогательные флаги ---------- */
   const isMenuOpen = () => overlay.classList.contains('open');
   const isChatOpen = () => mobileMenu.classList.contains('chat-open');
 
+  /* ---------- функции состояния ---------- */
   function reset() {
     overlay.classList.remove('open');
     mobileMenu.classList.remove('chat-open');
     document.body.style.overflow = '';
   }
 
-  /* начальный сброс + bfcache */
-  reset();
-  window.addEventListener('pageshow', e => e.persisted && reset());
-
-  /* ------- режимы ------- */
-  function openMenu()  {
+  function openMenu() {
     overlay.classList.add('open');
     mobileMenu.classList.remove('chat-open');
     document.body.style.overflow = 'hidden';
@@ -30,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openChat() {
-    mobileMenu.classList.add('chat-open');
-    overlay.classList.add('open');          // блокируем фон + скролл
+    mobileMenu.classList.add('chat-open');   // показ chat-контейнера
+    overlay.classList.add('open');           // фон + блок скролла
     document.body.style.overflow = 'hidden';
   }
 
@@ -41,22 +40,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
   }
 
-  /* ------- клик по логотипу ------- */
-  trigger.addEventListener('click', () => {
-    if (isChatOpen())      closeChat();     // если открыт чат — закрываем чат
-    else if (isMenuOpen()) closeMenu();     // если открыто меню — сворачиваем меню
-    else                   openMenu();      // иначе открываем меню
+  /* ---------- инициализация & bfcache ---------- */
+  reset();                                   // при первой загрузке
+  window.addEventListener('pageshow', e => { // при «Назад» из bfcache
+    if (e.persisted) reset();
   });
 
-  /* ------- жест «протяни вверх» для чата ------- */
+  /* ---------- клик по логотипу ---------- */
+  trigger.addEventListener('click', () => {
+    if (isChatOpen())       { closeChat(); }
+    else if (isMenuOpen())  { closeMenu(); }
+    else                    { openMenu();  }
+  });
+
+  /* ---------- жест «свайп вверх» ---------- */
   let startY = null;
+
+  // запоминаем точку старта
   trigger.addEventListener('pointerdown', e => { startY = e.clientY; });
+
+  // отслеживаем движение
   window.addEventListener('pointermove', e => {
     if (startY === null) return;
-    if (e.clientY - startY < -80 && !isChatOpen()) { // сдвиг вверх >80px
+    e.preventDefault();                      // блокируем прокрутку
+    const deltaY = e.clientY - startY;
+    if (deltaY < -40 && !isChatOpen()) {     // тянем вверх > 40 px
       openChat();
-      startY = null;                               // сброс
+      startY = null;                         // сброс
     }
-  });
+  }, { passive: false });                    // обязателен!
+
+  // отпуск пальца → сбросим старт
   window.addEventListener('pointerup', () => { startY = null; });
 });
+</script>
