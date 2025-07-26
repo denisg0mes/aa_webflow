@@ -1,89 +1,85 @@
 document.addEventListener('DOMContentLoaded', () => {
-  /* ---------- базовые элементы ---------- */
+  /* ---------- элементы компонента ---------- */
   const mobileMenu = document.querySelector('.mobile-menu');
   if (!mobileMenu) return;
 
-  const trigger    = mobileMenu.querySelector('.menu-trigger');
-  const overlay    = mobileMenu.querySelector('.menu-overlay');
-  const overlayBg  = mobileMenu.querySelector('.overlay-bg');
+  const trigger   = mobileMenu.querySelector('.menu-trigger');   // логотип
+  const overlay   = mobileMenu.querySelector('.menu-overlay');   // контейнер
+  const overlayBg = mobileMenu.querySelector('.overlay-bg');     // белый овал
 
-  /* ---------- полезные проверки ---------- */
+  /* ---------- утилиты ---------- */
   const isMenuOpen = () => overlay.classList.contains('open');
   const isChatOpen = () => mobileMenu.classList.contains('chat-open');
 
-  /* ---------- лимиты и пороги ---------- */
-  const DRAG_THRESHOLD = 10;   // «микро-движения» игнорируем
-  const UP_THRESHOLD   = -70;  // > 70 px вверх → чат
-  const MAX_UP         = -100; // больше не тянем
-  const DOWN_LIMIT     =  40;  // вниз максимум 40
-  const DAMP           =  0.3; // вязкость за пределами
+  /* ---------- пороги и «вязкость» ---------- */
+  const DRAG_THRESHOLD = 10;     // до 10 px считаем «тап», а не drag
+  const UP_THRESHOLD   = -70;    // выше 70 px → открыть чат
+  const MAX_UP         = -100;   // физический лимит вверх
+  const DOWN_LIMIT     =  40;    // физический лимит вниз
+  const DAMP           =  0.3;   // замедление за пределом
 
-  /* ---------- утилиты ---------- */
-  const damp = (dy, limit, sign) => {
+  const spring = 'transform .3s cubic-bezier(.16,1,.3,1)';       // пружина
+  const bgScaleTransition = 'transform .45s ease';               // масштаб овала
+
+  const viscous = (dy, limit, sign) => {
     const over = sign > 0 ? dy - limit : limit - dy;
     return sign > 0
       ? limit + over * DAMP
       : limit - over * DAMP;
   };
 
-  /* ---------- функции состояний ---------- */
+  /* ---------- сброс ---------- */
   function reset() {
     overlay.classList.remove('open');
     mobileMenu.classList.remove('chat-open');
-    overlayBg.style.transform = '';
     overlayBg.style.transition = '';
-    trigger.style.transform = 'translate(-50%,0)';
-    trigger.style.transition = '';
+    overlayBg.style.transform  = '';
+    trigger  .style.transition = '';
+    trigger  .style.transform  = 'translate(-50%,0)';
     document.body.style.overflow = '';
   }
 
-  const openMenu  = () => {
-    overlayBg.style.transform  = '';   // снять inline
-    overlayBg.style.transition = '';
+  /* ---------- режимы ---------- */
+  function openMenu() {
+    overlayBg.style.transition = bgScaleTransition;   // вернуть плавность
+    overlayBg.style.transform  = '';                  // scale(20) → CSS
     overlay.classList.add('open');
     mobileMenu.classList.remove('chat-open');
     document.body.style.overflow = 'hidden';
-  };
-
-  const closeMenu = () => {
+  }
+  function closeMenu() {
+    overlayBg.style.transition = bgScaleTransition;
     overlay.classList.remove('open');
-    overlayBg.style.transition = 'transform .45s ease';
     overlayBg.style.transform  = 'translate(-50%,0) scale(1)';
     document.body.style.overflow = '';
-  };
-
-  const openChat  = () => {
+  }
+  function openChat() {
     mobileMenu.classList.add('chat-open');
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-  };
+  }
+  const closeChat = () => { mobileMenu.classList.remove('chat-open'); closeMenu(); };
 
-  const closeChat = () => {
-    mobileMenu.classList.remove('chat-open');
-    closeMenu();
-  };
-
-  /* ---------- инициализация & bfcache ---------- */
+  /* ---------- инициализация / bfcache ---------- */
   reset();
   window.addEventListener('pageshow', e => { if (e.persisted) reset(); });
 
-  /* ---------- Click ---------- */
-  let dragged = false;
+  /* ---------- click ---------- */
+  let dragged = false;   // чтобы клик не срабатывал сразу после drag
   trigger.addEventListener('click', () => {
-    if (dragged) { dragged = false; return; }   // игнор «клика после drag»
+    if (dragged) { dragged = false; return; }
     if      (isChatOpen()) closeChat();
     else if (isMenuOpen()) closeMenu();
     else                   openMenu();
   });
 
-  /* ---------- Drag ---------- */
+  /* ---------- drag ---------- */
   let startY = null, deltaY = 0;
 
   trigger.addEventListener('pointerdown', e => {
-    startY  = e.clientY;
-    deltaY  = 0;
-    dragged = false;
-    trigger.style.transition   = 'none';
+    startY = e.clientY;
+    deltaY = 0;
+    trigger  .style.transition = 'none';
     overlayBg.style.transition = 'none';
   });
 
@@ -93,16 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
     deltaY = e.clientY - startY;
     const absDY = Math.abs(deltaY);
 
-    /* блокируем скролл и отмечаем drag только, когда перешли порог */
+    /* включаем drag, когда вышли за 10 px и блокируем прокрутку */
     if (absDY > DRAG_THRESHOLD) {
       dragged = true;
       e.preventDefault();
     }
 
-    /* визуальный эффект даже при мелких движениях */
+    /* «вязкость» за пределами */
     let eff = deltaY;
-    if (deltaY >  DOWN_LIMIT) eff = damp(deltaY, DOWN_LIMIT, +1);
-    if (deltaY <  MAX_UP)     eff = damp(deltaY, MAX_UP,     -1);
+    if (deltaY >  DOWN_LIMIT) eff = viscous(deltaY, DOWN_LIMIT, +1);
+    if (deltaY <  MAX_UP)     eff = viscous(deltaY, MAX_UP,   -1);
 
     trigger  .style.transform = `translate(-50%, ${eff}px)`;
     overlayBg.style.transform = `translate(-50%, ${eff}px) scale(1)`;
@@ -111,14 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('pointerup', () => {
     if (startY === null) return;
 
-    /* возвращаем «пружину» */
-    const spring = 'transform .3s cubic-bezier(.16,1,.3,1)';
     trigger  .style.transition = spring;
     overlayBg.style.transition = spring;
     trigger  .style.transform  = 'translate(-50%,0)';
     overlayBg.style.transform  = 'translate(-50%,0) scale(1)';
 
-    /* открываем чат, если протянули достаточно высоко */
     if (deltaY < UP_THRESHOLD && !isChatOpen()) openChat();
 
     startY = null;
