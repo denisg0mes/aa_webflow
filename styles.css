@@ -134,6 +134,9 @@ blockquote {
     margin: var(--spacer) var(--pad-right-small) var(--spacer) var(--pad-left-small);
     max-width: 700px;
   }
+  .cms_content h3 {
+    margin-left: var(--pad-left-small);
+  }
   .rt-wrapper--vertical {
     padding: 0 0 0 var(--pad-left-small);
   }
