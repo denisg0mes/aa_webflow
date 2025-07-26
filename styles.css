@@ -389,3 +389,11 @@ blockquote {
 .menu-container .w--current {
   text-decoration: underline;
 }
+
+
+.chat-container {
+  display: none;
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+}
