@@ -388,3 +388,25 @@ blockquote {
 .menu-container .w--current {
   border-bottom: 2px solid;
 }
+
+/* ============================= */
+/*             Fields            */
+/* ============================= */
+
+
+.w-form-label {
+  pointer-events: none;
+  cursor: default;
+}
+
+/* Включаем клики на ссылках внутри лейбла */
+.w-form-label a {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Включаем клики на самом чекбоксе */
+.w-checkbox-input {
+  pointer-events: auto;
+  cursor: pointer;
+}
