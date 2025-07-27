@@ -354,14 +354,16 @@ blockquote {
 .menu-main {
   display: flex;
   flex-direction: column;
-  gap: 1.8rem;            /* отступ между ссылками */
+  gap: 1.4rem;            /* отступ между ссылками */
 }
 .menu-main a {
   font-size: 60px;
   letter-spacing: -2px;
-  line-height: 40px;
+  line-height: 46px;
   color: #000;
   text-decoration: none;
+  align-self: flex-start; 
+  width: fit-content;
 }
 
 /* Дополнительные блоки в две колонки */
@@ -384,5 +386,5 @@ blockquote {
 
 /* Активный пункт меню */
 .menu-container .w--current {
-  border-bottom: 1px solid;
+  border-bottom: 2px solid;
 }
