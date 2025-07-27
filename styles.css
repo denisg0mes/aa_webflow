@@ -384,5 +384,5 @@ blockquote {
 
 /* Активный пункт меню */
 .menu-container .w--current {
-  text-decoration: underline;
+  border-bottom: 1px solid;
 }
