@@ -402,63 +402,60 @@ blockquote {
 /*      Chat-режим мобильного меню      */
 /* ============================= */
 
-/* 1. Показываем чат-контейнер, когда выставлен флаг .chat-open */
-.mobile-menu.chat-open .chat-container {
-  display: flex;              /* растянется на весь экран */
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 1rem 1rem 6rem;    /* нижний паддинг — чтобы не закрывал логотип */
-  background: #fff;           /* или ваш бренд-цвет */
-  z-index: 2;                 /* над меню и фоном */
-  animation: chatFade .30s ease-out;
+.mobile-menu.chat-open .chat-container{
+  display:flex;                         /* full-screen колонка */
+  flex-direction:column;
+  justify-content:flex-start;
+  padding:1rem 1rem 6rem;               /* внизу запас под логотип */
+  background:#fff;                      /* фон чата */
+  z-index:2;                            /* над меню/фоном */
+  animation:chatFade .3s ease-out;
 }
 
-/* лёгкая анимация появления */
-@keyframes chatFade {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes chatFade{
+  from{opacity:0;transform:translateY(20px);}
+  to  {opacity:1;transform:translateY(0);}
 }
 
-/* 2. Прячем блок пунктов меню, чтобы не перехватывал клики */
-.mobile-menu.chat-open .menu-container {
-  display: none;              /* полностью убираем */
+/* --------------------------------------------------
+   2.  Что прячем / блокируем, когда открыт чат
+   -------------------------------------------------- */
+.mobile-menu.chat-open .menu-container{ display:none; }
+.mobile-menu.chat-open .overlay-bg   { pointer-events:none; }
+.mobile-menu.chat-open               { overflow:hidden; }   /* подстраховка прокрутки */
+
+/* --------------------------------------------------
+   3.  Основная анимация меню
+   -------------------------------------------------- */
+.overlay-bg{
+  transform:translate(-50%,0) scale(1);
+  transition:transform .45s ease;
+  will-change:transform;
+}
+.menu-overlay.open .overlay-bg{
+  transform:translate(-50%,0) scale(20);
 }
 
-/* 3. Фон-овал остаётся раскрытым, но не мешает взаимодействию */
-.mobile-menu.chat-open .overlay-bg {
-  pointer-events: none;
+/* Пункты меню появляются после фона (0.45 s delay) */
+.menu-container{
+  transition:opacity .25s ease .45s,
+             transform .25s ease .45s;
 }
 
-/* 4. В режиме чата блокируем скролл body (подстраховка) */
-.mobile-menu.chat-open {
-  overflow: hidden;
-}
-
-/* 5. При необходимости — простые стили для содержимого чата */
-.chat-container .chat-header {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-.chat-container .chat-messages {
-  flex: 1 1 auto;
-  overflow-y: auto;
-}
-.chat-container .chat-input {
-  margin-top: 1rem;
-}
-.menu-trigger { touch-action: none; }
-
-/* логотип и фон должны возвращаться плавно */
-.menu-trigger,
-.overlay-bg {
-  will-change: transform;
-  /* transition задаётся скриптом после drag,
-     но fallback можно оставить:            */
-  transition: transform .3s cubic-bezier(.16,1,.3,1);
-}
+/* При закрытии меню мгновенно прячем пункты */
 .mobile-menu.closing .menu-container{
   opacity:0;
   pointer-events:none;
-  transition:opacity .25s ease, transform .25s ease;
+  transition:opacity .25s ease,
+             transform .25s ease;
+}
+
+/* --------------------------------------------------
+   4.  Логотип + овал при drag
+   -------------------------------------------------- */
+.menu-trigger{
+  touch-action:none;                    /* блок скролла при drag */
+  will-change:transform;
+  /* fallback-анимация — скрипт всё равно перезапишет */
+  transition:transform .3s cubic-bezier(.16,1,.3,1);
 }
