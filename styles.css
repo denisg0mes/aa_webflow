@@ -354,12 +354,12 @@ blockquote {
 .menu-main {
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;            /* отступ между ссылками */
+  gap: 1.1rem;            /* отступ между ссылками */
 }
 .menu-main a {
   font-size: 60px;
   letter-spacing: -2px;
-  line-height: 46px;
+  line-height: 54px;
   color: #000;
   text-decoration: none;
   align-self: flex-start; 
