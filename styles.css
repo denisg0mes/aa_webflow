@@ -392,6 +392,9 @@ blockquote {
 /* ============================= */
 /*             Fields            */
 /* ============================= */
+.w-embed {
+  width: 100%;
+}
 
 .horizontal-forms {
   display: flex;
