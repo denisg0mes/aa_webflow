@@ -555,17 +555,20 @@ blockquote {
   color: #C04B4B;
   font-size: 14px;
   line-height: 18px;
-  margin-top: 6px;
+  margin-top: 0;
   padding-left: 46px;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
   transition: all 0.3s ease;
+  transform: translateY(-10px);
 }
 
 .checkbox-error.show {
   max-height: 50px;
+  margin-top: 6px;
   opacity: 1;
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
