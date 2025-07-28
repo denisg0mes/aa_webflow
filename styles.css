@@ -459,3 +459,7 @@ blockquote {
   opacity: 1;
   transform: translateY(0);
 }
+
+.w-embed {
+    display: contents; /* Убирает влияние обертки на layout */
+}
