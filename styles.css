@@ -509,7 +509,7 @@ blockquote {
     user-select: none;
 }
 
-.checkbox {
+.form-checkbox {
     position: relative;
     width: 20px;
     height: 20px;
@@ -520,11 +520,11 @@ blockquote {
     cursor: pointer;
 }
 
-.checkbox.checked {
+.form-checkbox.checked {
     background: #000;
 }
 
-.checkbox::after {
+.form-checkbox::after {
     content: "";
     position: absolute;
     left: 50%;
@@ -538,7 +538,7 @@ blockquote {
     transition: opacity 0.2s ease;
 }
 
-.checkbox.checked::after {
+.form-checkbox.checked::after {
     opacity: 1;
 }
 
