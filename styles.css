@@ -391,7 +391,7 @@ blockquote {
 
 /* ============================= */
 /*             Fields            */
-/* ============================= */
+/* ============================= 
 
 .popup-subcontainer p {
   max-width: 600px
@@ -424,7 +424,6 @@ blockquote {
   outline: none;
 }
 
-/* Убираем плейсхолдер полностью */
 .input::placeholder {
   color: transparent;
 }
@@ -451,12 +450,10 @@ blockquote {
   transform: scale(1);
 }
 
-/* Состояние ошибки для поля */
 .input.error {
   background: #FFF7F7;
 }
 
-/* Сообщение об ошибке */
 .error-message {
   color: #C04B4B;
   font-size: 14px;
@@ -475,7 +472,7 @@ blockquote {
   opacity: 1;
   transform: translateY(0);
 }
-
+*/
 /* BUTTON */
 
 .submit-button {
@@ -540,19 +537,19 @@ blockquote {
   transform: scale(1);
 }
 
-.checkbox-text {
+.checkbox-label {
   color: #000;
   font-size: 18px;
   line-height: 22px;
   cursor: pointer;
 }
 
-.checkbox-text a {
+.checkbox-label a {
   color: #000;
   text-decoration: underline;
 }
 
-.checkbox-text a:hover {
+.checkbox-label a:hover {
   text-decoration: none;
 }
 
