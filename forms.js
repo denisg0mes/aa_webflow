@@ -17,9 +17,11 @@ function showError(field, message) {
     const errorMessage = field.querySelector('.error-message');
     const input = field.querySelector('.input');
     
-    errorMessage.textContent = message;
-    errorMessage.classList.add('show');
-    input.classList.add('error');
+    if (errorMessage && input) {
+        errorMessage.textContent = message;
+        errorMessage.classList.add('show');
+        input.classList.add('error');
+    }
 }
 
 // Скрыть ошибку поля
@@ -27,27 +29,35 @@ function hideError(field) {
     const errorMessage = field.querySelector('.error-message');
     const input = field.querySelector('.input');
     
-    errorMessage.classList.remove('show');
-    input.classList.remove('error');
+    if (errorMessage && input) {
+        errorMessage.classList.remove('show');
+        input.classList.remove('error');
+    }
 }
 
 // Показать ошибку чекбокса
 function showCheckboxError(message) {
     const checkboxError = document.getElementById('checkboxError');
-    checkboxError.textContent = message;
-    checkboxError.classList.add('show');
+    if (checkboxError) {
+        checkboxError.textContent = message;
+        checkboxError.classList.add('show');
+    }
 }
 
 // Скрыть ошибку чекбокса
 function hideCheckboxError() {
     const checkboxError = document.getElementById('checkboxError');
-    checkboxError.classList.remove('show');
+    if (checkboxError) {
+        checkboxError.classList.remove('show');
+    }
 }
 
 // Обновить состояние лейбла
 function updateLabel(field) {
     const input = field.querySelector('.input');
     const label = field.querySelector('.floating-label');
+    
+    if (!input || !label) return;
     
     const isFocused = input === document.activeElement;
     const hasValue = input.value.trim() !== '';
@@ -59,8 +69,10 @@ function updateLabel(field) {
     }
 }
 
-// Валидация по ID
+// Валидация конкретного поля
 function validateField(field, input) {
+    if (!field || !input) return true;
+    
     const value = input.value.trim();
     const inputId = input.id;
     
@@ -96,7 +108,8 @@ function validateForm() {
     let isValid = true;
     
     // Проверяем все поля
-    document.querySelectorAll('.field').forEach(field => {
+    const fields = document.querySelectorAll('.field');
+    fields.forEach(field => {
         const input = field.querySelector('.input');
         if (!validateField(field, input)) {
             isValid = false;
@@ -114,106 +127,151 @@ function validateForm() {
     return isValid;
 }
 
+// Инициализация полей
+function initFields() {
+    const fields = document.querySelectorAll('.field');
+    
+    fields.forEach(field => {
+        const input = field.querySelector('.input');
+        if (!input) return;
+        
+        // Фокус
+        input.addEventListener('focus', function() {
+            updateLabel(field);
+        });
+        
+        // Потеря фокуса
+        input.addEventListener('blur', function() {
+            updateLabel(field);
+            // Валидируем только если поле заполнено
+            if (input.value.trim()) {
+                validateField(field, input);
+            }
+        });
+        
+        // Ввод текста
+        input.addEventListener('input', function() {
+            updateLabel(field);
+            
+            // Убираем ошибку при вводе
+            const errorMessage = field.querySelector('.error-message');
+            if (errorMessage && errorMessage.classList.contains('show')) {
+                hideError(field);
+            }
+        });
+        
+        // Инициализация лейбла
+        updateLabel(field);
+    });
+}
+
 // Инициализация чекбокса
 function initCheckbox() {
-    const customCheckbox = document.getElementById('agreementCheckbox');
-    const checkboxContainer = document.querySelector('.checkbox-container');
+    const checkbox = document.getElementById('agreementCheckbox');
+    const container = document.querySelector('.checkbox-container');
     
-    if (customCheckbox && checkboxContainer) {
-        checkboxContainer.addEventListener('click', function(e) {
-            // Не активируем чекбокс если клик по ссылке
+    console.log('Initializing checkbox:', checkbox, container);
+    
+    if (checkbox && container) {
+        container.addEventListener('click', function(e) {
+            console.log('Checkbox container clicked');
+            
+            // Игнорируем клики по ссылкам
             if (e.target.tagName === 'A') {
+                console.log('Link clicked, ignoring');
                 return;
             }
-
-            isChecked = !isChecked;
-            customCheckbox.classList.toggle('checked', isChecked);
             
-            // Скрываем ошибку чекбокса если пользователь согласился
+            // Переключаем состояние
+            isChecked = !isChecked;
+            
             if (isChecked) {
+                checkbox.classList.add('checked');
                 hideCheckboxError();
+            } else {
+                checkbox.classList.remove('checked');
             }
             
-            console.log('Checkbox state:', isChecked);
+            console.log('Checkbox state changed to:', isChecked);
+        });
+    } else {
+        console.error('Checkbox elements not found');
+    }
+}
+
+// Инициализация формы
+function initForm() {
+    const submitButton = document.getElementById('submitButton');
+    
+    if (submitButton) {
+        submitButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            console.log('Submit button clicked');
+            
+            if (validateForm()) {
+                console.log('Form is valid, submitting...');
+                
+                // Блокируем кнопку
+                submitButton.textContent = 'Subscribing...';
+                submitButton.disabled = true;
+                
+                // Получаем данные
+                const formData = {
+                    name: document.getElementById('nameInput')?.value.trim() || '',
+                    email: document.getElementById('emailInput')?.value.trim() || '',
+                    agreedToTerms: isChecked
+                };
+                
+                console.log('Form data:', formData);
+                
+                // Имитация отправки
+                setTimeout(() => {
+                    alert('Thank you for subscribing!');
+                    
+                    // Сброс формы
+                    const nameInput = document.getElementById('nameInput');
+                    const emailInput = document.getElementById('emailInput');
+                    const checkbox = document.getElementById('agreementCheckbox');
+                    
+                    if (nameInput) nameInput.value = '';
+                    if (emailInput) emailInput.value = '';
+                    
+                    isChecked = false;
+                    if (checkbox) checkbox.classList.remove('checked');
+                    
+                    // Обновляем лейблы
+                    document.querySelectorAll('.field').forEach(field => {
+                        updateLabel(field);
+                    });
+                    
+                    // Восстанавливаем кнопку
+                    submitButton.textContent = 'Subscribe';
+                    submitButton.disabled = false;
+                    
+                }, 2000);
+                
+            } else {
+                console.log('Form validation failed');
+            }
         });
     }
 }
 
-// Инициализация всех полей
-document.querySelectorAll('.field').forEach(field => {
-    const input = field.querySelector('.input');
+// Главная инициализация
+function init() {
+    console.log('Initializing form components...');
     
-    // События для анимации лейбла
-    input.addEventListener('focus', () => updateLabel(field));
+    initFields();
+    initCheckbox();
+    initForm();
     
-    input.addEventListener('blur', () => {
-        updateLabel(field);
-        // Валидируем только при потере фокуса если поле не пустое
-        if (input.value.trim()) {
-            validateField(field, input);
-        }
-    });
-    
-    input.addEventListener('input', () => {
-        updateLabel(field);
-        
-        // Очистка ошибки при вводе
-        const errorMessage = field.querySelector('.error-message');
-        if (errorMessage.classList.contains('show')) {
-            hideError(field);
-        }
-    });
-    
-    // Инициализация
-    updateLabel(field);
-});
+    console.log('Form initialization complete');
+}
 
-// Обработка отправки формы
-document.getElementById('newsletterForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    console.log('Form submission attempted');
-    
-    if (validateForm()) {
-        console.log('Form is valid, submitting...');
-        
-        // Имитация отправки
-        const submitButton = document.getElementById('submitButton');
-        submitButton.textContent = 'Subscribing...';
-        submitButton.disabled = true;
-        
-        // Получаем данные формы
-        const formData = {
-            name: document.getElementById('nameInput').value.trim(),
-            email: document.getElementById('emailInput').value.trim(),
-            agreedToTerms: isChecked
-        };
-        
-        console.log('Form data:', formData);
-        
-        // Здесь добавьте реальную отправку данных
-        setTimeout(() => {
-            alert('Thank you for subscribing!');
-            
-            // Сброс формы
-            document.getElementById('nameInput').value = '';
-            document.getElementById('emailInput').value = '';
-            isChecked = false;
-            document.getElementById('agreementCheckbox').classList.remove('checked');
-            
-            // Обновляем лейблы
-            document.querySelectorAll('.field').forEach(field => {
-                updateLabel(field);
-            });
-            
-            submitButton.textContent = 'Subscribe';
-            submitButton.disabled = false;
-        }, 2000);
-        
-    } else {
-        console.log('Form validation failed');
-    }
-});
-
-// Инициализация чекбокса
-initCheckbox();
+// Запуск после загрузки DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
