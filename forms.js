@@ -157,7 +157,7 @@ function submitFormData(formData, submitButton) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 секунд таймаут
     
-    return fetch('https://n8n.arrivedaliens.com/webhook-test/newsletter', {
+    return fetch('https://n8n.arrivedaliens.com/webhook/newsletter', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
