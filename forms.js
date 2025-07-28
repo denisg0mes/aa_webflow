@@ -1,7 +1,3 @@
-const emailInput = document.getElementById('emailInput');
-const floatingLabel = document.getElementById('floatingLabel');
-const errorMessage = document.getElementById('errorMessage');
-
 // Валидация email
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,66 +5,80 @@ function isValidEmail(email) {
 }
 
 // Показать ошибку
-function showError(message) {
+function showError(field, message) {
+    const errorMessage = field.querySelector('.error-message');
+    const input = field.querySelector('.input');
+    
     errorMessage.textContent = message;
     errorMessage.classList.add('show');
-    emailInput.classList.add('error');
+    input.classList.add('error');
 }
 
 // Скрыть ошибку
-function hideError() {
+function hideError(field) {
+    const errorMessage = field.querySelector('.error-message');
+    const input = field.querySelector('.input');
+    
     errorMessage.classList.remove('show');
-    emailInput.classList.remove('error');
+    input.classList.remove('error');
 }
 
 // Обновить состояние лейбла
-function updateLabel() {
-    console.log('updateLabel called');
-    console.log('Input focused:', emailInput === document.activeElement);
-    console.log('Input value:', emailInput.value);
+function updateLabel(field) {
+    const input = field.querySelector('.input');
+    const label = field.querySelector('.floating-label');
     
-    const isFocused = emailInput === document.activeElement;
-    const hasValue = emailInput.value.trim() !== '';
+    const isFocused = input === document.activeElement;
+    const hasValue = input.value.trim() !== '';
     
     if (isFocused || hasValue) {
-        console.log('Activating label');
-        floatingLabel.classList.add('active');
+        label.classList.add('active');
     } else {
-        console.log('Deactivating label');
-        floatingLabel.classList.remove('active');
+        label.classList.remove('active');
     }
 }
 
-// События для полей
-emailInput.addEventListener('focus', function() {
-    console.log('Focus event');
-    updateLabel();
-});
-
-emailInput.addEventListener('blur', function() {
-    console.log('Blur event');
-    updateLabel();
+// Инициализация всех полей
+document.querySelectorAll('.field').forEach(field => {
+    const input = field.querySelector('.input');
+    const inputType = input.type;
     
-    // Валидация при потере фокуса
-    const email = this.value.trim();
-    if (email && !isValidEmail(email)) {
-        showError('Enter a valid email address');
-    } else if (email === '') {
-        hideError();
-    } else {
-        hideError();
-    }
-});
-
-emailInput.addEventListener('input', function() {
-    console.log('Input event, value:', this.value);
-    updateLabel();
+    // События для анимации лейбла
+    input.addEventListener('focus', () => updateLabel(field));
     
-    // Очистка ошибки при вводе
-    if (errorMessage.classList.contains('show')) {
-        hideError();
-    }
+    input.addEventListener('blur', () => {
+        updateLabel(field);
+        
+        // Валидация при потере фокуса
+        const value = input.value.trim();
+        
+        if (inputType === 'email' && value) {
+            if (!isValidEmail(value)) {
+                showError(field, 'Enter a valid email address');
+            } else {
+                hideError(field);
+            }
+        } else if (inputType === 'text' && value) {
+            if (value.length < 2) {
+                showError(field, 'Name must be at least 2 characters');
+            } else {
+                hideError(field);
+            }
+        } else if (value === '') {
+            hideError(field);
+        }
+    });
+    
+    input.addEventListener('input', () => {
+        updateLabel(field);
+        
+        // Очистка ошибки при вводе
+        const errorMessage = field.querySelector('.error-message');
+        if (errorMessage.classList.contains('show')) {
+            hideError(field);
+        }
+    });
+    
+    // Инициализация
+    updateLabel(field);
 });
-
-// Инициализация
-updateLabel();
