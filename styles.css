@@ -522,10 +522,6 @@ blockquote {
     justify-content: center;
 }
 
-.form-checkbox.checked {
-    background: #000;
-}
-
 .checkbox-icon {
     width: 20px;
     height: 20px;
