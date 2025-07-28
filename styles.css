@@ -460,3 +460,28 @@ blockquote {
   transform: translateY(0);
 }
 
+/* BUTTON */
+
+.submit-button {
+    height: 70px;
+    padding: 0 32px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    line-height: 22px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.submit-button:hover {
+    background: #333;
+}
+
+.submit-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
