@@ -499,7 +499,6 @@ blockquote {
 }
 
 /* CHECKBOX */
-
 .checkbox-container {
     display: flex;
     align-items: center;
@@ -518,28 +517,26 @@ blockquote {
     transition: all 0.3s ease;
     flex-shrink: 0;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .form-checkbox.checked {
     background: #000;
 }
 
-.form-checkbox::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 6px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -60%) rotate(45deg);
+.checkbox-icon {
+    width: 20px;
+    height: 20px;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transform: scale(0.5);
+    transition: all 0.3s ease;
 }
 
-.form-checkbox.checked::after {
+.form-checkbox.checked .checkbox-icon {
     opacity: 1;
+    transform: scale(1);
 }
 
 .checkbox-label {
