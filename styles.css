@@ -392,6 +392,11 @@ blockquote {
 /* ============================= */
 /*             Fields            */
 /* ============================= */
+
+.popup-subcontainer p {
+  max-width: 700px
+}
+
 .w-embed {
   width: 100%;
 }
