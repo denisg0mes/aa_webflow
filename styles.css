@@ -537,8 +537,8 @@ blockquote {
 
 .checkbox-label {
   color: #000;
-  font-size: 16px;
-  line-height: 1.4;
+  font-size: 18px;
+  line-height: 22px;
   cursor: pointer;
 }
 
@@ -555,7 +555,8 @@ blockquote {
   color: #C04B4B;
   font-size: 14px;
   line-height: 18px;
-  margin-top: 12px;
+  margin-top: 6px;
+  padding-left: 46px;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
