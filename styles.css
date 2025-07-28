@@ -391,7 +391,7 @@ blockquote {
 
 /* ============================= */
 /*             Fields            */
-/* ============================= 
+/* ============================= */
 
 .popup-subcontainer p {
   max-width: 600px
@@ -472,7 +472,7 @@ blockquote {
   opacity: 1;
   transform: translateY(0);
 }
-*/
+
 /* BUTTON */
 
 .submit-button {
@@ -500,7 +500,7 @@ blockquote {
   cursor: not-allowed;
 }
 
-/* CHECKBOX */
+/* CHECKBOX 
 .checkbox-container {
   display: flex;
   align-items: center;
@@ -582,4 +582,4 @@ blockquote {
     .horizontal-forms .submit-button {
         width: 100%;
     }
-}
+}*/
