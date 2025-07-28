@@ -437,22 +437,25 @@ blockquote {
 
 /* Состояние ошибки для поля */
 .input.error {
-    background: #FFF7F7;
+  background: #FFF7F7;
 }
 
 /* Сообщение об ошибке */
 .error-message {
-    color: #C04B4B;
-    font-size: 14px;
-    line-height: 18px;
-    margin-top: 8px;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.3s ease;
+  color: #C04B4B;
+  font-size: 14px;
+  line-height: 18px;
+  margin-top: 0px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  transform: translateY(-10px);
 }
 
 .error-message.show {
-    max-height: 50px;
-    opacity: 1;
+  margin-top: 8px;
+  max-height: 50px;
+  opacity: 1;
+  transform: translateY(0);
 }
