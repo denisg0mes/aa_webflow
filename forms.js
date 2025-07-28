@@ -4,6 +4,11 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+// Валидация имени
+function isValidName(name) {
+    return name.trim().length >= 2;
+}
+
 // Показать ошибку
 function showError(field, message) {
     const errorMessage = field.querySelector('.error-message');
@@ -38,35 +43,38 @@ function updateLabel(field) {
     }
 }
 
+// Валидация по ID
+function validateField(field, input) {
+    const value = input.value.trim();
+    const inputId = input.id;
+    
+    if (inputId === 'emailInput' && value) {
+        if (!isValidEmail(value)) {
+            showError(field, 'Enter a valid email address');
+        } else {
+            hideError(field);
+        }
+    } else if (inputId === 'nameInput' && value) {
+        if (!isValidName(value)) {
+            showError(field, 'Name must be at least 2 characters');
+        } else {
+            hideError(field);
+        }
+    } else if (value === '') {
+        hideError(field);
+    }
+}
+
 // Инициализация всех полей
 document.querySelectorAll('.field').forEach(field => {
     const input = field.querySelector('.input');
-    const inputType = input.type;
     
     // События для анимации лейбла
     input.addEventListener('focus', () => updateLabel(field));
     
     input.addEventListener('blur', () => {
         updateLabel(field);
-        
-        // Валидация при потере фокуса
-        const value = input.value.trim();
-        
-        if (inputType === 'email' && value) {
-            if (!isValidEmail(value)) {
-                showError(field, 'Enter a valid email address');
-            } else {
-                hideError(field);
-            }
-        } else if (inputType === 'text' && value) {
-            if (value.length < 2) {
-                showError(field, 'Name must be at least 2 characters');
-            } else {
-                hideError(field);
-            }
-        } else if (value === '') {
-            hideError(field);
-        }
+        validateField(field, input);
     });
     
     input.addEventListener('input', () => {
