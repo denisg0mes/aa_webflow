@@ -127,6 +127,87 @@ function validateForm() {
     return isValid;
 }
 
+// Сброс формы
+function resetForm() {
+    const nameInput = document.getElementById('nameInput');
+    const emailInput = document.getElementById('emailInput');
+    const checkbox = document.getElementById('agreementCheckbox');
+    const submitButton = document.getElementById('submitButton');
+    
+    if (nameInput) nameInput.value = '';
+    if (emailInput) emailInput.value = '';
+    
+    isChecked = false;
+    if (checkbox) checkbox.classList.remove('checked');
+    
+    // Обновляем лейблы
+    document.querySelectorAll('.field').forEach(field => {
+        updateLabel(field);
+    });
+    
+    // Восстанавливаем кнопку
+    if (submitButton) {
+        submitButton.textContent = 'Subscribe';
+        submitButton.disabled = false;
+    }
+}
+
+// Отправка данных на сервер
+function submitFormData(formData, submitButton) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 секунд таймаут
+    
+    return fetch('https://n8n.arrivedaliens.com/webhook-test/newsletter', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        signal: controller.signal
+    })
+    .then(response => {
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+            // Проверяем тип контента
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                return response.text();
+            }
+        } else {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
+    })
+    .then(data => {
+        console.log('Success:', data);
+        alert('Thank you for subscribing! Check your email for confirmation.');
+        resetForm();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        let errorMessage = 'Something went wrong. Please try again.';
+        
+        if (error.name === 'AbortError') {
+            errorMessage = 'Request timed out. Please check your connection and try again.';
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Network error. Please check your internet connection.';
+        } else if (error.message.includes('Server error')) {
+            errorMessage = 'Server is temporarily unavailable. Please try again later.';
+        }
+        
+        alert(errorMessage);
+        
+        // Восстанавливаем кнопку при ошибке
+        if (submitButton) {
+            submitButton.textContent = 'Subscribe';
+            submitButton.disabled = false;
+        }
+    });
+}
+
 // Инициализация полей
 function initFields() {
     const fields = document.querySelectorAll('.field');
@@ -220,36 +301,15 @@ function initForm() {
                 const formData = {
                     name: document.getElementById('nameInput')?.value.trim() || '',
                     email: document.getElementById('emailInput')?.value.trim() || '',
-                    agreedToTerms: isChecked
+                    agreedToTerms: isChecked,
+                    timestamp: new Date().toISOString(),
+                    source: 'website_newsletter'
                 };
                 
                 console.log('Form data:', formData);
                 
-                // Имитация отправки
-                setTimeout(() => {
-                    alert('Thank you for subscribing!');
-                    
-                    // Сброс формы
-                    const nameInput = document.getElementById('nameInput');
-                    const emailInput = document.getElementById('emailInput');
-                    const checkbox = document.getElementById('agreementCheckbox');
-                    
-                    if (nameInput) nameInput.value = '';
-                    if (emailInput) emailInput.value = '';
-                    
-                    isChecked = false;
-                    if (checkbox) checkbox.classList.remove('checked');
-                    
-                    // Обновляем лейблы
-                    document.querySelectorAll('.field').forEach(field => {
-                        updateLabel(field);
-                    });
-                    
-                    // Восстанавливаем кнопку
-                    submitButton.textContent = 'Subscribe';
-                    submitButton.disabled = false;
-                    
-                }, 2000);
+                // Отправляем данные
+                submitFormData(formData, submitButton);
                 
             } else {
                 console.log('Form validation failed');
