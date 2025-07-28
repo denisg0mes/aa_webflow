@@ -398,7 +398,7 @@ blockquote {
 }
 .input {
   width: 100%;
-  height: 68px;
+  height: 70px;
   padding: 22px 20px 8px 16px;
   border: none;
   background: #fff;
@@ -416,7 +416,7 @@ blockquote {
 .floating-label {
   position: absolute;
   left: 16px;
-  top: 62px;
+  top: 24px;
   font-size: 18px;
   line-height: 22px;
   color: #999;
@@ -429,7 +429,7 @@ blockquote {
 }
 
 .floating-label.active {
-  top: 50px;
+  top: 10px;
   font-size: 14px;
   line-height: 18px;
   color: #666;
