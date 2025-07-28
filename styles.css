@@ -435,3 +435,25 @@ blockquote {
   color: #666;
   transform: scale(1);
 }
+
+/* Состояние ошибки для поля */
+.input.error {
+    background: #FFF7F7;
+}
+
+/* Сообщение об ошибке */
+.error-message {
+    color: #ff4444;
+    font-size: 14px;
+    line-height: 18px;
+    margin-top: 8px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.error-message.show {
+    max-height: 50px;
+    opacity: 1;
+}
