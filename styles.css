@@ -498,6 +498,66 @@ blockquote {
   cursor: not-allowed;
 }
 
+/* CHECKBOX */
+
+.checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 20px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: none;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.checkbox.checked {
+    background: #000;
+}
+
+.checkbox::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -60%) rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.checkbox.checked::after {
+    opacity: 1;
+}
+
+.checkbox-label {
+    color: #000;
+    font-size: 16px;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.checkbox-label a {
+    color: #000;
+    text-decoration: underline;
+}
+
+.checkbox-label a:hover {
+    text-decoration: none;
+}
+
 @media (max-width: 768px) {
     .horizontal-forms {
         flex-direction: column;
