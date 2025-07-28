@@ -1,4 +1,4 @@
-:root {
+d:root {
   --pad-left-big: 28%;
   --pad-left-small: 15%;
   --pad-right-small: 20px;
@@ -393,7 +393,9 @@ blockquote {
 /*             Fields            */
 /* ============================= */
 
-
+.field {
+  position: relative;
+}
 .input {
   width: 100%;
   height: 68px;
