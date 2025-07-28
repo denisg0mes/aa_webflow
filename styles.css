@@ -445,7 +445,7 @@ blockquote {
   color: #C04B4B;
   font-size: 14px;
   line-height: 18px;
-  margin-top: 0px;
+  margin: 0 0 0 16px;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
@@ -454,7 +454,7 @@ blockquote {
 }
 
 .error-message.show {
-  margin-top: 8px;
+  margin: 8px 0 0 16px;
   max-height: 50px;
   opacity: 1;
   transform: translateY(0);
