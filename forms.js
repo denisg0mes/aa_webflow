@@ -1,3 +1,6 @@
+// Состояние чекбокса
+let isChecked = false;
+
 // Валидация email
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,6 +68,50 @@ function validateField(field, input) {
     }
 }
 
+// Инициализация чекбокса
+function initCheckbox() {
+    const customCheckbox = document.getElementById('agreementCheckbox');
+    const checkboxContainer = document.querySelector('.checkbox-container');
+    
+    if (customCheckbox && checkboxContainer) {
+        checkboxContainer.addEventListener('click', function(e) {
+            // Не активируем чекбокс если клик по ссылке
+            if (e.target.tagName === 'A') {
+                return;
+            }
+
+            isChecked = !isChecked;
+            customCheckbox.classList.toggle('checked', isChecked);
+            
+            console.log('Checkbox state:', isChecked);
+        });
+    }
+}
+
+// Валидация формы (для использования при отправке)
+function validateForm() {
+    let isValid = true;
+    
+    // Проверяем все поля
+    document.querySelectorAll('.field').forEach(field => {
+        const input = field.querySelector('.input');
+        validateField(field, input);
+        
+        // Если есть ошибка - форма невалидна
+        if (field.querySelector('.error-message.show')) {
+            isValid = false;
+        }
+    });
+    
+    // Проверяем чекбокс
+    if (!isChecked) {
+        alert('Please agree to the Terms and Conditions');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
 // Инициализация всех полей
 document.querySelectorAll('.field').forEach(field => {
     const input = field.querySelector('.input');
@@ -90,3 +137,15 @@ document.querySelectorAll('.field').forEach(field => {
     // Инициализация
     updateLabel(field);
 });
+
+// Инициализация чекбокса
+initCheckbox();
+
+// Пример использования при отправке формы
+// document.getElementById('submitButton').addEventListener('click', function(e) {
+//     e.preventDefault();
+//     if (validateForm()) {
+//         console.log('Form is valid, submitting...');
+//         // Отправка формы
+//     }
+// });
