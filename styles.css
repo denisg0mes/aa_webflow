@@ -393,6 +393,13 @@ blockquote {
 /*             Fields            */
 /* ============================= */
 
+.horizontal-forms {
+  display: flex;
+  gap: 2px;
+  align-items: flex-start;
+  width: 100%;
+}
+
 .field {
   position: relative;
 }
