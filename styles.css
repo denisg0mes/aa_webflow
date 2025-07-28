@@ -1,4 +1,4 @@
-d:root {
+:root {
   --pad-left-big: 28%;
   --pad-left-small: 15%;
   --pad-right-small: 20px;
@@ -388,4 +388,3 @@ blockquote {
 .menu-container .w--current {
   border-bottom: 2px solid;
 }
-
