@@ -12,7 +12,7 @@ function isValidName(name) {
     return name.trim().length >= 2;
 }
 
-// Показать ошибку
+// Показать ошибку поля
 function showError(field, message) {
     const errorMessage = field.querySelector('.error-message');
     const input = field.querySelector('.input');
@@ -22,13 +22,26 @@ function showError(field, message) {
     input.classList.add('error');
 }
 
-// Скрыть ошибку
+// Скрыть ошибку поля
 function hideError(field) {
     const errorMessage = field.querySelector('.error-message');
     const input = field.querySelector('.input');
     
     errorMessage.classList.remove('show');
     input.classList.remove('error');
+}
+
+// Показать ошибку чекбокса
+function showCheckboxError(message) {
+    const checkboxError = document.getElementById('checkboxError');
+    checkboxError.textContent = message;
+    checkboxError.classList.add('show');
+}
+
+// Скрыть ошибку чекбокса
+function hideCheckboxError() {
+    const checkboxError = document.getElementById('checkboxError');
+    checkboxError.classList.remove('show');
 }
 
 // Обновить состояние лейбла
@@ -51,21 +64,54 @@ function validateField(field, input) {
     const value = input.value.trim();
     const inputId = input.id;
     
-    if (inputId === 'emailInput' && value) {
-        if (!isValidEmail(value)) {
+    if (inputId === 'emailInput') {
+        if (!value) {
+            showError(field, 'Email is required');
+            return false;
+        } else if (!isValidEmail(value)) {
             showError(field, 'Enter a valid email address');
+            return false;
         } else {
             hideError(field);
+            return true;
         }
-    } else if (inputId === 'nameInput' && value) {
-        if (!isValidName(value)) {
+    } else if (inputId === 'nameInput') {
+        if (!value) {
+            showError(field, 'Name is required');
+            return false;
+        } else if (!isValidName(value)) {
             showError(field, 'Name must be at least 2 characters');
+            return false;
         } else {
             hideError(field);
+            return true;
         }
-    } else if (value === '') {
-        hideError(field);
     }
+    
+    return true;
+}
+
+// Полная валидация формы
+function validateForm() {
+    let isValid = true;
+    
+    // Проверяем все поля
+    document.querySelectorAll('.field').forEach(field => {
+        const input = field.querySelector('.input');
+        if (!validateField(field, input)) {
+            isValid = false;
+        }
+    });
+    
+    // Проверяем чекбокс
+    if (!isChecked) {
+        showCheckboxError('Please agree to the Terms and Conditions and Privacy Policy');
+        isValid = false;
+    } else {
+        hideCheckboxError();
+    }
+    
+    return isValid;
 }
 
 // Инициализация чекбокса
@@ -83,33 +129,14 @@ function initCheckbox() {
             isChecked = !isChecked;
             customCheckbox.classList.toggle('checked', isChecked);
             
+            // Скрываем ошибку чекбокса если пользователь согласился
+            if (isChecked) {
+                hideCheckboxError();
+            }
+            
             console.log('Checkbox state:', isChecked);
         });
     }
-}
-
-// Валидация формы (для использования при отправке)
-function validateForm() {
-    let isValid = true;
-    
-    // Проверяем все поля
-    document.querySelectorAll('.field').forEach(field => {
-        const input = field.querySelector('.input');
-        validateField(field, input);
-        
-        // Если есть ошибка - форма невалидна
-        if (field.querySelector('.error-message.show')) {
-            isValid = false;
-        }
-    });
-    
-    // Проверяем чекбокс
-    if (!isChecked) {
-        alert('Please agree to the Terms and Conditions');
-        isValid = false;
-    }
-    
-    return isValid;
 }
 
 // Инициализация всех полей
@@ -121,7 +148,10 @@ document.querySelectorAll('.field').forEach(field => {
     
     input.addEventListener('blur', () => {
         updateLabel(field);
-        validateField(field, input);
+        // Валидируем только при потере фокуса если поле не пустое
+        if (input.value.trim()) {
+            validateField(field, input);
+        }
     });
     
     input.addEventListener('input', () => {
@@ -138,14 +168,52 @@ document.querySelectorAll('.field').forEach(field => {
     updateLabel(field);
 });
 
+// Обработка отправки формы
+document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log('Form submission attempted');
+    
+    if (validateForm()) {
+        console.log('Form is valid, submitting...');
+        
+        // Имитация отправки
+        const submitButton = document.getElementById('submitButton');
+        submitButton.textContent = 'Subscribing...';
+        submitButton.disabled = true;
+        
+        // Получаем данные формы
+        const formData = {
+            name: document.getElementById('nameInput').value.trim(),
+            email: document.getElementById('emailInput').value.trim(),
+            agreedToTerms: isChecked
+        };
+        
+        console.log('Form data:', formData);
+        
+        // Здесь добавьте реальную отправку данных
+        setTimeout(() => {
+            alert('Thank you for subscribing!');
+            
+            // Сброс формы
+            document.getElementById('nameInput').value = '';
+            document.getElementById('emailInput').value = '';
+            isChecked = false;
+            document.getElementById('agreementCheckbox').classList.remove('checked');
+            
+            // Обновляем лейблы
+            document.querySelectorAll('.field').forEach(field => {
+                updateLabel(field);
+            });
+            
+            submitButton.textContent = 'Subscribe';
+            submitButton.disabled = false;
+        }, 2000);
+        
+    } else {
+        console.log('Form validation failed');
+    }
+});
+
 // Инициализация чекбокса
 initCheckbox();
-
-// Пример использования при отправке формы
-// document.getElementById('submitButton').addEventListener('click', function(e) {
-//     e.preventDefault();
-//     if (validateForm()) {
-//         console.log('Form is valid, submitting...');
-//         // Отправка формы
-//     }
-// });
