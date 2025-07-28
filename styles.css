@@ -511,8 +511,8 @@ blockquote {
 
 .form-checkbox {
     position: relative;
-    width: 20px;
-    height: 20px;
+    width: 35px;
+    height: 35px;
     background: #fff;
     border: none;
     transition: all 0.3s ease;
