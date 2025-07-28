@@ -552,10 +552,10 @@ blockquote {
 }
 
 .checkbox-error {
-  color: #ff4444;
+  color: #C04B4B;
   font-size: 14px;
   line-height: 18px;
-  margin-top: 8px;
+  margin-top: 12px;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
