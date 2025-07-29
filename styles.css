@@ -585,3 +585,59 @@ blockquote {
         width: 100%;
     }
 }
+
+/* ============================= */
+/*          Notifications        */
+/* ============================= */
+
+/* Toast контейнер */
+.toast-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+/* Отдельное уведомление */
+.toast {
+    background: #28a745;
+    color: white;
+    padding: 16px 20px;
+    margin: 12px 16px 0 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    pointer-events: auto;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.toast.error {
+    background: #dc3545;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.hide {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+/* Для множественных уведомлений */
+.toast + .toast {
+    margin-top: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .toast {
+        margin: 8px 12px 0 12px;
+        padding: 14px 16px;
+        font-size: 14px;
+    }
+}
