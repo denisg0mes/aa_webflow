@@ -13,7 +13,7 @@ function isValidName(name) {
 }
 
 // Toast уведомления
-function showToast(message, isError = false, duration = 10000) {
+function showToast(message, isError = false, duration = 1000000) {
     const container = document.getElementById('toastContainer');
     if (!container) {
         console.warn('Toast container not found');
