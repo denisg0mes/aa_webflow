@@ -603,9 +603,9 @@ blockquote {
 /* Отдельное уведомление */
 .toast {
   background: #000000;
+  color: #E1E1E1;
   margin-left: auto;
   width: 55%;
-  color: white;
   padding: 30px 40px;
   pointer-events: auto;
   transform: translateY(-100%);
@@ -615,6 +615,7 @@ blockquote {
 
 .toast.error {
   background: #3A1717;
+  color: #FFE5E5;
 }
 
 .toast.show {
