@@ -603,6 +603,7 @@ blockquote {
 /* Отдельное уведомление */
 .toast {
   background: #000000;
+  margin-left: auto;
   width: 55%;
   color: white;
   padding: 30px 40px;
