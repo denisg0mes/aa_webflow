@@ -12,6 +12,60 @@ function isValidName(name) {
     return name.trim().length >= 2;
 }
 
+// Toast уведомления
+function showToast(message, isError = false, duration = 4000) {
+    const container = document.getElementById('toastContainer');
+    if (!container) {
+        console.warn('Toast container not found');
+        alert(message); // Fallback to alert
+        return;
+    }
+    
+    // Создаем элемент toast
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.textContent = message;
+    
+    // Добавляем в контейнер
+    container.appendChild(toast);
+    
+    // Показываем с анимацией
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    // Убираем через заданное время
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => {
+            if (container.contains(toast)) {
+                container.removeChild(toast);
+            }
+        }, 400);
+    }, duration);
+}
+
+// Обработка ответа от сервера
+function handleServerResponse(data) {
+    if (typeof data === 'string') {
+        // Если получили просто текст
+        showToast('Thank you for subscribing!', false);
+        return;
+    }
+    
+    if (data.success === true) {
+        const message = data.message || 'Thank you for subscribing! Check your email for confirmation.';
+        showToast(message, false);
+    } else if (data.success === false) {
+        const errorMessage = data.message || 'Something went wrong. Please try again.';
+        showToast(errorMessage, true);
+    } else {
+        // Если success не указан, считаем успехом
+        const message = data.message || 'Thank you for subscribing!';
+        showToast(message, false);
+    }
+}
+
 // Показать ошибку поля
 function showError(field, message) {
     const errorMessage = field.querySelector('.error-message');
@@ -155,7 +209,7 @@ function resetForm() {
 // Отправка данных на сервер
 function submitFormData(formData, submitButton) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 секунд таймаут
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     
     return fetch('https://n8n.arrivedaliens.com/webhook/newsletter', {
         method: 'POST',
@@ -169,12 +223,11 @@ function submitFormData(formData, submitButton) {
         clearTimeout(timeoutId);
         
         if (response.ok) {
-            // Проверяем тип контента
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
                 return response.json();
             } else {
-                return response.text();
+                return response.text().then(text => ({ success: true, message: text }));
             }
         } else {
             throw new Error(`Server error: ${response.status} ${response.statusText}`);
@@ -182,7 +235,7 @@ function submitFormData(formData, submitButton) {
     })
     .then(data => {
         console.log('Success:', data);
-        alert('Thank you for subscribing! Check your email for confirmation.');
+        handleServerResponse(data);
         resetForm();
     })
     .catch(error => {
@@ -198,7 +251,7 @@ function submitFormData(formData, submitButton) {
             errorMessage = 'Server is temporarily unavailable. Please try again later.';
         }
         
-        alert(errorMessage);
+        showToast(errorMessage, true);
         
         // Восстанавливаем кнопку при ошибке
         if (submitButton) {
