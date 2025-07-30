@@ -651,7 +651,7 @@ blockquote {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    visibility: hidden;
+/*     visibility: hidden; */
     pointer-events: none;
   }
 
@@ -680,7 +680,7 @@ blockquote {
 
   /* состояние «открыто» */
   .modal.is-open {
-    visibility: visible;
+/*     visibility: visible; */
     pointer-events: auto;
   }
   .modal.is-open .modal-back  { opacity: 1; }
