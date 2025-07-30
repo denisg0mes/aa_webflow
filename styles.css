@@ -325,7 +325,7 @@ blockquote {
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  padding: 0 8px;
+  padding: 40px 8px 0 8px;
   opacity: 0;
   transform: translateY(40px);
   pointer-events: none;
