@@ -671,7 +671,7 @@ blockquote {
     top: 0;
     width: 55%;
     height: 100%;
-    background: #fff;
+    background: var(--layout-bg_light);
     transform: translateX(100%);
     opacity: 0;
     transition: transform .4s ease, opacity .3s ease;
