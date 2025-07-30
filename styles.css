@@ -296,8 +296,8 @@ blockquote {
   inset: 0;
   pointer-events: none;
   z-index: 9;                     /* чуть ниже логотипа */
-  display: flex;
-  justify-content: center;
+/*   display: flex;
+  justify-content: center; */
   align-items: flex-end;          /* прижать к низу */
   padding-bottom: 130px;          /* смещение над логотипом */
 }
