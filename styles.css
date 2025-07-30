@@ -130,6 +130,9 @@ blockquote {
     height: 280px;
     margin: 40px 0;
   }
+  .cms_content h3 {
+    margin-left: var(--pad-left-small);
+  }
   .cms_content p {
     margin: var(--spacer) var(--pad-right-small) var(--spacer) var(--pad-left-small);
     max-width: 700px;
