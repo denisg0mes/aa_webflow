@@ -607,51 +607,49 @@ blockquote {
 /*             Modal             */
 /* ============================= */
 
-  /* Базовые стили */
-  .modal {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-/*     visibility: hidden; */
-    pointer-events: none;
-  }
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
 
-  /* фон */
-  .modal-back {
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,.55);
-    opacity: 0;
-    transition: opacity .3s ease;
-  }
+.modal-back {
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.55);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
 
-  /* контейнер */
-  .modal-container {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 55%;
-    height: 100%;
-    background: var(--layout--bg_light);
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform .4s ease, opacity .3s ease;
-    will-change: transform, opacity;
-  }
+.modal-container {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 55%;
+  height: 100%;
+  background: var(--layout--bg_light);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform .4s ease, opacity .3s ease;
+  will-change: transform, opacity;
+}
 
-  /* состояние «открыто» */
-  .modal.is-open {
-/*     visibility: visible; */
-    pointer-events: auto;
-  }
-  .modal.is-open .modal-back  { opacity: 1; }
-  .modal.is-open .modal-container {
-    transform: translateX(0);
-    opacity: 1;
-  }
+.modal-content {
+  padding: 80px 10px 0 10px;
+}
+/* состояние «открыто» */
+.modal.is-open {
+  pointer-events: auto;
+}
+.modal.is-open .modal-back  { opacity: 1; }
+.modal.is-open .modal-container {
+  transform: translateX(0);
+  opacity: 1;
+}
 
-  /* блокировка прокрутки */
-  body.modal-open { overflow: hidden; }
+/* блокировка прокрутки */
+body.modal-open { overflow: hidden; }
 
 /* ============================= */
 /*             Mobile            */
