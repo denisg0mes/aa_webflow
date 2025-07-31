@@ -624,6 +624,7 @@ blockquote {
 
 .modal-container {
   position: absolute;
+  overflow-y: auto;
   right: 0;
   top: 0;
   width: 55%;
