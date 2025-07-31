@@ -695,6 +695,7 @@ body.modal-open { overflow: hidden; }
   /* Modal */
   .modal-container {
     width: 100%;
+    min-height: 100dvh;
   }
   .modal-content {
     padding: 40px 10px 0 10px;
