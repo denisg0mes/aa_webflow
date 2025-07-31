@@ -706,7 +706,8 @@ body.modal-open { overflow: hidden; }
   /* Forms */
   .horizontal-forms {
     flex-direction: column;
-    gap: 15px;
+    align-items: stretch;
+    gap: 10px;
   }
   .horizontal-forms .submit-button {
     width: 100%;
