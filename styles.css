@@ -699,7 +699,10 @@ body.modal-open { overflow: hidden; }
   }
 
   /* Modal */
-   .modal-container {
+  .modal-container {
     width: 100%;
+  }
+  .modal-content {
+    padding: 40px 10px 0 10px;
   }
 }
