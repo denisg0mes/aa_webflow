@@ -638,6 +638,11 @@ blockquote {
 .modal-content {
   padding: 80px 10px 0 10px;
 }
+
+.modal-subcontainer {
+  padding: 0 10% 0 15%
+}
+
 /* состояние «открыто» */
 .modal.is-open {
   pointer-events: auto;
@@ -704,5 +709,8 @@ body.modal-open { overflow: hidden; }
   }
   .modal-content {
     padding: 40px 10px 0 10px;
+  }
+  .modal-subcontainer {
+    padding: 0 5% 0 5%
   }
 }
