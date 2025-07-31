@@ -674,6 +674,9 @@ blockquote {
   .horizontal-forms .submit-button {
     width: 100%;
   }
+  .cover-image {
+    height: 300px;
+  }
   
   /* Gallery */
   .w-richtext .custom-gallery-wrapper .custom-gallery {
