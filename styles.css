@@ -668,18 +668,6 @@ body.modal-open { overflow: hidden; }
     padding: 14px 16px;
     font-size: 14px;
   }
-
-  /* Forms */
-  .horizontal-forms {
-    flex-direction: column;
-    gap: 15px;
-  }
-  .horizontal-forms .submit-button {
-    width: 100%;
-  }
-  .cover-image {
-    height: 300px;
-  }
   
   /* Gallery */
   .w-richtext .custom-gallery-wrapper .custom-gallery {
@@ -712,5 +700,17 @@ body.modal-open { overflow: hidden; }
   }
   .modal-subcontainer {
     padding: 0;
+  }
+  
+  /* Forms */
+  .horizontal-forms {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .horizontal-forms .submit-button {
+    width: 100%;
+  }
+  .cover-image {
+    height: 150px;
   }
 }
