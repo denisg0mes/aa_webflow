@@ -9,7 +9,6 @@
         // Состояние приложения
         let isLoading = false;
         let sessionId = null;
-        let lastMessageDate = null; // Для отслеживания последней даты сообщения
 
         // DOM элементы
         let chatBox, userInput, sendButton, charCounter;
@@ -96,11 +95,15 @@
 
         function formatTimestamp() {
             const now = new Date();
-            return now.toLocaleTimeString([], { 
-                hour: '2-digit', 
+            return now.toLocaleDateString('en-US', { 
+                month: 'long', 
+                day: 'numeric',
+                year: 'numeric'
+            }) + ' ' + now.toLocaleTimeString([], { 
+                hour: 'numeric', 
                 minute: '2-digit',
-                hour12: false 
-            });
+                hour12: true 
+            }).toLowerCase();
         }
 
         function formatDateHeader(date) {
@@ -315,16 +318,6 @@
         }
 
         function renderMessage(sender, text, messageDate = null) {
-            const currentDate = messageDate || new Date();
-            
-            // Проверяем, нужно ли показать разделитель даты
-            if (shouldShowDateSeparator(currentDate)) {
-                renderDateSeparator(currentDate);
-            }
-            
-            // Обновляем последнюю дату сообщения
-            lastMessageDate = currentDate;
-            
             const messageContainer = document.createElement("div");
             messageContainer.className = `message-container ${sender}`;
             
@@ -362,16 +355,6 @@
         }
 
         function renderLoader() {
-            const currentDate = new Date();
-            
-            // Проверяем, нужно ли показать разделитель даты
-            if (shouldShowDateSeparator(currentDate)) {
-                renderDateSeparator(currentDate);
-            }
-            
-            // Обновляем последнюю дату сообщения
-            lastMessageDate = currentDate;
-            
             const messageContainer = document.createElement("div");
             messageContainer.className = "message-container bot";
             
@@ -426,10 +409,9 @@
                 const history = JSON.parse(raw);
                 if (!Array.isArray(history)) return;
                 
-                history.forEach(({ sender, text, timestamp }) => {
+                history.forEach(({ sender, text }) => {
                     if (sender && text && typeof text === 'string') {
-                        const messageDate = timestamp ? new Date(timestamp) : new Date();
-                        renderMessage(sender, text, messageDate);
+                        renderMessage(sender, text);
                     }
                 });
             } catch (error) {
@@ -462,7 +444,6 @@
             try {
                 localStorage.removeItem(getStorageKey());
                 chatBox.innerHTML = '';
-                lastMessageDate = null;
                 console.log('Chat history cleared');
             } catch (error) {
                 console.error('Failed to clear history:', error);
