@@ -746,7 +746,7 @@ body.modal-open { overflow: hidden; }
   display: flex;
   flex-direction: column;
   align-items: stretch;
-/*   justify-content: center; */
+  justify-content: center;
   gap: 12px;
   margin: 0 auto;
 }
