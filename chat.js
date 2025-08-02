@@ -20,7 +20,7 @@
             // Получение DOM элементов
             chatBox = document.getElementById("chat_box");
             userInput = document.getElementById("user_input");
-            sendButton = document.getElementById("chat_button");
+            sendButton = document.getElementById("chatButton");
             charCounter = document.getElementById("char_counter");
 
             if (!chatBox || !userInput || !sendButton) {
