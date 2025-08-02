@@ -862,7 +862,6 @@ body.modal-open { overflow: hidden; }
   font-size: 12px;
   color: #999;
   text-align: left;
-  margin: 4px 0 -50px 0;
 }
 
 .char-counter.warning {
