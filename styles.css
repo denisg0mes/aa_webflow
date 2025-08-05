@@ -662,7 +662,7 @@ body.modal-open { overflow: hidden; }
 /*             Chat              */
 /* ============================= */
 
-юchat-container .w-embed {
+.chat-container .w-embed {
   position: relative;
   height: 100vh;
   overflow: hidden;
