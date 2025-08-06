@@ -293,6 +293,11 @@ async function sendMessage() {
         appendToHistory("bot", errorMessage);
     } finally {
         setLoadingState(false);
+        
+        // Возвращаем фокус на поле ввода
+        setTimeout(() => {
+            userInput.focus();
+        }, 100); // Небольшая задержка для надёжности
     }
 }
 
