@@ -4,7 +4,7 @@ const CONFIG = {
     WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
     STORAGE_PREFIX: "secure_chat_",
     REQUEST_TIMEOUT: 30000,
-    TYPING_SPEED: 30, // Скорость печати в миллисекундах между символами
+    TYPING_SPEED: 10, // Скорость печати в миллисекундах между символами
     SCROLL_THRESHOLD: 100,        // Порог прокрутки для загрузки истории
     ERROR_DISPLAY_TIME: 5000,     // Время показа ошибок
     FOCUS_DELAY: 100,             // Задержка возврата фокуса
