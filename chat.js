@@ -413,9 +413,6 @@ function renderLoader() {
     bubble.className = "bubble bot loader";
     bubble.textContent = "Thinking";
     
-    // Добавляем inline стиль для гарантии
-    bubble.style.animation = "shimmer 2s ease-in-out infinite";
-    
     messageContainer.appendChild(bubble);
     chatBox.appendChild(messageContainer);
     scrollToBottom();
