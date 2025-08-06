@@ -20,6 +20,7 @@ let isLoading = false;
 let sessionId = null;
 let currentDisplayedCount = 0; // Количество отображаемых сообщений
 let currentTypingCancel = null; // Для отмены предыдущей анимации печати
+let isLoadingHistory = false; // Флаг загрузки истории
 
 // DOM элементы
 let chatBox, userInput, sendButton, charCounter;
@@ -145,6 +146,9 @@ function setupEventListeners() {
 }
 
 function handleScroll() {
+    // Не загружаем если уже загружаем
+    if (isLoadingHistory) return;
+    
     // Проверяем, докрутил ли пользователь до верха
     if (chatBox && chatBox.scrollTop <= CONFIG.SCROLL_THRESHOLD) {
         const fullHistory = getFullHistory();
@@ -152,13 +156,15 @@ function handleScroll() {
         
         // Проверяем есть ли еще сообщения для загрузки
         if (currentDisplayedCount < totalMessages) {
+            isLoadingHistory = true;
+            
             // Показываем индикатор загрузки
             showLoadingIndicator();
             
             // Небольшая задержка для визуального эффекта
             setTimeout(() => {
                 loadMoreHistory();
-            }, 500);
+            }, 300);
         }
     }
 }
