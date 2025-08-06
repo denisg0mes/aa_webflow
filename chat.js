@@ -275,8 +275,8 @@ async function sendMessage() {
         // Убираем индикатор загрузки
         removeLoader(loaderElement);
         
-        // Показываем ответ
-        renderMessage("bot", reply);
+        // Показываем ответ с анимацией печати
+        renderMessage("bot", reply, null, true); // animated = true
         appendToHistory("bot", reply);
         
     } catch (error) {
@@ -289,7 +289,7 @@ async function sendMessage() {
             removeLoader(loader.closest('.message-container'));
         }
         
-        renderMessage("bot", errorMessage);
+        renderMessage("bot", errorMessage, null, true); // С анимацией
         appendToHistory("bot", errorMessage);
     } finally {
         setLoadingState(false);
@@ -370,7 +370,7 @@ function getErrorMessage(error) {
     }
 }
 
-function renderMessage(sender, text, messageTimestamp = null) {
+function renderMessage(sender, text, messageTimestamp = null, animated = false) {
     const messageContainer = document.createElement("div");
     messageContainer.className = `message-container ${sender}`;
     
@@ -394,7 +394,13 @@ function renderMessage(sender, text, messageTimestamp = null) {
         messageContainer.appendChild(bubble);
     } else {
         // Для бота: текст без фона + время снаружи
-        bubble.textContent = text;
+        if (animated) {
+            // Анимированный вывод текста
+            bubble.textContent = "";
+            typeWriter(bubble, text, 30); // 30ms между символами
+        } else {
+            bubble.textContent = text;
+        }
         
         const timestamp = document.createElement("div");
         timestamp.className = "timestamp";
@@ -410,7 +416,20 @@ function renderMessage(sender, text, messageTimestamp = null) {
     return messageContainer;
 }
 
-function renderLoader() {
+function typeWriter(element, text, speed = 30) {
+    let i = 0;
+    
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            scrollToBottom(); // Прокручиваем при каждом символе
+            setTimeout(type, speed);
+        }
+    }
+    
+    type();
+}
     const messageContainer = document.createElement("div");
     messageContainer.className = "message-container bot";
     
