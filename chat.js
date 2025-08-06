@@ -395,25 +395,54 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
     } else {
         // Для бота: текст без фона + время снаружи
         if (animated) {
-            // Сначала создаем невидимый элемент для измерения высоты
-            const measureDiv = document.createElement("div");
-            measureDiv.className = `bubble ${sender}`;
-            measureDiv.style.visibility = "hidden";
-            measureDiv.style.position = "absolute";
-            measureDiv.style.top = "-9999px";
-            measureDiv.textContent = text;
-            document.body.appendChild(measureDiv);
+            // Добавляем контейнер в DOM для получения реальных размеров
+            messageContainer.appendChild(bubble);
+            chatBox.appendChild(messageContainer);
             
-            // Устанавливаем минимальную высоту для основного bubble
-            const fullHeight = measureDiv.offsetHeight;
+            // Создаем временный элемент с полным текстом для измерения
+            const tempText = document.createElement("div");
+            tempText.textContent = text;
+            tempText.style.visibility = "hidden";
+            tempText.style.position = "absolute";
+            tempText.style.top = "-9999px";
+            tempText.style.left = "-9999px";
+            
+            // Копируем ВСЕ стили от реального bubble
+            const bubbleStyles = window.getComputedStyle(bubble);
+            const bubbleRect = bubble.getBoundingClientRect();
+            
+            // Применяем все стили
+            Object.keys(bubbleStyles).forEach(key => {
+                if (bubbleStyles[key] && key !== 'height' && key !== 'minHeight') {
+                    try {
+                        tempText.style[key] = bubbleStyles[key];
+                    } catch (e) {
+                        // Игнорируем ошибки для read-only свойств
+                    }
+                }
+            });
+            
+            // Устанавливаем точную ширину как у реального элемента
+            tempText.style.width = bubbleRect.width + "px";
+            tempText.style.maxWidth = bubbleRect.width + "px";
+            
+            document.body.appendChild(tempText);
+            
+            // Измеряем высоту с учетом реальной ширины
+            const fullHeight = tempText.getBoundingClientRect().height;
+            
+            // Удаляем временный элемент
+            document.body.removeChild(tempText);
+            
+            // Устанавливаем точную высоту и блокируем изменения
+            bubble.style.height = fullHeight + "px";
             bubble.style.minHeight = fullHeight + "px";
-            
-            // Удаляем измерительный элемент
-            document.body.removeChild(measureDiv);
+            bubble.style.maxHeight = fullHeight + "px";
+            bubble.style.overflow = "hidden";
             
             // Анимированный вывод текста
             bubble.textContent = "";
-            typeWriter(bubble, text, 30); // 30ms между символами
+            typeWriter(bubble, text, 30);
         } else {
             bubble.textContent = text;
         }
@@ -422,11 +451,16 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
         timestamp.className = "timestamp";
         timestamp.textContent = timeToShow;
         
-        messageContainer.appendChild(bubble);
+        if (!animated) {
+            messageContainer.appendChild(bubble);
+            chatBox.appendChild(messageContainer);
+        }
         messageContainer.appendChild(timestamp);
     }
     
-    chatBox.appendChild(messageContainer);
+    if (!animated || sender === "user") {
+        chatBox.appendChild(messageContainer);
+    }
     scrollToBottom();
     
     return messageContainer;
