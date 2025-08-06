@@ -803,51 +803,26 @@ body.modal-open { overflow: hidden; }
   border-radius: 2px;
 }
 
-#chat_button {
-  width: 48px;
-  height: 48px;
-  border: none;
-  border-radius: 8px;
-  background-color: #333;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-#chat_button:hover:not(:disabled) {
-  background-color: #000;
-}
-
-#chat_button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
 /* Loader */
 .loader {
   background: transparent;
   color: #666;
   position: relative;
   padding: 0;
+  animation: thinking 2s ease-in-out infinite;
 }
 
 .loader::after {
-  content: "";
-  display: inline-block;
-  width: 1em;
-  text-align: left;
-  animation: dots 1.4s steps(4, end) infinite;
+  display: none;
 }
 
-@keyframes dots {
-  0%, 25% { content: ""; }
-  50%     { content: "●"; }
-  75%     { content: "● ●"; }
-  100%    { content: "● ● ●"; }
+@keyframes thinking {
+    0%, 100% { 
+        opacity: 0.2; 
+    }
+    50% { 
+        opacity: 1; 
+    }
 }
 
 /* Error message */
