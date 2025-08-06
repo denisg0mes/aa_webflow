@@ -4,21 +4,21 @@ const CONFIG = {
     WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
     STORAGE_PREFIX: "secure_chat_",
     REQUEST_TIMEOUT: 30000,
-    TYPING_SPEED: 10, // Скорость печати в миллисекундах между символами
+    TYPING_SPEED: 30, // Скорость печати в миллисекундах между символами
     SCROLL_THRESHOLD: 100,        // Порог прокрутки для загрузки истории
     ERROR_DISPLAY_TIME: 5000,     // Время показа ошибок
     FOCUS_DELAY: 100,             // Задержка возврата фокуса
     TEXTAREA_MIN_HEIGHT: 48,      // Минимальная высота textarea
     TEXTAREA_MAX_HEIGHT: 120,     // Максимальная высота textarea
     THROTTLE_DELAY: 100,          // Задержка для throttling
-    DEBOUNCE_DELAY: 50            // Задержка для debouncing
+    DEBOUNCE_DELAY: 50,           // Задержка для debouncing
+    MESSAGES_PER_LOAD: 10         // Количество сообщений загружаемых за раз
 };
 
 // Состояние приложения
 let isLoading = false;
 let sessionId = null;
 let currentDisplayedCount = 0; // Количество отображаемых сообщений
-const MESSAGES_PER_LOAD = 15; // Сколько сообщений загружать за раз
 let currentTypingCancel = null; // Для отмены предыдущей анимации печати
 
 // DOM элементы
@@ -168,14 +168,20 @@ function loadMoreHistory() {
     const fullHistory = getFullHistory();
     const totalMessages = fullHistory.length;
     
+    console.log(`Load more: ${currentDisplayedCount}/${totalMessages} messages shown`);
+    
     // Проверяем, есть ли еще сообщения для загрузки
     if (currentDisplayedCount >= totalMessages) {
+        console.log('All messages already loaded');
+        hideLoadMoreIndicator();
         return; // Все сообщения уже загружены
     }
     
     // Вычисляем сколько еще нужно загрузить
     const remainingMessages = totalMessages - currentDisplayedCount;
-    const messagesToLoad = Math.min(MESSAGES_PER_LOAD, remainingMessages);
+    const messagesToLoad = Math.min(CONFIG.MESSAGES_PER_LOAD, remainingMessages);
+    
+    console.log(`Loading ${messagesToLoad} more messages`);
     
     // Берем следующую порцию сообщений (с конца истории, но раньше уже показанных)
     const startIndex = totalMessages - currentDisplayedCount - messagesToLoad;
@@ -200,6 +206,12 @@ function loadMoreHistory() {
     // Восстанавливаем позицию прокрутки (чтобы чат не "прыгал")
     const newScrollHeight = chatBox.scrollHeight;
     chatBox.scrollTop = newScrollHeight - scrollHeight;
+    
+    // Скрываем индикатор если все загружено
+    if (currentDisplayedCount >= totalMessages) {
+        console.log('All messages loaded, hiding indicator');
+        hideLoadMoreIndicator();
+    }
 }
 
 function prependMessage(sender, text, messageTimestamp = null) {
@@ -450,7 +462,34 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
     return messageContainer;
 }
 
-// Простая и надежная анимация
+function showLoadMoreIndicator() {
+    // Удаляем предыдущий индикатор если есть
+    const existingIndicator = chatBox.querySelector('.load-more-indicator');
+    if (existingIndicator) {
+        existingIndicator.remove();
+    }
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'load-more-indicator';
+    indicator.innerHTML = '↑ Scroll up to load more messages';
+    indicator.style.cssText = `
+        text-align: center;
+        padding: 10px;
+        color: #666;
+        font-size: 12px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 10px;
+    `;
+    
+    chatBox.insertBefore(indicator, chatBox.firstChild);
+}
+
+function hideLoadMoreIndicator() {
+    const indicator = chatBox.querySelector('.load-more-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
 function typeWriterSimple(element, text, finalHeight) {
     let currentText = "";
     let index = 0;
@@ -562,18 +601,27 @@ function loadChatHistory() {
         const fullHistory = getFullHistory();
         if (fullHistory.length === 0) return;
         
-        // Загружаем только последние MESSAGES_PER_LOAD сообщений
-        const messagesToShow = Math.min(MESSAGES_PER_LOAD, fullHistory.length);
+        console.log(`Total messages in storage: ${fullHistory.length}`);
+        
+        // Загружаем только последние CONFIG.MESSAGES_PER_LOAD сообщений
+        const messagesToShow = Math.min(CONFIG.MESSAGES_PER_LOAD, fullHistory.length);
         const recentMessages = fullHistory.slice(-messagesToShow);
+        
+        console.log(`Showing last ${messagesToShow} messages`);
         
         recentMessages.forEach(({ sender, text, timestamp }) => {
             if (sender && text && typeof text === 'string') {
-                renderMessage(sender, text, timestamp);
+                renderMessage(sender, text, timestamp, false); // Без анимации для истории
             }
         });
         
         // Устанавливаем счетчик отображаемых сообщений
         currentDisplayedCount = messagesToShow;
+        
+        // Показываем индикатор если есть еще сообщения
+        if (fullHistory.length > CONFIG.MESSAGES_PER_LOAD) {
+            showLoadMoreIndicator();
+        }
         
     } catch (error) {
         console.error('Failed to load chat history:', error);
@@ -613,6 +661,7 @@ function clearChatHistory() {
             currentTypingCancel();
             currentTypingCancel = null;
         }
+        hideLoadMoreIndicator();
         console.log('Chat history cleared');
     } catch (error) {
         console.error('Failed to clear history:', error);
