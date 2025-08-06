@@ -4,7 +4,7 @@ const CONFIG = {
     WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
     STORAGE_PREFIX: "secure_chat_",
     REQUEST_TIMEOUT: 30000,
-    TYPING_SPEED: 10, // Скорость печати в миллисекундах между символами
+    TYPING_SPEED: 30, // Скорость печати в миллисекундах между символами
     SCROLL_THRESHOLD: 100,        // Порог прокрутки для загрузки истории
     ERROR_DISPLAY_TIME: 5000,     // Время показа ошибок
     FOCUS_DELAY: 100,             // Задержка возврата фокуса
@@ -458,8 +458,21 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
         bubble.appendChild(messageText);
         bubble.appendChild(timestamp);
         messageContainer.appendChild(bubble);
+        
+        // Добавляем в чат
+        chatBox.appendChild(messageContainer);
     } else {
         // Для бота: текст без фона + время снаружи
+        const timestamp = document.createElement("div");
+        timestamp.className = "timestamp";
+        timestamp.textContent = timeToShow;
+        
+        messageContainer.appendChild(bubble);
+        messageContainer.appendChild(timestamp);
+        
+        // ВАЖНО: Сначала добавляем в чат
+        chatBox.appendChild(messageContainer);
+        
         if (animated) {
             // Отменяем предыдущую анимацию печати
             if (currentTypingCancel) {
@@ -492,18 +505,9 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
         } else {
             bubble.textContent = text;
         }
-        
-        const timestamp = document.createElement("div");
-        timestamp.className = "timestamp";
-        timestamp.textContent = timeToShow;
-        
-        messageContainer.appendChild(bubble);
-        messageContainer.appendChild(timestamp);
     }
     
-    chatBox.appendChild(messageContainer);
     scrollToBottom();
-    
     return messageContainer;
 }
 
