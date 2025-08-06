@@ -348,9 +348,9 @@ function setLoadingState(loading) {
     
     // Изменяем иконку кнопки при загрузке
     if (loading) {
-        sendButton.innerHTML = '<div style="width: 12px; height: 12px; border: 2px solid #fff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>';
+        sendButton.classList.add('loading');
     } else {
-        sendButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7l10 10M7 17L17 7"/></svg>';
+        sendButton.classList.remove('loading');
     }
 }
 
