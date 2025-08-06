@@ -728,19 +728,6 @@ body.modal-open { overflow: hidden; }
   margin-bottom: 4px;
 }
 
-/* Timestamp */
-.timestamp {
-  font-size: 14px;
-  color: #999;
-  margin-top: 4px;
-  font-weight: 400;
-}
-
-.timestamp.user {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
 /* Input container */
 .input-container {
   position: fixed;
@@ -809,14 +796,13 @@ body.modal-open { overflow: hidden; }
   color: #666;
   position: relative;
   padding: 0;
-  animation: thinking 2s ease-in-out infinite;
-}
-
+  animation: shimmer 2s ease-in-out infinite;
+  
 .loader::after {
   display: none;
 }
 
-@keyframes thinking {
+@keyframes shimmer {
     0%, 100% { 
         opacity: 0.2; 
     }
