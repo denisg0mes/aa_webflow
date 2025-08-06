@@ -12,7 +12,7 @@ const CONFIG = {
     TEXTAREA_MAX_HEIGHT: 120,     // Максимальная высота textarea
     THROTTLE_DELAY: 100,          // Задержка для throttling
     DEBOUNCE_DELAY: 50,           // Задержка для debouncing
-    MESSAGES_PER_LOAD: 8         // Количество сообщений загружаемых за раз
+    MESSAGES_PER_LOAD: 15         // Количество сообщений загружаемых за раз
 };
 
 // Состояние приложения
@@ -221,9 +221,10 @@ function loadMoreHistorySimple() {
     // Восстанавливаем позицию + сдвигаем от верха
     const newScrollHeight = chatBox.scrollHeight;
     const heightDiff = newScrollHeight - oldScrollHeight;
-    const newScrollTop = oldScrollTop + heightDiff + 200; // +200px от верха
+    const safeOffset = Math.max(500, CONFIG.SCROLL_THRESHOLD * 5); // Минимум 500px от верха
+    const newScrollTop = oldScrollTop + heightDiff + safeOffset;
     
-    console.log(`📍 Scroll: ${oldScrollTop} → ${newScrollTop} (diff: ${heightDiff})`);
+    console.log(`📍 Scroll: ${oldScrollTop} → ${newScrollTop} (diff: ${heightDiff}, offset: ${safeOffset})`);
     chatBox.scrollTop = newScrollTop;
     
     // Убираем индикатор загрузки
@@ -241,11 +242,22 @@ function loadMoreHistorySimple() {
         hideLoadMoreIndicator();
     }
     
-    // ВАЖНО: Сбрасываем флаг в конце
+    // ВАЖНО: Сбрасываем флаг в конце с проверкой позиции
     setTimeout(() => {
-        isLoadingHistory = false;
-        console.log('🔓 Setting isLoadingHistory = false');
-    }, 500); // Даем время на "успокоение" скролла
+        // Проверяем что мы достаточно далеко от верха
+        const currentScrollTop = chatBox.scrollTop;
+        if (currentScrollTop > CONFIG.SCROLL_THRESHOLD * 2) {
+            isLoadingHistory = false;
+            console.log(`🔓 Setting isLoadingHistory = false (scrollTop: ${currentScrollTop})`);
+        } else {
+            console.log(`⚠️ Still too close to top (${currentScrollTop}), keeping lock`);
+            // Попробуем еще раз через секунду
+            setTimeout(() => {
+                isLoadingHistory = false;
+                console.log('🔓 Force unlock isLoadingHistory');
+            }, 1000);
+        }
+    }, 300); // Уменьшили до 300ms
 }
 
 function getFullHistory() {
