@@ -430,6 +430,8 @@ function typeWriter(element, text, speed = 30) {
     
     type();
 }
+
+function renderLoader() {
     const messageContainer = document.createElement("div");
     messageContainer.className = "message-container bot";
     
