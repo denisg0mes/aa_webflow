@@ -718,7 +718,7 @@ body.modal-open { overflow: hidden; }
 
 .bubble.user {
   background: white;
-  padding: 24px;
+  padding: 24px 24px 16px 24px;
 }
 
 .bubble.bot {
@@ -726,6 +726,19 @@ body.modal-open { overflow: hidden; }
   color: #333;
   padding: 0;
   margin-bottom: 4px;
+}
+
+/* Timestamp */
+.timestamp {
+  font-size: 14px;
+  color: #999;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.timestamp.user {
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 /* Input container */
@@ -796,13 +809,14 @@ body.modal-open { overflow: hidden; }
   color: #666;
   position: relative;
   padding: 0;
-  animation: shimmer 2s ease-in-out infinite;
-  
+  animation: thinking 2s ease-in-out infinite;
+}
+
 .loader::after {
   display: none;
 }
 
-@keyframes shimmer {
+@keyframes thinking {
     0%, 100% { 
         opacity: 0.2; 
     }
