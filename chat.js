@@ -4,44 +4,23 @@ const CONFIG = {
     WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
     STORAGE_PREFIX: "secure_chat_",
     REQUEST_TIMEOUT: 30000,
-    TYPING_SPEED: 30,
-    ERROR_DISPLAY_TIME: 5000,
-    FOCUS_DELAY: 100,
-    TEXTAREA_MIN_HEIGHT: 48,
-    TEXTAREA_MAX_HEIGHT: 120,
-    THROTTLE_DELAY: 100,
-    DEBOUNCE_DELAY: 50,
-    MESSAGES_PER_LOAD: 10,
-    INTERSECTION_ROOT_MARGIN: '50px' // Триггер за 50px до появления sentinel
+    TYPING_SPEED: 10, // Скорость печати в миллисекундах между символами
+    ERROR_DISPLAY_TIME: 5000,     // Время показа ошибок
+    FOCUS_DELAY: 100,             // Задержка возврата фокуса
+    TEXTAREA_MIN_HEIGHT: 48,      // Минимальная высота textarea
+    TEXTAREA_MAX_HEIGHT: 120,     // Максимальная высота textarea
+    DEBOUNCE_DELAY: 50            // Задержка для debouncing
 };
 
 // Состояние приложения
 let isLoading = false;
 let sessionId = null;
-let currentDisplayedCount = 0;
-let currentTypingCancel = null;
-
-// Infinity scroll state
-let isLoadingHistory = false;
-let scrollSentinel = null;
-let intersectionObserver = null;
+let currentTypingCancel = null; // Для отмены предыдущей анимации печати
 
 // DOM элементы
 let chatBox, userInput, sendButton, charCounter;
 
 // Утилиты для производительности
-function throttle(func, delay) {
-    let timeoutId;
-    let lastExecTime = 0;
-    return function (...args) {
-        const currentTime = Date.now();
-        if (currentTime - lastExecTime > delay) {
-            func.apply(this, args);
-            lastExecTime = currentTime;
-        }
-    };
-}
-
 function debounce(func, delay) {
     let timeoutId;
     return function (...args) {
@@ -141,392 +120,9 @@ function setupEventListeners() {
             sendMessage();
         }
     });
-
-    // Обработчик прокрутки заменен на Intersection Observer
-    setupInfiniteScroll();
     
     // Инициализация счетчика
     updateCharCounter();
-}
-
-// =====================================================
-// INFINITY SCROLL SYSTEM с Intersection Observer API
-// =====================================================
-
-/**
- * Инициализирует систему бесконечной прокрутки
- * Использует современный Intersection Observer API вместо scroll events
- */
-function setupInfiniteScroll() {
-    if (!chatBox) {
-        console.error('Chat box not found for infinite scroll setup');
-        return;
-    }
-
-    // Очищаем предыдущий observer если есть
-    cleanupInfiniteScroll();
-
-    // Проверяем поддержку API
-    if (!('IntersectionObserver' in window)) {
-        console.warn('IntersectionObserver not supported, falling back to scroll events');
-        setupScrollFallback();
-        return;
-    }
-
-    // Создаем sentinel element только если есть история для загрузки
-    const fullHistory = getFullHistory();
-    if (fullHistory.length <= currentDisplayedCount) {
-        console.log('No more history to load, skipping infinite scroll setup');
-        return;
-    }
-
-    createScrollSentinel();
-    createIntersectionObserver();
-    
-    console.log('✅ Infinite scroll initialized with Intersection Observer');
-}
-
-/**
- * Создает sentinel элемент - невидимый маркер для отслеживания прокрутки
- */
-function createScrollSentinel() {
-    scrollSentinel = document.createElement('div');
-    scrollSentinel.className = 'scroll-sentinel';
-    scrollSentinel.setAttribute('data-testid', 'scroll-sentinel');
-    
-    // Стили для debugging (можно убрать в production)
-    scrollSentinel.style.cssText = `
-        height: 1px;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        background: transparent;
-        pointer-events: none;
-    `;
-
-    // Вставляем в начало чата
-    if (chatBox.firstChild) {
-        chatBox.insertBefore(scrollSentinel, chatBox.firstChild);
-    } else {
-        chatBox.appendChild(scrollSentinel);
-    }
-}
-
-/**
- * Создает и конфигурирует Intersection Observer
- */
-function createIntersectionObserver() {
-    const options = {
-        root: chatBox,
-        rootMargin: `${CONFIG.INTERSECTION_ROOT_MARGIN} 0px 0px 0px`,
-        threshold: 0
-    };
-
-    intersectionObserver = new IntersectionObserver(handleIntersection, options);
-    intersectionObserver.observe(scrollSentinel);
-}
-
-/**
- * Обработчик пересечения sentinel с viewport
- * @param {IntersectionObserverEntry[]} entries - массив наблюдаемых элементов
- */
-function handleIntersection(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && !isLoadingHistory) {
-            console.log('🎯 Sentinel intersected, triggering load more');
-            loadMoreHistoryClean();
-        }
-    });
-}
-
-/**
- * Fallback для браузеров без поддержки IntersectionObserver
- */
-function setupScrollFallback() {
-    console.log('Setting up scroll fallback');
-    chatBox.addEventListener('scroll', throttle(() => {
-        if (!isLoadingHistory && chatBox.scrollTop <= 100) {
-            loadMoreHistoryClean();
-        }
-    }, CONFIG.THROTTLE_DELAY));
-}
-
-/**
- * Чистая реализация загрузки истории
- * Следует принципам SOLID и clean architecture
- */
-async function loadMoreHistoryClean() {
-    // Guard clauses
-    if (isLoadingHistory) {
-        console.log('Already loading history, skipping');
-        return;
-    }
-
-    const historyData = getHistoryLoadingData();
-    if (!historyData.hasMore) {
-        console.log('No more history to load');
-        cleanupInfiniteScroll();
-        return;
-    }
-
-    try {
-        await executeHistoryLoading(historyData);
-    } catch (error) {
-        console.error('Failed to load history:', error);
-        showError('Failed to load more messages');
-    } finally {
-        isLoadingHistory = false;
-    }
-}
-
-/**
- * Получает данные для загрузки истории
- * @returns {Object} Объект с данными для загрузки
- */
-function getHistoryLoadingData() {
-    const fullHistory = getFullHistory();
-    const totalMessages = fullHistory.length;
-    const remainingMessages = totalMessages - currentDisplayedCount;
-    const messagesToLoad = Math.min(CONFIG.MESSAGES_PER_LOAD, remainingMessages);
-    
-    return {
-        fullHistory,
-        totalMessages,
-        remainingMessages,
-        messagesToLoad,
-        hasMore: remainingMessages > 0,
-        startIndex: totalMessages - currentDisplayedCount - messagesToLoad,
-        endIndex: totalMessages - currentDisplayedCount
-    };
-}
-
-/**
- * Выполняет загрузку истории с сохранением позиции прокрутки
- * @param {Object} historyData - данные для загрузки
- */
-async function executeHistoryLoading(historyData) {
-    isLoadingHistory = true;
-    console.log(`📥 Loading ${historyData.messagesToLoad} messages (${historyData.remainingMessages} remaining)`);
-
-    // Показываем индикатор загрузки
-    showLoadingIndicator();
-
-    // Получаем порцию сообщений
-    const messagesChunk = historyData.fullHistory.slice(
-        historyData.startIndex, 
-        historyData.endIndex
-    );
-
-    if (messagesChunk.length === 0) {
-        hideLoadingIndicator();
-        return;
-    }
-
-    // Сохраняем scroll state для restoration
-    const scrollState = captureScrollState();
-
-    // Добавляем сообщения
-    await renderHistoryMessages(messagesChunk);
-
-    // Обновляем состояние
-    currentDisplayedCount += historyData.messagesToLoad;
-    console.log(`📊 Updated count: ${currentDisplayedCount}/${historyData.totalMessages}`);
-
-    // Восстанавливаем позицию прокрутки
-    restoreScrollPosition(scrollState);
-
-    // Управляем UI состоянием
-    hideLoadingIndicator();
-    updateInfiniteScrollState(historyData);
-}
-
-/**
- * Захватывает текущее состояние прокрутки для restoration
- */
-function captureScrollState() {
-    return {
-        scrollHeight: chatBox.scrollHeight,
-        scrollTop: chatBox.scrollTop
-    };
-}
-
-/**
- * Рендерит сообщения из истории
- * @param {Array} messagesChunk - порция сообщений для рендера
- */
-async function renderHistoryMessages(messagesChunk) {
-    const fragment = document.createDocumentFragment();
-    
-    messagesChunk.forEach(({ sender, text, timestamp }) => {
-        if (sender && text && typeof text === 'string') {
-            const messageElement = createHistoryMessageElement(sender, text, timestamp);
-            fragment.appendChild(messageElement);
-        }
-    });
-
-    // Вставляем все сообщения одной операцией для лучшей производительности
-    if (scrollSentinel && scrollSentinel.nextSibling) {
-        chatBox.insertBefore(fragment, scrollSentinel.nextSibling);
-    } else if (chatBox.firstChild) {
-        chatBox.insertBefore(fragment, chatBox.firstChild);
-    } else {
-        chatBox.appendChild(fragment);
-    }
-}
-
-/**
- * Создает элемент сообщения для истории
- * @param {string} sender - отправитель
- * @param {string} text - текст сообщения  
- * @param {string} timestamp - временная метка
- * @returns {HTMLElement} элемент сообщения
- */
-function createHistoryMessageElement(sender, text, timestamp) {
-    const messageContainer = document.createElement("div");
-    messageContainer.className = `message-container ${sender}`;
-    
-    const bubble = document.createElement("div");
-    bubble.className = `bubble ${sender}`;
-    bubble.textContent = text;
-    
-    messageContainer.appendChild(bubble);
-    return messageContainer;
-}
-
-/**
- * Восстанавливает позицию прокрутки после добавления контента
- * @param {Object} scrollState - сохраненное состояние прокрутки
- */
-function restoreScrollPosition(scrollState) {
-    const newScrollHeight = chatBox.scrollHeight;
-    const heightDiff = newScrollHeight - scrollState.scrollHeight;
-    
-    // Оптимальная позиция: сохраняем relative position + небольшой offset
-    const targetScrollTop = scrollState.scrollTop + heightDiff + 50;
-    
-    chatBox.scrollTop = targetScrollTop;
-    console.log(`📍 Scroll restored: ${scrollState.scrollTop} → ${targetScrollTop} (diff: ${heightDiff})`);
-}
-
-/**
- * Обновляет состояние системы бесконечной прокрутки
- * @param {Object} historyData - данные загрузки
- */
-function updateInfiniteScrollState(historyData) {
-    const stillRemaining = historyData.totalMessages - currentDisplayedCount;
-    
-    if (stillRemaining > 0) {
-        console.log(`📋 ${stillRemaining} messages remaining`);
-        showLoadMoreIndicator();
-    } else {
-        console.log('🏁 All messages loaded');
-        cleanupInfiniteScroll();
-        hideLoadMoreIndicator();
-    }
-}
-
-/**
- * Очищает ресурсы системы бесконечной прокрутки
- */
-function cleanupInfiniteScroll() {
-    if (intersectionObserver) {
-        intersectionObserver.disconnect();
-        intersectionObserver = null;
-        console.log('🧹 Intersection Observer cleaned up');
-    }
-    
-    if (scrollSentinel && scrollSentinel.parentNode) {
-        scrollSentinel.parentNode.removeChild(scrollSentinel);
-        scrollSentinel = null;
-        console.log('🧹 Scroll sentinel removed');
-    }
-}
-
-function getFullHistory() {
-    try {
-        const raw = safeLocalStorageGet(getStorageKey());
-        if (!raw) return [];
-        
-        const history = JSON.parse(raw);
-        return Array.isArray(history) ? history : [];
-    } catch (error) {
-        console.error('Failed to get full history:', error);
-        return [];
-    }
-}
-
-function loadMoreHistory() {
-    const fullHistory = getFullHistory();
-    const totalMessages = fullHistory.length;
-    
-    console.log(`Load more: ${currentDisplayedCount}/${totalMessages} messages shown`);
-    
-    // Проверяем, есть ли еще сообщения для загрузки
-    if (currentDisplayedCount >= totalMessages) {
-        console.log('All messages already loaded');
-        hideLoadingIndicator();
-        hideLoadMoreIndicator();
-        hideLoadingIndicator();
-        return; // Все сообщения уже загружены
-    }
-    
-    // Вычисляем сколько еще нужно загрузить
-    const remainingMessages = totalMessages - currentDisplayedCount;
-    const messagesToLoad = Math.min(CONFIG.MESSAGES_PER_LOAD, remainingMessages);
-    
-    console.log(`Loading ${messagesToLoad} more messages`);
-    
-    // Берем следующую порцию сообщений (с конца истории, но раньше уже показанных)
-    const startIndex = totalMessages - currentDisplayedCount - messagesToLoad;
-    const endIndex = totalMessages - currentDisplayedCount;
-    const messagesChunk = fullHistory.slice(startIndex, endIndex);
-    
-    if (messagesChunk.length === 0) return;
-    
-    // Убираем индикатор загрузки
-    hideLoadingIndicator();
-    
-    // Запоминаем текущую позицию прокрутки
-    const scrollHeight = chatBox.scrollHeight;
-    const scrollTop = chatBox.scrollTop;
-    
-    // Добавляем сообщения в начало чата
-    messagesChunk.forEach(({ sender, text, timestamp }) => {
-        if (sender && text && typeof text === 'string') {
-            prependMessage(sender, text, timestamp);
-        }
-    });
-    
-    // Обновляем счетчик отображаемых сообщений
-    currentDisplayedCount += messagesToLoad;
-    
-    // Восстанавливаем позицию прокрутки (чтобы чат не "прыгал")
-    const newScrollHeight = chatBox.scrollHeight;
-    chatBox.scrollTop = newScrollHeight - scrollHeight + scrollTop;
-    
-    // Показываем новый индикатор если есть еще сообщения
-    if (currentDisplayedCount < totalMessages) {
-        console.log(`Still ${totalMessages - currentDisplayedCount} messages remaining`);
-        showLoadMoreIndicator();
-    } else {
-        console.log('All messages loaded');
-    }
-}
-
-function prependMessage(sender, text, messageTimestamp = null) {
-    const messageContainer = document.createElement("div");
-    messageContainer.className = `message-container ${sender}`;
-    
-    const bubble = document.createElement("div");
-    bubble.className = `bubble ${sender}`;
-    bubble.textContent = text;
-    
-    messageContainer.appendChild(bubble);
-    
-    // Вставляем в начало чата
-    chatBox.insertBefore(messageContainer, chatBox.firstChild);
-    
-    return messageContainer;
 }
 
 function autoResizeTextarea() {
@@ -693,8 +289,6 @@ function setLoadingState(loading) {
     isLoading = loading;
     userInput.disabled = loading;
     sendButton.disabled = loading;
-    
-    // Просто делаем кнопку disabled, без изменения содержимого
 }
 
 function getErrorMessage(error) {
@@ -761,69 +355,7 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
     return messageContainer;
 }
 
-function showLoadMoreIndicator() {
-    // Удаляем предыдущий индикатор если есть
-    const existingIndicator = chatBox.querySelector('.load-more-indicator');
-    if (existingIndicator) {
-        existingIndicator.remove();
-    }
-    
-    const fullHistory = getFullHistory();
-    const remainingMessages = fullHistory.length - currentDisplayedCount;
-    
-    if (remainingMessages > 0) {
-        const indicator = document.createElement('div');
-        indicator.className = 'load-more-indicator';
-        indicator.innerHTML = `↑ Scroll up to load ${Math.min(CONFIG.MESSAGES_PER_LOAD, remainingMessages)} more messages`;
-        indicator.style.cssText = `
-            text-align: center;
-            padding: 8px 12px;
-            color: #666;
-            font-size: 12px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            animation: shimmer 2s ease-in-out infinite;
-        `;
-        
-        chatBox.insertBefore(indicator, chatBox.firstChild);
-    }
-}
-
-function showLoadingIndicator() {
-    // Удаляем индикатор "load more"
-    hideLoadMoreIndicator();
-    
-    const indicator = document.createElement('div');
-    indicator.className = 'loading-more-indicator';
-    indicator.innerHTML = 'Loading more messages';
-    indicator.style.cssText = `
-        text-align: center;
-        padding: 8px 12px;
-        color: #666;
-        font-size: 12px;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 10px;
-        background: #f0f0f0;
-        animation: shimmer 2s ease-in-out infinite;
-    `;
-    
-    chatBox.insertBefore(indicator, chatBox.firstChild);
-}
-
-function hideLoadMoreIndicator() {
-    const indicator = chatBox.querySelector('.load-more-indicator');
-    if (indicator) {
-        indicator.remove();
-    }
-}
-
-function hideLoadingIndicator() {
-    const indicator = chatBox.querySelector('.loading-more-indicator');
-    if (indicator) {
-        indicator.remove();
-    }
-}
+// Простая и надежная анимация
 function typeWriterSimple(element, text, finalHeight) {
     let currentText = "";
     let index = 0;
@@ -933,33 +465,18 @@ function getStorageKey() {
 
 function loadChatHistory() {
     try {
-        const fullHistory = getFullHistory();
-        if (fullHistory.length === 0) return;
+        const raw = safeLocalStorageGet(getStorageKey());
+        if (!raw) return;
         
-        console.log(`Total messages in storage: ${fullHistory.length}`);
+        const history = JSON.parse(raw);
+        if (!Array.isArray(history)) return;
         
-        // Загружаем только последние CONFIG.MESSAGES_PER_LOAD сообщений
-        const messagesToShow = Math.min(CONFIG.MESSAGES_PER_LOAD, fullHistory.length);
-        const recentMessages = fullHistory.slice(-messagesToShow);
-        
-        console.log(`Showing last ${messagesToShow} messages`);
-        
-        recentMessages.forEach(({ sender, text, timestamp }) => {
+        // Загружаем ВСЮ историю сразу
+        history.forEach(({ sender, text, timestamp }) => {
             if (sender && text && typeof text === 'string') {
                 renderMessage(sender, text, timestamp, false); // Без анимации для истории
             }
         });
-        
-        // Устанавливаем счетчик отображаемых сообщений
-        currentDisplayedCount = messagesToShow;
-        
-        // Показываем индикатор если есть еще сообщения для загрузки
-        if (fullHistory.length > CONFIG.MESSAGES_PER_LOAD) {
-            // Инициализируем infinite scroll после загрузки истории
-            setTimeout(() => {
-                setupInfiniteScroll();
-            }, 100);
-        }
         
     } catch (error) {
         console.error('Failed to load chat history:', error);
@@ -978,9 +495,6 @@ function appendToHistory(sender, text) {
         // НЕ ограничиваем размер истории - храним всё
         safeLocalStorageSet(getStorageKey(), JSON.stringify(history));
         
-        // Увеличиваем счетчик отображаемых сообщений (новое сообщение добавилось в DOM)
-        currentDisplayedCount++;
-        
     } catch (error) {
         console.error('Failed to save to history:', error);
     }
@@ -993,13 +507,11 @@ function clearChatHistory() {
         if (chatBox) {
             chatBox.innerHTML = '';
         }
-        currentDisplayedCount = 0;
         // Отменяем текущую анимацию печати
         if (currentTypingCancel) {
             currentTypingCancel();
             currentTypingCancel = null;
         }
-        hideLoadMoreIndicator();
         console.log('Chat history cleared');
     } catch (error) {
         console.error('Failed to clear history:', error);
