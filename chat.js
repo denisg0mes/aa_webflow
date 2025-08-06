@@ -395,6 +395,22 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
     } else {
         // Для бота: текст без фона + время снаружи
         if (animated) {
+            // Сначала создаем невидимый элемент для измерения высоты
+            const measureDiv = document.createElement("div");
+            measureDiv.className = `bubble ${sender}`;
+            measureDiv.style.visibility = "hidden";
+            measureDiv.style.position = "absolute";
+            measureDiv.style.top = "-9999px";
+            measureDiv.textContent = text;
+            document.body.appendChild(measureDiv);
+            
+            // Устанавливаем минимальную высоту для основного bubble
+            const fullHeight = measureDiv.offsetHeight;
+            bubble.style.minHeight = fullHeight + "px";
+            
+            // Удаляем измерительный элемент
+            document.body.removeChild(measureDiv);
+            
             // Анимированный вывод текста
             bubble.textContent = "";
             typeWriter(bubble, text, 30); // 30ms между символами
