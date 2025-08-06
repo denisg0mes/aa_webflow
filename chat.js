@@ -12,7 +12,7 @@ const CONFIG = {
     TEXTAREA_MAX_HEIGHT: 120,     // Максимальная высота textarea
     THROTTLE_DELAY: 100,          // Задержка для throttling
     DEBOUNCE_DELAY: 50,           // Задержка для debouncing
-    MESSAGES_PER_LOAD: 15         // Количество сообщений загружаемых за раз
+    MESSAGES_PER_LOAD: 8         // Количество сообщений загружаемых за раз
 };
 
 // Состояние приложения
@@ -148,36 +148,104 @@ function setupEventListeners() {
 function handleScroll() {
     const scrollTop = chatBox ? chatBox.scrollTop : 0;
     
+    console.log(`Scroll event: scrollTop=${scrollTop}, isLoadingHistory=${isLoadingHistory}`);
+    
     // Не загружаем если уже загружаем
     if (isLoadingHistory) {
-        console.log('Already loading history, skipping');
         return;
     }
     
     // Проверяем, докрутил ли пользователь до верха
-    if (chatBox && scrollTop <= CONFIG.SCROLL_THRESHOLD) {
+    if (scrollTop <= CONFIG.SCROLL_THRESHOLD) {
         const fullHistory = getFullHistory();
         const totalMessages = fullHistory.length;
         
-        console.log(`Scroll trigger: scrollTop=${scrollTop}, threshold=${CONFIG.SCROLL_THRESHOLD}`);
-        console.log(`Messages: ${currentDisplayedCount}/${totalMessages}`);
+        console.log(`Near top! Messages: ${currentDisplayedCount}/${totalMessages}`);
         
         // Проверяем есть ли еще сообщения для загрузки
         if (currentDisplayedCount < totalMessages) {
-            console.log('Starting to load more history...');
-            isLoadingHistory = true;
-            
-            // Показываем индикатор загрузки
-            showLoadingIndicator();
-            
-            // Небольшая задержка для визуального эффекта
-            setTimeout(() => {
-                loadMoreHistory();
-            }, 300);
+            console.log('🔄 Triggering load more...');
+            loadMoreHistorySimple();
         } else {
-            console.log('No more messages to load');
+            console.log('✅ All messages already loaded');
+            hideLoadMoreIndicator();
         }
     }
+}
+
+function loadMoreHistorySimple() {
+    // Устанавливаем флаг загрузки
+    isLoadingHistory = true;
+    console.log('🔒 Setting isLoadingHistory = true');
+    
+    // Показываем индикатор
+    showLoadingIndicator();
+    
+    const fullHistory = getFullHistory();
+    const totalMessages = fullHistory.length;
+    const remainingMessages = totalMessages - currentDisplayedCount;
+    const messagesToLoad = Math.min(CONFIG.MESSAGES_PER_LOAD, remainingMessages);
+    
+    console.log(`📥 Loading ${messagesToLoad} messages (${remainingMessages} remaining)`);
+    
+    if (messagesToLoad === 0) {
+        console.log('❌ No messages to load');
+        isLoadingHistory = false;
+        hideLoadingIndicator();
+        hideLoadMoreIndicator();
+        return;
+    }
+    
+    // Загружаем сообщения
+    const startIndex = totalMessages - currentDisplayedCount - messagesToLoad;
+    const endIndex = totalMessages - currentDisplayedCount;
+    const messagesChunk = fullHistory.slice(startIndex, endIndex);
+    
+    console.log(`📝 Message chunk: ${startIndex}-${endIndex}, length: ${messagesChunk.length}`);
+    
+    // Запоминаем позицию
+    const oldScrollTop = chatBox.scrollTop;
+    const oldScrollHeight = chatBox.scrollHeight;
+    
+    // Добавляем сообщения
+    messagesChunk.forEach(({ sender, text, timestamp }) => {
+        if (sender && text && typeof text === 'string') {
+            prependMessage(sender, text, timestamp);
+        }
+    });
+    
+    // Обновляем счетчик
+    currentDisplayedCount += messagesToLoad;
+    console.log(`📊 Updated count: ${currentDisplayedCount}/${totalMessages}`);
+    
+    // Восстанавливаем позицию + сдвигаем от верха
+    const newScrollHeight = chatBox.scrollHeight;
+    const heightDiff = newScrollHeight - oldScrollHeight;
+    const newScrollTop = oldScrollTop + heightDiff + 200; // +200px от верха
+    
+    console.log(`📍 Scroll: ${oldScrollTop} → ${newScrollTop} (diff: ${heightDiff})`);
+    chatBox.scrollTop = newScrollTop;
+    
+    // Убираем индикатор загрузки
+    hideLoadingIndicator();
+    
+    // Проверяем остались ли еще сообщения
+    const stillRemaining = totalMessages - currentDisplayedCount;
+    console.log(`🔢 Still remaining: ${stillRemaining}`);
+    
+    if (stillRemaining > 0) {
+        console.log('📋 Showing load more indicator');
+        showLoadMoreIndicator();
+    } else {
+        console.log('🏁 All messages loaded, hiding indicator');
+        hideLoadMoreIndicator();
+    }
+    
+    // ВАЖНО: Сбрасываем флаг в конце
+    setTimeout(() => {
+        isLoadingHistory = false;
+        console.log('🔓 Setting isLoadingHistory = false');
+    }, 500); // Даем время на "успокоение" скролла
 }
 
 function getFullHistory() {
