@@ -813,7 +813,7 @@ body.modal-open { overflow: hidden; }
 }
 
 .loader::after {
-  display: none;
+
 }
 
 @keyframes thinking {
