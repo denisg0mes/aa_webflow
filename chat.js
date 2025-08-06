@@ -147,7 +147,19 @@ function setupEventListeners() {
 function handleScroll() {
     // Проверяем, докрутил ли пользователь до верха
     if (chatBox && chatBox.scrollTop <= CONFIG.SCROLL_THRESHOLD) {
-        loadMoreHistory();
+        const fullHistory = getFullHistory();
+        const totalMessages = fullHistory.length;
+        
+        // Проверяем есть ли еще сообщения для загрузки
+        if (currentDisplayedCount < totalMessages) {
+            // Показываем индикатор загрузки
+            showLoadingIndicator();
+            
+            // Небольшая задержка для визуального эффекта
+            setTimeout(() => {
+                loadMoreHistory();
+            }, 500);
+        }
     }
 }
 
@@ -173,7 +185,9 @@ function loadMoreHistory() {
     // Проверяем, есть ли еще сообщения для загрузки
     if (currentDisplayedCount >= totalMessages) {
         console.log('All messages already loaded');
+        hideLoadingIndicator();
         hideLoadMoreIndicator();
+        hideLoadingIndicator();
         return; // Все сообщения уже загружены
     }
     
@@ -190,8 +204,12 @@ function loadMoreHistory() {
     
     if (messagesChunk.length === 0) return;
     
+    // Убираем индикатор загрузки
+    hideLoadingIndicator();
+    
     // Запоминаем текущую позицию прокрутки
     const scrollHeight = chatBox.scrollHeight;
+    const scrollTop = chatBox.scrollTop;
     
     // Добавляем сообщения в начало чата
     messagesChunk.forEach(({ sender, text, timestamp }) => {
@@ -205,12 +223,14 @@ function loadMoreHistory() {
     
     // Восстанавливаем позицию прокрутки (чтобы чат не "прыгал")
     const newScrollHeight = chatBox.scrollHeight;
-    chatBox.scrollTop = newScrollHeight - scrollHeight;
+    chatBox.scrollTop = newScrollHeight - scrollHeight + scrollTop;
     
-    // Скрываем индикатор если все загружено
-    if (currentDisplayedCount >= totalMessages) {
-        console.log('All messages loaded, hiding indicator');
-        hideLoadMoreIndicator();
+    // Показываем новый индикатор если есть еще сообщения
+    if (currentDisplayedCount < totalMessages) {
+        console.log(`Still ${totalMessages - currentDisplayedCount} messages remaining`);
+        showLoadMoreIndicator();
+    } else {
+        console.log('All messages loaded');
     }
 }
 
@@ -469,16 +489,44 @@ function showLoadMoreIndicator() {
         existingIndicator.remove();
     }
     
+    const fullHistory = getFullHistory();
+    const remainingMessages = fullHistory.length - currentDisplayedCount;
+    
+    if (remainingMessages > 0) {
+        const indicator = document.createElement('div');
+        indicator.className = 'load-more-indicator';
+        indicator.innerHTML = `↑ Scroll up to load ${Math.min(CONFIG.MESSAGES_PER_LOAD, remainingMessages)} more messages`;
+        indicator.style.cssText = `
+            text-align: center;
+            padding: 8px 12px;
+            color: #666;
+            font-size: 12px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            animation: shimmer 2s ease-in-out infinite;
+        `;
+        
+        chatBox.insertBefore(indicator, chatBox.firstChild);
+    }
+}
+
+function showLoadingIndicator() {
+    // Удаляем индикатор "load more"
+    hideLoadMoreIndicator();
+    
     const indicator = document.createElement('div');
-    indicator.className = 'load-more-indicator';
-    indicator.innerHTML = '↑ Scroll up to load more messages';
+    indicator.className = 'loading-more-indicator';
+    indicator.innerHTML = 'Loading more messages';
     indicator.style.cssText = `
         text-align: center;
-        padding: 10px;
+        padding: 8px 12px;
         color: #666;
         font-size: 12px;
         border-bottom: 1px solid #eee;
         margin-bottom: 10px;
+        background: #f0f0f0;
+        animation: shimmer 2s ease-in-out infinite;
     `;
     
     chatBox.insertBefore(indicator, chatBox.firstChild);
@@ -486,6 +534,13 @@ function showLoadMoreIndicator() {
 
 function hideLoadMoreIndicator() {
     const indicator = chatBox.querySelector('.load-more-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+function hideLoadingIndicator() {
+    const indicator = chatBox.querySelector('.loading-more-indicator');
     if (indicator) {
         indicator.remove();
     }
@@ -546,6 +601,7 @@ function renderLoader() {
     const bubble = document.createElement("div");
     bubble.className = "bubble bot loader";
     bubble.textContent = "Thinking";
+    bubble.style.animation = "shimmer 2s ease-in-out infinite";
     
     messageContainer.appendChild(bubble);
     chatBox.appendChild(messageContainer);
