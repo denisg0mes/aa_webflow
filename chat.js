@@ -208,31 +208,9 @@ function prependMessage(sender, text, messageTimestamp = null) {
     
     const bubble = document.createElement("div");
     bubble.className = `bubble ${sender}`;
+    bubble.textContent = text;
     
-    // Используем переданное время или текущее
-    const timeToShow = messageTimestamp ? formatTimestamp(new Date(messageTimestamp)) : formatTimestamp();
-    
-    if (sender === "user") {
-        const messageText = document.createElement("div");
-        messageText.textContent = text;
-        
-        const timestamp = document.createElement("div");
-        timestamp.className = "timestamp user";
-        timestamp.textContent = timeToShow;
-        
-        bubble.appendChild(messageText);
-        bubble.appendChild(timestamp);
-        messageContainer.appendChild(bubble);
-    } else {
-        bubble.textContent = text;
-        
-        const timestamp = document.createElement("div");
-        timestamp.className = "timestamp";
-        timestamp.textContent = timeToShow;
-        
-        messageContainer.appendChild(bubble);
-        messageContainer.appendChild(timestamp);
-    }
+    messageContainer.appendChild(bubble);
     
     // Вставляем в начало чата
     chatBox.insertBefore(messageContainer, chatBox.firstChild);
@@ -249,18 +227,6 @@ function autoResizeTextarea() {
     newHeight = Math.min(newHeight, CONFIG.TEXTAREA_MAX_HEIGHT);
     
     userInput.style.height = newHeight + 'px';
-}
-
-function formatTimestamp(date = new Date()) {
-    return date.toLocaleDateString('en-US', { 
-        month: 'long', 
-        day: 'numeric',
-        year: 'numeric'
-    }) + ' ' + date.toLocaleTimeString([], { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-    }).toLowerCase();
 }
 
 function updateCharCounter() {
@@ -443,65 +409,38 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
     const bubble = document.createElement("div");
     bubble.className = `bubble ${sender}`;
     
-    // Используем переданное время или текущее
-    const timeToShow = messageTimestamp ? formatTimestamp(new Date(messageTimestamp)) : formatTimestamp();
-    
     if (sender === "user") {
-        // Для пользователя: текст + время внутри пузыря
-        const messageText = document.createElement("div");
-        messageText.textContent = text;
-        
-        const timestamp = document.createElement("div");
-        timestamp.className = "timestamp user";
-        timestamp.textContent = timeToShow;
-        
-        bubble.appendChild(messageText);
-        bubble.appendChild(timestamp);
+        // Для пользователя: просто текст
+        bubble.textContent = text;
         messageContainer.appendChild(bubble);
-        
-        // Добавляем в чат
         chatBox.appendChild(messageContainer);
     } else {
-        // Для бота: текст без фона + время снаружи
-        const timestamp = document.createElement("div");
-        timestamp.className = "timestamp";
-        timestamp.textContent = timeToShow;
-        
+        // Для бота: текст без фона
         messageContainer.appendChild(bubble);
-        messageContainer.appendChild(timestamp);
-        
-        // ВАЖНО: Сначала добавляем в чат
         chatBox.appendChild(messageContainer);
         
         if (animated) {
-            // Отменяем предыдущую анимацию печати
+            // Отменяем предыдущую анимацию
             if (currentTypingCancel) {
                 currentTypingCancel();
                 currentTypingCancel = null;
             }
             
-            // Сначала ставим пустой текст
+            // ПРОСТОЕ решение: сначала показываем полный текст (невидимый)
+            bubble.textContent = text;
+            bubble.style.visibility = 'hidden';
+            
+            // Принудительный reflow для получения финальной высоты
+            const finalHeight = bubble.offsetHeight;
+            
+            // Теперь готовим к анимации
             bubble.textContent = "";
+            bubble.style.visibility = 'visible';
+            bubble.style.height = finalHeight + 'px';
+            bubble.style.overflow = 'hidden';
             
-            // Создаем временный невидимый элемент для измерения высоты
-            const tempDiv = document.createElement("div");
-            tempDiv.className = `bubble ${sender}`;
-            tempDiv.textContent = text;
-            tempDiv.style.visibility = "hidden";
-            tempDiv.style.position = "absolute";
-            tempDiv.style.top = "-9999px";
-            tempDiv.style.maxWidth = "70%"; // Как у обычного bubble
-            
-            document.body.appendChild(tempDiv);
-            const fullHeight = tempDiv.offsetHeight;
-            document.body.removeChild(tempDiv);
-            
-            // Фиксируем высоту
-            bubble.style.height = fullHeight + "px";
-            bubble.style.overflow = "hidden";
-            
-            // Запускаем анимацию с возможностью отмены
-            currentTypingCancel = typeWriter(bubble, text, CONFIG.TYPING_SPEED);
+            // Запускаем простую анимацию
+            currentTypingCancel = typeWriterSimple(bubble, text, finalHeight);
         } else {
             bubble.textContent = text;
         }
@@ -511,25 +450,52 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
     return messageContainer;
 }
 
-function typeWriter(element, text, speed = CONFIG.TYPING_SPEED) {
-    let i = 0;
-    let timeoutId;
+// Простая и надежная анимация
+function typeWriterSimple(element, text, finalHeight) {
+    let currentText = "";
+    let index = 0;
+    let animationId;
+    let cancelled = false;
     
-    function type() {
-        if (i < text.length && element && element.parentNode) { // Проверяем что элемент еще в DOM
-            element.textContent += text.charAt(i);
-            i++;
-            scrollToBottom();
-            timeoutId = setTimeout(type, speed);
+    function animate() {
+        if (cancelled || !element || !element.parentNode) {
+            // Простая гарантия: показываем весь текст
+            if (element && element.parentNode) {
+                element.textContent = text;
+                element.style.height = 'auto';
+                element.style.overflow = 'visible';
+            }
+            return;
+        }
+        
+        if (index < text.length) {
+            currentText += text[index];
+            element.textContent = currentText;
+            index++;
+            
+            // Используем setTimeout для контролируемой задержки
+            animationId = setTimeout(animate, CONFIG.TYPING_SPEED);
+        } else {
+            // Анимация завершена
+            element.style.height = 'auto';
+            element.style.overflow = 'visible';
+            scrollToBottom(); // Финальная прокрутка
         }
     }
     
-    type();
+    animate();
     
-    // Возвращаем функцию для отмены анимации
+    // Простая функция отмены
     return () => {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
+        cancelled = true;
+        if (animationId) {
+            clearTimeout(animationId);
+        }
+        // Гарантированно показываем полный текст
+        if (element && element.parentNode) {
+            element.textContent = text;
+            element.style.height = 'auto';
+            element.style.overflow = 'visible';
         }
     };
 }
