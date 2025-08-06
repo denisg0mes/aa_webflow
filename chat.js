@@ -4,7 +4,7 @@ const CONFIG = {
     WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
     STORAGE_PREFIX: "secure_chat_",
     REQUEST_TIMEOUT: 30000,
-    TYPING_SPEED: 10, // Скорость печати в миллисекундах между символами
+    TYPING_SPEED: 30, // Скорость печати в миллисекундах между символами
     SCROLL_THRESHOLD: 100,        // Порог прокрутки для загрузки истории
     ERROR_DISPLAY_TIME: 5000,     // Время показа ошибок
     FOCUS_DELAY: 100,             // Задержка возврата фокуса
@@ -12,7 +12,7 @@ const CONFIG = {
     TEXTAREA_MAX_HEIGHT: 120,     // Максимальная высота textarea
     THROTTLE_DELAY: 100,          // Задержка для throttling
     DEBOUNCE_DELAY: 50,           // Задержка для debouncing
-    MESSAGES_PER_LOAD: 6         // Количество сообщений загружаемых за раз
+    MESSAGES_PER_LOAD: 15         // Количество сообщений загружаемых за раз
 };
 
 // Состояние приложения
@@ -146,16 +146,25 @@ function setupEventListeners() {
 }
 
 function handleScroll() {
+    const scrollTop = chatBox ? chatBox.scrollTop : 0;
+    
     // Не загружаем если уже загружаем
-    if (isLoadingHistory) return;
+    if (isLoadingHistory) {
+        console.log('Already loading history, skipping');
+        return;
+    }
     
     // Проверяем, докрутил ли пользователь до верха
-    if (chatBox && chatBox.scrollTop <= CONFIG.SCROLL_THRESHOLD) {
+    if (chatBox && scrollTop <= CONFIG.SCROLL_THRESHOLD) {
         const fullHistory = getFullHistory();
         const totalMessages = fullHistory.length;
         
+        console.log(`Scroll trigger: scrollTop=${scrollTop}, threshold=${CONFIG.SCROLL_THRESHOLD}`);
+        console.log(`Messages: ${currentDisplayedCount}/${totalMessages}`);
+        
         // Проверяем есть ли еще сообщения для загрузки
         if (currentDisplayedCount < totalMessages) {
+            console.log('Starting to load more history...');
             isLoadingHistory = true;
             
             // Показываем индикатор загрузки
@@ -165,6 +174,8 @@ function handleScroll() {
             setTimeout(() => {
                 loadMoreHistory();
             }, 300);
+        } else {
+            console.log('No more messages to load');
         }
     }
 }
