@@ -1,973 +1,627 @@
-:root {
-  --pad-left-big: 28%;
-  --pad-left-small: 15%;
-  --pad-right-small: 20px;
-  --spacer: 30px;
-  --pad-side: 4px;
-  --menu-clr-white: rgba(255,255,255,1);
-  --menu-clr-white-alfa: rgba(255,255,255,.5);
-  --menu-clr-black: rgba(0,0,0,1);
-  --menu-clr-black-alfa: rgba(0,0,0,.5);
-}
-
-body {
-  -webkit-font-smoothing: antialiased !important;
-}
-
-/* ============================= */
-/*            Gallery            */
-/* ============================= */
-
-.w-richtext .custom-gallery-wrapper .custom-gallery {
-  width: 100%;
-  height: 800px;
-  margin: 60px 0;
-}
-
-/* card Flickity */
-.gallery-cell {
-  height: 100%;
-  width: auto;   
-  margin-right: 4px; /* GAP */
-  user-select: none;
-}
-
-/* скрываем нативный скролл на случай fallback */
-.custom-gallery::-webkit-scrollbar { display: none; }
-.custom-gallery { -ms-overflow-style: none; scrollbar-width: none; }
-
-/*---GALLERY DOTS---*/  
-.custom-gallery .flickity-page-dots{
-  bottom:-16px;    /* SPACER */
-}
-
-.custom-gallery .flickity-page-dots .dot{
-  width:26px; 
-  height:3px;
-  margin:0 2px; 
-  border-radius:0;
-  background:#000;
-  opacity:.2;
-  transition:opacity .3s;
-}
-
-.custom-gallery .flickity-page-dots .dot.is-selected {
-  opacity: 1;
-}
-
-/* ============================= */
-/*      Rich Text with alt       */
-/* ============================= */
-
-/* WIDE */
-.w-richtext > p img[alt="wide"],
-.w-richtext > figure img[alt="wide"] {
-  display: block;
-  width: 100%;
-  max-width: 3000px;
-  height: auto;
-}
-
-/* VERICAL */
-.w-richtext > p img[alt="vertical"],
-.w-richtext > figure img[alt="vertical"] {
-  height: auto;
-  max-width: 3000px;
-}
-
-/* HORIZONTAL */
-.w-richtext > p img[alt="horizontal"],
-.w-richtext > figure img[alt="horizontal"] {
-  display: block;
-  height: auto;
-  max-width: 3000px;
-}
-
-.rt-wrapper--wide {
-  padding: 0;
-}
-
-.rt-wrapper--vertical {
-  padding: 0 20% 0 var(--pad-left-big);
-}
-
-.rt-wrapper--horizontal {
-  padding: 0 0 0 var(--pad-left-big);
-}
-
-figure {
-  margin: 60px 0;
-}
-
-/*---PROJECT and ARTICLE---*/  
-.cms_content p {
-  margin: var(--spacer) 0 var(--spacer) var(--pad-left-big);
-  max-width: 700px;
-}
-
-.cms_content h3 {
-  margin-left: var(--pad-left-big);
-}
-.w-richtext figure img {
-  /*padding: var(--spacer) 0 var(--spacer);*/
-}
-
-blockquote {
-  font-size: var(--blockquote--size);
-  line-height: var(--blockquote--line-height);
-  letter-spacing: var(--blockquote--letter-spacing);
-  margin: calc(var(--spacer) + 40px) 20px calc(var(--spacer) + 60px) 20px;
-  max-width: 1200px;
-  padding: 0;
-  border: none;
-}
-
-/* ============================= */
-/*    Main navigation: white     */
-/* ============================= */
-.menu_item,
-.footer_item{
-  display:inline-block;
-}
-.label{
-  display:inline-block;
-  transition:color .2s ease, transform .2s ease;
-  will-change:color, transform;
-  color:var(--menu-clr-white-alfa);
-}
-.menu_item:hover .label,
-.menu_item:focus .label{
-  transform:translateX(16px);
-  color:var(--menu-clr-white);
-}
-
-/* Стандартный активный пункт (точное совпадение страницы) */
-.nav_menu .w--current .label {
-  color:var(--menu-clr-white);
-  transform:translateX(16px);
-}
-
-/* Родительские разделы на вложенных страницах (белый фон) */
-.menu_item.section-active .label {
-  color:var(--menu-clr-white);
-  transform:translateX(0);
-}
-
-/* ИСПРАВЛЕННОЕ поведение при ховере на меню */
-/* Убираем стили для .nav_menu:hover и используем только прямое наведение */
-
-/* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
-.nav_menu .menu_item:hover ~ .w--current .label,
-.nav_menu .menu_item:hover ~ .section-active .label {
-  transform: translateX(0);
-  color:var(--menu-clr-white-alfa);
-}
-
-/* Прямое наведение на активный пункт возвращает его стили */
-.nav_menu .w--current:hover .label {
-  transform: translateX(16px);
-  color:var(--menu-clr-white);
-}
-.nav_menu .section-active:hover .label {
-  transform: translateX(16px);
-  color:var(--menu-clr-white);
-}
-
-/*--- home menu container white ---*/
-.container_home .label,
-.footer_home .label {
-  color:var(--menu-clr-white);
-}
-/*--- footer navigation white ---*/ 
-.footer_item:hover .label,
-.w-nav-brand {
-  color:var(--menu-clr-white);
-}
-
-/* ============================= */
-/*    Main navigation: black     */
-/* ============================= */ 
-.container_light .label,
-.container-info .label,
-.footer_light .label 
-{
-  display:inline-block;
-  transition:color .2s ease, transform .2s ease;
-  will-change:color, transform;
-  color:var(--menu-clr-black-alfa);
-}
-.container_light .menu_item:hover .label,
-.container_light .menu_item:focus .label,
-.container-info .menu_item:hover .label,
-.container-info .menu_item:focus .label
-{
-  color:var(--menu-clr-black);
-}
-
-/* Стандартный активный пункт (светлый фон) */
-.container_light .nav_menu .w--current .label,
-.container-info .nav_menu .w--current .label 
-{
-  color:var(--menu-clr-black);
-}
-
-/* Родительские разделы на вложенных страницах (светлый фон) */
-.container_light .menu_item.section-active .label, 
-.container-info .menu_item.section-active .label
-{
-  color:var(--menu-clr-black);
-  transform:translateX(0);
-}
-
-/* Когда НЕ наводим на активный пункт, но наводим на другие пункты */
-.container_light .nav_menu .menu_item:hover ~ .w--current .label,
-.container_light .nav_menu .menu_item:hover ~ .section-active .label, 
-.container-info .nav_menu .menu_item:hover ~ .w--current .label,
-.container-info .nav_menu .menu_item:hover ~ .section-active .label
-{
-  color:var(--menu-clr-black-alfa);
-  transform: translateX(0);
-}
-
-/* Прямое наведение на активный пункт возвращает его стили */
-.container_light .nav_menu .w--current:hover .label,
-.container-info .nav_menu .w--current:hover .label
-{
-  color:var(--menu-clr-black);
-}
-
-.container_light .nav_menu .section-active:hover .label, 
-.container-info .nav_menu .section-active:hover .label
-{
-  transform: translateX(16px);
-  color:var(--menu-clr-black);
-}
-
-/*---footer navigation black---*/ 
-
-.footer_light .footer_item:hover .label
-{
-  color:var(--menu-clr-black);
-}
-
-.container_light .w-nav-brand,
-.container-info .w-nav-brand
-{
-  color:var(--menu-clr-black);
-}
-
-/* ============================= */
-/*          Mobile menu          */
-/* ============================= */
-
-/* .menu-trigger (логотип) */
-.menu-trigger {
-  position: fixed;
-  left: 50%;
-  bottom: 23px;
-  transform: translateX(-50%);
-  z-index: 10;                    /* логотип над всем */
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* .menu-overlay (контейнер) */
-.menu-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9;                     /* чуть ниже логотипа */
-/*   display: flex;
-  justify-content: center; */
-  align-items: flex-end;          /* прижать к низу */
-  padding-bottom: 130px;          /* смещение над логотипом */
-}
-
-/* .overlay-bg (SVG-фон) */
-.menu-overlay .overlay-bg {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  width: 93px;
-  height: 76px;
-  transform: translateX(-50%) scale(1);
-  transform-origin: center center;
-  transition: transform .45s ease 0s;  /* без delay */
-  z-index: 0;                          /* фон под меню */
-}
-
-/* .menu-container (весь блок с пунктами) */
-/* — базовое состояние: мгновенно спрятано */
-.menu-overlay .menu-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  padding: 40px 8px 0 8px;
-  opacity: 0;
-  transform: translateY(40px);
-  pointer-events: none;
-  transition:
-    opacity 0.25s ease 0s,
-    transform 0.25s ease 0s;          /* сразу, без delay */
-  z-index: 1;                          /* над фоном, под логотипом */
-}
-
-/* === Открытое состояние === */
-.menu-overlay.open {
-  pointer-events: auto;
-}
-
-/* — растягиваем фон сразу при open */
-.menu-overlay.open .overlay-bg {
-  transform: translateX(-50%) scale(20);
-}
-
-/* — появление меню с delay ровно 0.4s */
-.menu-overlay.open .menu-container {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-  transition-delay: 0.4s;            /* задержка перед появлением */
-}
-
-/* Основные пункты */
-.menu-main {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;            /* отступ между ссылками */
-}
-.menu-main a {
-  font-size: 60px;
-  letter-spacing: -2px;
-  line-height: 54px;
-  color: #000;
-  text-decoration: none;
-  align-self: flex-start; 
-  width: fit-content;
-}
-
-/* Дополнительные блоки в две колонки */
-.menu-extra {
-  display: flex;
-  gap: 30px;
-  width: 100%;
-  margin-top: 3rem;
-}
-.menu-extra .column {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.menu-extra .column a {
-  font-size: 1rem;
-  color: #444;
-  text-decoration: none;
-}
-
-/* Активный пункт меню */
-.menu-container .w--current {
-  border-bottom: 2px solid;
-}
-
-
-
-/* ============================= */
-/*             Fields            */
-/* ============================= */
-
-.popup-subcontainer p {
-  max-width: 600px
-}
-
-.w-embed {
-  width: 100%;
-}
-
-.horizontal-forms {
-  display: flex;
-  gap: 2px;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.field {
-  flex: 1;
-  position: relative;
-}
-.input {
-  width: 100%;
-  height: 70px;
-  padding: 22px 20px 8px 16px;
-  border: none;
-  background: #fff;
-  font-size: 18px;
-  line-height: 22px;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.input::placeholder {
-  color: transparent;
-}
-
-.floating-label {
-  position: absolute;
-  left: 16px;
-  top: 24px;
-  font-size: 18px;
-  line-height: 22px;
-  color: #999;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  padding: 0 4px;
-  margin-left: -4px;
-  transform-origin: left center;
-}
-
-.floating-label.active {
-  top: 10px;
-  font-size: 14px;
-  line-height: 18px;
-  color: #666;
-  transform: scale(1);
-}
-
-.input.error {
-  background: #FFF7F7;
-}
-
-.error-message {
-  color: #C04B4B;
-  font-size: 14px;
-  line-height: 18px;
-  margin: 0 0 0 16px;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: all 0.3s ease;
-  transform: translateY(-10px);
-}
-
-.error-message.show {
-  margin: 8px 0 0 16px;
-  max-height: 50px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* BUTTON */
-
-.submit-button {
-  height: 70px;
-  flex-shrink: 0;
-  padding: 0 32px;
-  background: #000;
-  color: #fff;
-  border: none;
-  font-size: 18px;
-  line-height: 22px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  white-space: nowrap;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.submit-button:hover {
-  background: #333;
-}
-
-.submit-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-/* CHECKBOX */
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 20px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.form-checkbox {
-  position: relative;
-  width: 35px;
-  height: 35px;
-  background: #fff;
-  border: none;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.checkbox-icon {
-  width: 20px;
-  height: 20px;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.3s ease;
-}
-
-.form-checkbox.checked .checkbox-icon {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.checkbox-label {
-  color: #000;
-  font-size: 18px;
-  line-height: 22px;
-  cursor: pointer;
-}
-
-.checkbox-label a {
-  color: #000;
-  text-decoration: underline;
-}
-
-.checkbox-label a:hover {
-  text-decoration: none;
-}
-
-.checkbox-error {
-  color: #C04B4B;
-  font-size: 14px;
-  line-height: 18px;
-  margin-top: 0;
-  padding-left: 46px;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: all 0.3s ease;
-  transform: translateY(-10px);
-}
-
-.checkbox-error.show {
-  max-height: 50px;
-  margin-top: 6px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-
-/* ============================= */
-/*          Notifications        */
-/* ============================= */
-
-/* Toast контейнер */
-.toast-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-/* Отдельное уведомление */
-.toast {
-  background: #000000;
-  color: #E1E1E1;
-  margin-left: auto;
-/*   width: 55%; */
-  padding: 30px 40px;
-  pointer-events: auto;
-  transform: translateY(-100%);
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.toast.error {
-  background: #3A1717;
-  color: #FFE5E5;
-}
-
-.toast.show {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.toast.hide {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
-/* Для множественных уведомлений */
-.toast + .toast {
-  margin-top: 8px;
-}
-
-/* ============================= */
-/*             Modal             */
-/* ============================= */
-
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.modal-back {
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,.55);
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-
-.modal-container {
-  position: absolute;
-  overflow-y: auto;
-  right: 0;
-  top: 0;
-  width: 55%;
-  height: 100%;
-  background: var(--layout--bg_light);
-  transform: translateX(100%);
-  opacity: 0;
-  transition: transform .4s ease, opacity .3s ease;
-  will-change: transform, opacity;
-}
-
-.modal-content {
-  padding: 80px 10px 0 10px;
-}
-
-.modal-subcontainer {
-  padding: 0 10% 0 15%
-}
-
-/* состояние «открыто» */
-.modal.is-open {
-  pointer-events: auto;
-}
-.modal.is-open .modal-back  { opacity: 1; }
-.modal.is-open .modal-container {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-/* блокировка прокрутки */
-body.modal-open { overflow: hidden; }
-
-
-/* ============================= */
-/*             Chat              */
-/* ============================= */
-
-.chat-container .w-embed {
-  display: flex;
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* Chat container */
-#chat_box {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px 10% 220px 10%;
-  margin: 0 auto;
-  width: 100%;
-}
-
-/* Date separator */
-.date-separator {
-  text-align: left;
-  margin: 40px 0 20px 0;
-}
-
-.date-text {
-  background: transparent;
-  color: #666;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.3px;
-}
-
-/* Message bubbles */
-.message-container {
-  margin: 24px 0 46px 0;
-  display: flex;
-  flex-direction: column;
-/*   max-width: 800px; */
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.message-container.user {
-  align-items: flex-end;
-}
-
-.message-container.bot {
-  align-items: flex-start;
-}
-
-.bubble {
-  max-width: 80%;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-}
-
-.bubble.user {
-  background: white;
-  padding: 24px;
-}
-
-.bubble.bot {
-  background: transparent;
-  color: #333;
-  padding: 0;
-  margin-bottom: 4px;
-}
-
-/* Input container */
-.input-container {
-  position: fixed;
-  height: 180px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  padding: 20px 10%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: 12px;
-  margin: 0 auto;
-}
-
-.input-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-/* Multiline input field */
-#user_input {
-  flex: 1;
-  min-height: 50px;
-  max-height: 120px;
-  padding: 12px 0;
-  background: white;
-  border: none;
-  resize: none;
-  overflow-y: auto;
-}
-
-#user_input:focus {
-  outline: none;
-  border: none;
-}
-
-#user_input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-#user_input::placeholder {
-  color: #999;
-}
-
-/* Custom scrollbar for input */
-#user_input::-webkit-scrollbar {
-  width: 4px;
-}
-
-#user_input::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-#user_input::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
-  border-radius: 2px;
-}
-
-/* Loader */
-.loader {
-  background: transparent;
-  color: #666;
-  position: relative;
-  padding: 0;
-  animation: shimmer 2s ease-in-out infinite;
-  
-.loader::after {
-  display: none;
-}
-
-@keyframes shimmer {
-    0%, 100% { 
-        opacity: 0.2; 
-    }
-    50% { 
-        opacity: 1; 
+// Конфигурация
+const CONFIG = {
+    MAX_MESSAGE_LENGTH: 1000,
+    WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
+    STORAGE_PREFIX: "secure_chat_",
+    REQUEST_TIMEOUT: 30000,
+    TYPING_SPEED: 30, // Скорость печати в миллисекундах между символами
+    SCROLL_THRESHOLD: 100,        // Порог прокрутки для загрузки истории
+    ERROR_DISPLAY_TIME: 5000,     // Время показа ошибок
+    FOCUS_DELAY: 100,             // Задержка возврата фокуса
+    TEXTAREA_MIN_HEIGHT: 48,      // Минимальная высота textarea
+    TEXTAREA_MAX_HEIGHT: 120,     // Максимальная высота textarea
+    THROTTLE_DELAY: 100,          // Задержка для throttling
+    DEBOUNCE_DELAY: 50            // Задержка для debouncing
+};
+
+// Состояние приложения
+let isLoading = false;
+let sessionId = null;
+let currentDisplayedCount = 0; // Количество отображаемых сообщений
+const MESSAGES_PER_LOAD = 15; // Сколько сообщений загружать за раз
+let currentTypingCancel = null; // Для отмены предыдущей анимации печати
+
+// DOM элементы
+let chatBox, userInput, sendButton, charCounter;
+
+// Утилиты для производительности
+function throttle(func, delay) {
+    let timeoutId;
+    let lastExecTime = 0;
+    return function (...args) {
+        const currentTime = Date.now();
+        if (currentTime - lastExecTime > delay) {
+            func.apply(this, args);
+            lastExecTime = currentTime;
+        }
+    };
+}
+
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// Безопасные функции для localStorage
+function safeLocalStorageGet(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (e) {
+        console.warn('localStorage unavailable:', e);
+        return null;
     }
 }
 
-/* Error message */
-.error-message {
-  background: #fff;
-  color: #d32f2f;
-  border: 1px solid #f5c6cb;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin: 8px 0;
-  font-size: 14px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+function safeLocalStorageSet(key, value) {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch (e) {
+        console.warn('localStorage unavailable:', e);
+        return false;
+    }
 }
 
-/* Character counter */
-.char-counter {
-  font-size: 12px;
-  color: #999;
-  text-align: left;
+function safeLocalStorageRemove(key) {
+    try {
+        localStorage.removeItem(key);
+        return true;
+    } catch (e) {
+        console.warn('localStorage unavailable:', e);
+        return false;
+    }
 }
 
-.char-counter.warning {
-  color: #ff9800;
+// Инициализация после загрузки DOM
+document.addEventListener('DOMContentLoaded', initializeChat);
+
+function initializeChat() {
+    // Получение DOM элементов
+    chatBox = document.getElementById("chat_box");
+    userInput = document.getElementById("user_input");
+    sendButton = document.getElementById("chatButton");
+    charCounter = document.getElementById("char_counter");
+
+    if (!chatBox || !userInput || !sendButton) {
+        console.error('Required DOM elements not found');
+        return;
+    }
+
+    // Инициализация сессии
+    initializeSession();
+    
+    // Восстановление истории
+    loadChatHistory();
+    
+    // Установка обработчиков событий
+    setupEventListeners();
+    
+    console.log('Chat initialized successfully');
 }
 
-.char-counter.error {
-  color: #d32f2f;
+function initializeSession() {
+    try {
+        sessionId = safeLocalStorageGet(`${CONFIG.STORAGE_PREFIX}session_id`);
+        if (!sessionId) {
+            sessionId = crypto.randomUUID();
+            safeLocalStorageSet(`${CONFIG.STORAGE_PREFIX}session_id`, sessionId);
+        }
+    } catch (error) {
+        console.error('Session initialization failed:', error);
+        sessionId = Date.now().toString(); // Fallback
+    }
 }
 
+function setupEventListeners() {
+    // Автоматическое изменение высоты textarea с debouncing
+    userInput.addEventListener('input', debounce(() => {
+        autoResizeTextarea();
+        updateCharCounter();
+    }, CONFIG.DEBOUNCE_DELAY));
 
-.submit-button.loading {
-    position: relative;
-    color: transparent; /* Скрываем текст */
+    // Отправка по Enter (без Shift)
+    userInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey && !isLoading) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // Отправка по кнопке
+    sendButton.addEventListener("click", () => {
+        if (!isLoading) {
+            sendMessage();
+        }
+    });
+
+    // Обработчик прокрутки для подгрузки истории с throttling
+    chatBox.addEventListener('scroll', throttle(handleScroll, CONFIG.THROTTLE_DELAY));
+    
+    // Инициализация счетчика
+    updateCharCounter();
 }
 
-.submit-button.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    margin: -6px 0 0 -6px;
-    border: 2px solid #fff;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+function handleScroll() {
+    // Проверяем, докрутил ли пользователь до верха
+    if (chatBox && chatBox.scrollTop <= CONFIG.SCROLL_THRESHOLD) {
+        loadMoreHistory();
+    }
 }
 
-/* Loader animation */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+function getFullHistory() {
+    try {
+        const raw = safeLocalStorageGet(getStorageKey());
+        if (!raw) return [];
+        
+        const history = JSON.parse(raw);
+        return Array.isArray(history) ? history : [];
+    } catch (error) {
+        console.error('Failed to get full history:', error);
+        return [];
+    }
 }
 
-/* Chat scrollbar */
-#chat_box::-webkit-scrollbar {
-  width: 6px;
-}
-
-#chat_box::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-#chat_box::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
-  border-radius: 3px;
-}
-
-
-@media only screen and (max-width: 768px) {
-
-    .bubble { 
-      max-width: 85%; 
-      font-size: 14px;
+function loadMoreHistory() {
+    const fullHistory = getFullHistory();
+    const totalMessages = fullHistory.length;
+    
+    // Проверяем, есть ли еще сообщения для загрузки
+    if (currentDisplayedCount >= totalMessages) {
+        return; // Все сообщения уже загружены
     }
     
-    .input-container {
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 15px;
-      gap: 8px;
-    }
+    // Вычисляем сколько еще нужно загрузить
+    const remainingMessages = totalMessages - currentDisplayedCount;
+    const messagesToLoad = Math.min(MESSAGES_PER_LOAD, remainingMessages);
     
-    #user_input {
-      padding: 10px 14px;
-      font-size: 16px; /* Prevents zoom on iOS */
-    }
+    // Берем следующую порцию сообщений (с конца истории, но раньше уже показанных)
+    const startIndex = totalMessages - currentDisplayedCount - messagesToLoad;
+    const endIndex = totalMessages - currentDisplayedCount;
+    const messagesChunk = fullHistory.slice(startIndex, endIndex);
     
-    #chat_button {
-      width: 44px;
-      height: 44px;
-    }
+    if (messagesChunk.length === 0) return;
+    
+    // Запоминаем текущую позицию прокрутки
+    const scrollHeight = chatBox.scrollHeight;
+    
+    // Добавляем сообщения в начало чата
+    messagesChunk.forEach(({ sender, text, timestamp }) => {
+        if (sender && text && typeof text === 'string') {
+            prependMessage(sender, text, timestamp);
+        }
+    });
+    
+    // Обновляем счетчик отображаемых сообщений
+    currentDisplayedCount += messagesToLoad;
+    
+    // Восстанавливаем позицию прокрутки (чтобы чат не "прыгал")
+    const newScrollHeight = chatBox.scrollHeight;
+    chatBox.scrollTop = newScrollHeight - scrollHeight;
+}
 
-    .date-text {
-      font-size: 13px;
+function prependMessage(sender, text, messageTimestamp = null) {
+    const messageContainer = document.createElement("div");
+    messageContainer.className = `message-container ${sender}`;
+    
+    const bubble = document.createElement("div");
+    bubble.className = `bubble ${sender}`;
+    bubble.textContent = text;
+    
+    messageContainer.appendChild(bubble);
+    
+    // Вставляем в начало чата
+    chatBox.insertBefore(messageContainer, chatBox.firstChild);
+    
+    return messageContainer;
+}
+
+function autoResizeTextarea() {
+    // Сброс высоты для правильного пересчета
+    userInput.style.height = 'auto';
+    
+    // Вычисляем нужную высоту
+    let newHeight = Math.max(CONFIG.TEXTAREA_MIN_HEIGHT, userInput.scrollHeight);
+    newHeight = Math.min(newHeight, CONFIG.TEXTAREA_MAX_HEIGHT);
+    
+    userInput.style.height = newHeight + 'px';
+}
+
+function updateCharCounter() {
+    const length = userInput.value.length;
+    const max = CONFIG.MAX_MESSAGE_LENGTH;
+    
+    charCounter.textContent = `${length}/${max}`;
+    
+    // Изменение цвета в зависимости от лимита
+    charCounter.className = 'char-counter';
+    if (length > max * 0.9) {
+        charCounter.classList.add('warning');
+    }
+    if (length >= max) {
+        charCounter.classList.add('error');
     }
 }
 
-/* ============================= */
-/*             Mobile            */
-/* ============================= */
-
-@media (max-width: 768px) {
-  
-  /* Notifications */
-  .toast { 
-    margin: 8px 12px 0 12px;
-    padding: 14px 16px;
-    font-size: 14px;
-  }
-  
-  /* Gallery */
-  .w-richtext .custom-gallery-wrapper .custom-gallery {
-    width: 100%;
-    height: 280px;
-    margin: 40px 0;
-  }
-
-  /* Articles */
-  .cms_content h3 {
-    margin-left: var(--pad-left-small);
-  }
-  .cms_content p {
-    margin: var(--spacer) var(--pad-right-small) var(--spacer) var(--pad-left-small);
-    max-width: 700px;
-  }
-  .rt-wrapper--vertical {
-    padding: 0 0 0 var(--pad-left-small);
-  }
-  .rt-wrapper--horizontal {
-    padding: 0 0 0 var(--pad-left-small);
-  }
-
-  /* Modal */
-  .modal-container {
-    width: 100%;
-    min-height: 100dvh;
-  }
-  .modal-content {
-    padding: 40px 10px 100px 10px;
-  }
-  .modal-subcontainer {
-    padding: 0;
-  }
-  
-  /* Forms */
-  .horizontal-forms {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-  .horizontal-forms .submit-button {
-    width: 100%;
-  }
-  .cover-image {
-    height: 150px;
-  }
+function validateMessage(message) {
+    if (!message || message.trim().length === 0) {
+        return { valid: false, error: "Message cannot be empty" };
+    }
+    
+    if (message.length > CONFIG.MAX_MESSAGE_LENGTH) {
+        return { valid: false, error: `Message too long (max ${CONFIG.MAX_MESSAGE_LENGTH} characters)` };
+    }
+    
+    return { valid: true };
 }
+
+function sanitizeMessage(message) {
+    // Базовая очистка от потенциально опасных символов
+    return message
+        .trim()
+        .replace(/[\u0000-\u001f\u007f-\u009f]/g, '') // Удаляем control characters
+        .substring(0, CONFIG.MAX_MESSAGE_LENGTH);
+}
+
+async function sendMessage() {
+    if (isLoading) return;
+
+    const rawMessage = userInput.value;
+    const validation = validateMessage(rawMessage);
+    
+    if (!validation.valid) {
+        showError(validation.error);
+        return;
+    }
+
+    const message = sanitizeMessage(rawMessage);
+    
+    try {
+        // Блокируем интерфейс
+        setLoadingState(true);
+        
+        // Отображаем сообщение пользователя
+        renderMessage("user", message);
+        appendToHistory("user", message);
+        userInput.value = "";
+        autoResizeTextarea(); // Сброс высоты после очистки
+        updateCharCounter();
+
+        // Показываем индикатор загрузки
+        const loaderElement = renderLoader();
+
+        // Отправляем запрос
+        const reply = await sendToAPI(message);
+        
+        // Убираем индикатор загрузки
+        removeLoader(loaderElement);
+        
+        // Показываем ответ с анимацией печати
+        renderMessage("bot", reply, null, true); // animated = true
+        appendToHistory("bot", reply);
+        
+    } catch (error) {
+        console.error('Send message error:', error);
+        const errorMessage = getErrorMessage(error);
+        
+        // Убираем индикатор загрузки если есть
+        const loader = chatBox.querySelector('.loader');
+        if (loader) {
+            removeLoader(loader.closest('.message-container'));
+        }
+        
+        renderMessage("bot", errorMessage, null, true); // С анимацией
+        appendToHistory("bot", errorMessage);
+    } finally {
+        setLoadingState(false);
+        
+        // Возвращаем фокус на поле ввода
+        setTimeout(() => {
+            if (userInput && userInput.parentNode) {
+                userInput.focus();
+            }
+        }, CONFIG.FOCUS_DELAY);
+    }
+}
+
+async function sendToAPI(message) {
+    // Проверяем интернет соединение
+    if (!navigator.onLine) {
+        throw new Error('No internet connection');
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
+
+    try {
+        const response = await fetch(CONFIG.WEBHOOK_URL, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({ 
+                message: message, 
+                session_id: sessionId,
+                timestamp: new Date().toISOString()
+            }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        
+        // Обработка разных форматов ответа
+        let reply;
+        if (Array.isArray(data)) {
+            reply = data[0]?.reply_text || data[0]?.message || "No response";
+        } else {
+            reply = data.reply_text || data.message || data.response || "No response";
+        }
+
+        if (!reply || typeof reply !== 'string') {
+            throw new Error('Invalid response format');
+        }
+
+        return sanitizeMessage(reply);
+        
+    } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+    }
+}
+
+function setLoadingState(loading) {
+    isLoading = loading;
+    userInput.disabled = loading;
+    sendButton.disabled = loading;
+    
+    // Просто делаем кнопку disabled, без изменения содержимого
+}
+
+function getErrorMessage(error) {
+    if (error.name === 'AbortError') {
+        return "Request timed out. Please try again.";
+    } else if (error.message.includes('No internet connection')) {
+        return "No internet connection. Please check your network.";
+    } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        return "Network error. Please check your connection and try again.";
+    } else if (error.message.includes('HTTP 4')) {
+        return "Invalid request. Please try again.";
+    } else if (error.message.includes('HTTP 5')) {
+        return "Server error. Please try again later.";
+    } else {
+        return "An error occurred. Please try again.";
+    }
+}
+
+function renderMessage(sender, text, messageTimestamp = null, animated = false) {
+    const messageContainer = document.createElement("div");
+    messageContainer.className = `message-container ${sender}`;
+    
+    const bubble = document.createElement("div");
+    bubble.className = `bubble ${sender}`;
+    
+    if (sender === "user") {
+        // Для пользователя: просто текст
+        bubble.textContent = text;
+        messageContainer.appendChild(bubble);
+        chatBox.appendChild(messageContainer);
+    } else {
+        // Для бота: текст без фона
+        messageContainer.appendChild(bubble);
+        chatBox.appendChild(messageContainer);
+        
+        if (animated) {
+            // Отменяем предыдущую анимацию
+            if (currentTypingCancel) {
+                currentTypingCancel();
+                currentTypingCancel = null;
+            }
+            
+            // ПРОСТОЕ решение: сначала показываем полный текст (невидимый)
+            bubble.textContent = text;
+            bubble.style.visibility = 'hidden';
+            
+            // Принудительный reflow для получения финальной высоты
+            const finalHeight = bubble.offsetHeight;
+            
+            // Теперь готовим к анимации
+            bubble.textContent = "";
+            bubble.style.visibility = 'visible';
+            bubble.style.height = finalHeight + 'px';
+            bubble.style.overflow = 'hidden';
+            
+            // Запускаем простую анимацию
+            currentTypingCancel = typeWriterSimple(bubble, text, finalHeight);
+        } else {
+            bubble.textContent = text;
+        }
+    }
+    
+    scrollToBottom();
+    return messageContainer;
+}
+
+// Простая и надежная анимация
+function typeWriterSimple(element, text, finalHeight) {
+    let currentText = "";
+    let index = 0;
+    let animationId;
+    let cancelled = false;
+    
+    function animate() {
+        if (cancelled || !element || !element.parentNode) {
+            // Простая гарантия: показываем весь текст
+            if (element && element.parentNode) {
+                element.textContent = text;
+                element.style.height = 'auto';
+                element.style.overflow = 'visible';
+            }
+            return;
+        }
+        
+        if (index < text.length) {
+            currentText += text[index];
+            element.textContent = currentText;
+            index++;
+            
+            // Используем setTimeout для контролируемой задержки
+            animationId = setTimeout(animate, CONFIG.TYPING_SPEED);
+        } else {
+            // Анимация завершена
+            element.style.height = 'auto';
+            element.style.overflow = 'visible';
+            scrollToBottom(); // Финальная прокрутка
+        }
+    }
+    
+    animate();
+    
+    // Простая функция отмены
+    return () => {
+        cancelled = true;
+        if (animationId) {
+            clearTimeout(animationId);
+        }
+        // Гарантированно показываем полный текст
+        if (element && element.parentNode) {
+            element.textContent = text;
+            element.style.height = 'auto';
+            element.style.overflow = 'visible';
+        }
+    };
+}
+
+function renderLoader() {
+    const messageContainer = document.createElement("div");
+    messageContainer.className = "message-container bot";
+    
+    const bubble = document.createElement("div");
+    bubble.className = "bubble bot loader";
+    bubble.textContent = "Thinking";
+    
+    messageContainer.appendChild(bubble);
+    chatBox.appendChild(messageContainer);
+    scrollToBottom();
+    
+    return messageContainer;
+}
+
+function removeLoader(loaderElement) {
+    if (loaderElement && loaderElement.parentNode) {
+        try {
+            loaderElement.parentNode.removeChild(loaderElement);
+        } catch (e) {
+            console.warn('Failed to remove loader:', e);
+        }
+    }
+}
+
+function showError(message) {
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "error-message";
+    errorDiv.textContent = message;
+    
+    // Вставляем в чат
+    chatBox.appendChild(errorDiv);
+    scrollToBottom();
+    
+    // Автоматически убираем через заданное время
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            try {
+                errorDiv.parentNode.removeChild(errorDiv);
+            } catch (e) {
+                console.warn('Failed to remove error message:', e);
+            }
+        }
+    }, CONFIG.ERROR_DISPLAY_TIME);
+}
+
+function scrollToBottom() {
+    if (chatBox && chatBox.parentNode) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+}
+
+// Работа с историей чата
+function getStorageKey() {
+    return `${CONFIG.STORAGE_PREFIX}history_${sessionId}`;
+}
+
+function loadChatHistory() {
+    try {
+        const fullHistory = getFullHistory();
+        if (fullHistory.length === 0) return;
+        
+        // Загружаем только последние MESSAGES_PER_LOAD сообщений
+        const messagesToShow = Math.min(MESSAGES_PER_LOAD, fullHistory.length);
+        const recentMessages = fullHistory.slice(-messagesToShow);
+        
+        recentMessages.forEach(({ sender, text, timestamp }) => {
+            if (sender && text && typeof text === 'string') {
+                renderMessage(sender, text, timestamp);
+            }
+        });
+        
+        // Устанавливаем счетчик отображаемых сообщений
+        currentDisplayedCount = messagesToShow;
+        
+    } catch (error) {
+        console.error('Failed to load chat history:', error);
+    }
+}
+
+function appendToHistory(sender, text) {
+    try {
+        const history = JSON.parse(safeLocalStorageGet(getStorageKey()) || '[]');
+        history.push({ 
+            sender, 
+            text, 
+            timestamp: new Date().toISOString() 
+        });
+        
+        // НЕ ограничиваем размер истории - храним всё
+        safeLocalStorageSet(getStorageKey(), JSON.stringify(history));
+        
+        // Увеличиваем счетчик отображаемых сообщений (новое сообщение добавилось в DOM)
+        currentDisplayedCount++;
+        
+    } catch (error) {
+        console.error('Failed to save to history:', error);
+    }
+}
+
+// Функция для очистки истории (можно вызвать из консоли)
+function clearChatHistory() {
+    try {
+        safeLocalStorageRemove(getStorageKey());
+        if (chatBox) {
+            chatBox.innerHTML = '';
+        }
+        currentDisplayedCount = 0;
+        // Отменяем текущую анимацию печати
+        if (currentTypingCancel) {
+            currentTypingCancel();
+            currentTypingCancel = null;
+        }
+        console.log('Chat history cleared');
+    } catch (error) {
+        console.error('Failed to clear history:', error);
+    }
+}
+
+// Экспорт для отладки
+window.chatDebug = {
+    clearHistory: clearChatHistory,
+    getSessionId: () => sessionId,
+    getConfig: () => CONFIG
+};
