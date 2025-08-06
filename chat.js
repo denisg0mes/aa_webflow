@@ -353,12 +353,7 @@ function setLoadingState(loading) {
     userInput.disabled = loading;
     sendButton.disabled = loading;
     
-    // Просто добавляем/убираем класс
-    if (loading) {
-        sendButton.classList.add('loading');
-    } else {
-        sendButton.classList.remove('loading');
-    }
+    // Просто делаем кнопку disabled, без изменения содержимого
 }
 
 function getErrorMessage(error) {
