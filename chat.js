@@ -3,7 +3,15 @@ const CONFIG = {
     MAX_MESSAGE_LENGTH: 1000,
     WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
     STORAGE_PREFIX: "secure_chat_",
-    REQUEST_TIMEOUT: 30000
+    REQUEST_TIMEOUT: 30000,
+    TYPING_SPEED: 10, // Скорость печати в миллисекундах между символами
+    SCROLL_THRESHOLD: 100,        // Порог прокрутки для загрузки истории
+    ERROR_DISPLAY_TIME: 5000,     // Время показа ошибок
+    FOCUS_DELAY: 100,             // Задержка возврата фокуса
+    TEXTAREA_MIN_HEIGHT: 48,      // Минимальная высота textarea
+    TEXTAREA_MAX_HEIGHT: 120,     // Максимальная высота textarea
+    THROTTLE_DELAY: 100,          // Задержка для throttling
+    DEBOUNCE_DELAY: 50            // Задержка для debouncing
 };
 
 // Состояние приложения
@@ -11,9 +19,61 @@ let isLoading = false;
 let sessionId = null;
 let currentDisplayedCount = 0; // Количество отображаемых сообщений
 const MESSAGES_PER_LOAD = 15; // Сколько сообщений загружать за раз
+let currentTypingCancel = null; // Для отмены предыдущей анимации печати
 
 // DOM элементы
 let chatBox, userInput, sendButton, charCounter;
+
+// Утилиты для производительности
+function throttle(func, delay) {
+    let timeoutId;
+    let lastExecTime = 0;
+    return function (...args) {
+        const currentTime = Date.now();
+        if (currentTime - lastExecTime > delay) {
+            func.apply(this, args);
+            lastExecTime = currentTime;
+        }
+    };
+}
+
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// Безопасные функции для localStorage
+function safeLocalStorageGet(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (e) {
+        console.warn('localStorage unavailable:', e);
+        return null;
+    }
+}
+
+function safeLocalStorageSet(key, value) {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch (e) {
+        console.warn('localStorage unavailable:', e);
+        return false;
+    }
+}
+
+function safeLocalStorageRemove(key) {
+    try {
+        localStorage.removeItem(key);
+        return true;
+    } catch (e) {
+        console.warn('localStorage unavailable:', e);
+        return false;
+    }
+}
 
 // Инициализация после загрузки DOM
 document.addEventListener('DOMContentLoaded', initializeChat);
@@ -44,10 +104,10 @@ function initializeChat() {
 
 function initializeSession() {
     try {
-        sessionId = localStorage.getItem(`${CONFIG.STORAGE_PREFIX}session_id`);
+        sessionId = safeLocalStorageGet(`${CONFIG.STORAGE_PREFIX}session_id`);
         if (!sessionId) {
             sessionId = crypto.randomUUID();
-            localStorage.setItem(`${CONFIG.STORAGE_PREFIX}session_id`, sessionId);
+            safeLocalStorageSet(`${CONFIG.STORAGE_PREFIX}session_id`, sessionId);
         }
     } catch (error) {
         console.error('Session initialization failed:', error);
@@ -56,11 +116,11 @@ function initializeSession() {
 }
 
 function setupEventListeners() {
-    // Автоматическое изменение высоты textarea
-    userInput.addEventListener('input', () => {
+    // Автоматическое изменение высоты textarea с debouncing
+    userInput.addEventListener('input', debounce(() => {
         autoResizeTextarea();
         updateCharCounter();
-    });
+    }, CONFIG.DEBOUNCE_DELAY));
 
     // Отправка по Enter (без Shift)
     userInput.addEventListener("keydown", (e) => {
@@ -77,8 +137,8 @@ function setupEventListeners() {
         }
     });
 
-    // Обработчик прокрутки для подгрузки истории
-    chatBox.addEventListener('scroll', handleScroll);
+    // Обработчик прокрутки для подгрузки истории с throttling
+    chatBox.addEventListener('scroll', throttle(handleScroll, CONFIG.THROTTLE_DELAY));
     
     // Инициализация счетчика
     updateCharCounter();
@@ -86,14 +146,14 @@ function setupEventListeners() {
 
 function handleScroll() {
     // Проверяем, докрутил ли пользователь до верха
-    if (chatBox.scrollTop <= 100) { // 100px от верха для более плавной загрузки
+    if (chatBox && chatBox.scrollTop <= CONFIG.SCROLL_THRESHOLD) {
         loadMoreHistory();
     }
 }
 
 function getFullHistory() {
     try {
-        const raw = localStorage.getItem(getStorageKey());
+        const raw = safeLocalStorageGet(getStorageKey());
         if (!raw) return [];
         
         const history = JSON.parse(raw);
@@ -185,11 +245,8 @@ function autoResizeTextarea() {
     userInput.style.height = 'auto';
     
     // Вычисляем нужную высоту
-    const minHeight = 48;   // минимальная высота (1 строка)
-    const maxHeight = 120;  // максимальная высота (5 строк)
-    
-    let newHeight = Math.max(minHeight, userInput.scrollHeight);
-    newHeight = Math.min(newHeight, maxHeight);
+    let newHeight = Math.max(CONFIG.TEXTAREA_MIN_HEIGHT, userInput.scrollHeight);
+    newHeight = Math.min(newHeight, CONFIG.TEXTAREA_MAX_HEIGHT);
     
     userInput.style.height = newHeight + 'px';
 }
@@ -296,12 +353,19 @@ async function sendMessage() {
         
         // Возвращаем фокус на поле ввода
         setTimeout(() => {
-            userInput.focus();
-        }, 100); // Небольшая задержка для надёжности
+            if (userInput && userInput.parentNode) {
+                userInput.focus();
+            }
+        }, CONFIG.FOCUS_DELAY);
     }
 }
 
 async function sendToAPI(message) {
+    // Проверяем интернет соединение
+    if (!navigator.onLine) {
+        throw new Error('No internet connection');
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
 
@@ -359,6 +423,8 @@ function setLoadingState(loading) {
 function getErrorMessage(error) {
     if (error.name === 'AbortError') {
         return "Request timed out. Please try again.";
+    } else if (error.message.includes('No internet connection')) {
+        return "No internet connection. Please check your network.";
     } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
         return "Network error. Please check your connection and try again.";
     } else if (error.message.includes('HTTP 4')) {
@@ -395,54 +461,34 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
     } else {
         // Для бота: текст без фона + время снаружи
         if (animated) {
-            // Добавляем контейнер в DOM для получения реальных размеров
-            messageContainer.appendChild(bubble);
-            chatBox.appendChild(messageContainer);
+            // Отменяем предыдущую анимацию печати
+            if (currentTypingCancel) {
+                currentTypingCancel();
+                currentTypingCancel = null;
+            }
             
-            // Создаем временный элемент с полным текстом для измерения
-            const tempText = document.createElement("div");
-            tempText.textContent = text;
-            tempText.style.visibility = "hidden";
-            tempText.style.position = "absolute";
-            tempText.style.top = "-9999px";
-            tempText.style.left = "-9999px";
+            // Сначала ставим пустой текст
+            bubble.textContent = "";
             
-            // Копируем ВСЕ стили от реального bubble
-            const bubbleStyles = window.getComputedStyle(bubble);
-            const bubbleRect = bubble.getBoundingClientRect();
+            // Создаем временный невидимый элемент для измерения высоты
+            const tempDiv = document.createElement("div");
+            tempDiv.className = `bubble ${sender}`;
+            tempDiv.textContent = text;
+            tempDiv.style.visibility = "hidden";
+            tempDiv.style.position = "absolute";
+            tempDiv.style.top = "-9999px";
+            tempDiv.style.maxWidth = "70%"; // Как у обычного bubble
             
-            // Применяем все стили
-            Object.keys(bubbleStyles).forEach(key => {
-                if (bubbleStyles[key] && key !== 'height' && key !== 'minHeight') {
-                    try {
-                        tempText.style[key] = bubbleStyles[key];
-                    } catch (e) {
-                        // Игнорируем ошибки для read-only свойств
-                    }
-                }
-            });
+            document.body.appendChild(tempDiv);
+            const fullHeight = tempDiv.offsetHeight;
+            document.body.removeChild(tempDiv);
             
-            // Устанавливаем точную ширину как у реального элемента
-            tempText.style.width = bubbleRect.width + "px";
-            tempText.style.maxWidth = bubbleRect.width + "px";
-            
-            document.body.appendChild(tempText);
-            
-            // Измеряем высоту с учетом реальной ширины
-            const fullHeight = tempText.getBoundingClientRect().height;
-            
-            // Удаляем временный элемент
-            document.body.removeChild(tempText);
-            
-            // Устанавливаем точную высоту и блокируем изменения
+            // Фиксируем высоту
             bubble.style.height = fullHeight + "px";
-            bubble.style.minHeight = fullHeight + "px";
-            bubble.style.maxHeight = fullHeight + "px";
             bubble.style.overflow = "hidden";
             
-            // Анимированный вывод текста
-            bubble.textContent = "";
-            typeWriter(bubble, text, 30);
+            // Запускаем анимацию с возможностью отмены
+            currentTypingCancel = typeWriter(bubble, text, CONFIG.TYPING_SPEED);
         } else {
             bubble.textContent = text;
         }
@@ -451,34 +497,37 @@ function renderMessage(sender, text, messageTimestamp = null, animated = false) 
         timestamp.className = "timestamp";
         timestamp.textContent = timeToShow;
         
-        if (!animated) {
-            messageContainer.appendChild(bubble);
-            chatBox.appendChild(messageContainer);
-        }
+        messageContainer.appendChild(bubble);
         messageContainer.appendChild(timestamp);
     }
     
-    if (!animated || sender === "user") {
-        chatBox.appendChild(messageContainer);
-    }
+    chatBox.appendChild(messageContainer);
     scrollToBottom();
     
     return messageContainer;
 }
 
-function typeWriter(element, text, speed = 30) {
+function typeWriter(element, text, speed = CONFIG.TYPING_SPEED) {
     let i = 0;
+    let timeoutId;
     
     function type() {
-        if (i < text.length) {
+        if (i < text.length && element && element.parentNode) { // Проверяем что элемент еще в DOM
             element.textContent += text.charAt(i);
             i++;
-            scrollToBottom(); // Прокручиваем при каждом символе
-            setTimeout(type, speed);
+            scrollToBottom();
+            timeoutId = setTimeout(type, speed);
         }
     }
     
     type();
+    
+    // Возвращаем функцию для отмены анимации
+    return () => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+    };
 }
 
 function renderLoader() {
@@ -498,7 +547,11 @@ function renderLoader() {
 
 function removeLoader(loaderElement) {
     if (loaderElement && loaderElement.parentNode) {
-        loaderElement.parentNode.removeChild(loaderElement);
+        try {
+            loaderElement.parentNode.removeChild(loaderElement);
+        } catch (e) {
+            console.warn('Failed to remove loader:', e);
+        }
     }
 }
 
@@ -511,16 +564,22 @@ function showError(message) {
     chatBox.appendChild(errorDiv);
     scrollToBottom();
     
-    // Автоматически убираем через 5 секунд
+    // Автоматически убираем через заданное время
     setTimeout(() => {
         if (errorDiv.parentNode) {
-            errorDiv.parentNode.removeChild(errorDiv);
+            try {
+                errorDiv.parentNode.removeChild(errorDiv);
+            } catch (e) {
+                console.warn('Failed to remove error message:', e);
+            }
         }
-    }, 5000);
+    }, CONFIG.ERROR_DISPLAY_TIME);
 }
 
 function scrollToBottom() {
-    chatBox.scrollTop = chatBox.scrollHeight;
+    if (chatBox && chatBox.parentNode) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 }
 
 // Работа с историей чата
@@ -553,7 +612,7 @@ function loadChatHistory() {
 
 function appendToHistory(sender, text) {
     try {
-        const history = JSON.parse(localStorage.getItem(getStorageKey()) || '[]');
+        const history = JSON.parse(safeLocalStorageGet(getStorageKey()) || '[]');
         history.push({ 
             sender, 
             text, 
@@ -561,7 +620,7 @@ function appendToHistory(sender, text) {
         });
         
         // НЕ ограничиваем размер истории - храним всё
-        localStorage.setItem(getStorageKey(), JSON.stringify(history));
+        safeLocalStorageSet(getStorageKey(), JSON.stringify(history));
         
         // Увеличиваем счетчик отображаемых сообщений (новое сообщение добавилось в DOM)
         currentDisplayedCount++;
@@ -574,9 +633,16 @@ function appendToHistory(sender, text) {
 // Функция для очистки истории (можно вызвать из консоли)
 function clearChatHistory() {
     try {
-        localStorage.removeItem(getStorageKey());
-        chatBox.innerHTML = '';
+        safeLocalStorageRemove(getStorageKey());
+        if (chatBox) {
+            chatBox.innerHTML = '';
+        }
         currentDisplayedCount = 0;
+        // Отменяем текущую анимацию печати
+        if (currentTypingCancel) {
+            currentTypingCancel();
+            currentTypingCancel = null;
+        }
         console.log('Chat history cleared');
     } catch (error) {
         console.error('Failed to clear history:', error);
