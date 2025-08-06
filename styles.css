@@ -673,7 +673,7 @@ body.modal-open { overflow: hidden; }
 #chat_box {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 10%;
+  padding: 20px 10% 220px 10%;
   margin: 0 auto;
   width: 100%;
 }
@@ -899,10 +899,6 @@ body.modal-open { overflow: hidden; }
   border-radius: 3px;
 }
 
-/* Add bottom padding to prevent input overlap */
-#chat_box {
-  padding-bottom: 120px;
-}
 
 @media only screen and (max-width: 768px) {
 
