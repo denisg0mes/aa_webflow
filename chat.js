@@ -128,9 +128,9 @@ function loadMoreHistory() {
     const scrollHeight = chatBox.scrollHeight;
     
     // Добавляем сообщения в начало чата
-    messagesChunk.forEach(({ sender, text }) => {
+    messagesChunk.forEach(({ sender, text, timestamp }) => {
         if (sender && text && typeof text === 'string') {
-            prependMessage(sender, text);
+            prependMessage(sender, text, timestamp);
         }
     });
     
@@ -142,12 +142,15 @@ function loadMoreHistory() {
     chatBox.scrollTop = newScrollHeight - scrollHeight;
 }
 
-function prependMessage(sender, text) {
+function prependMessage(sender, text, messageTimestamp = null) {
     const messageContainer = document.createElement("div");
     messageContainer.className = `message-container ${sender}`;
     
     const bubble = document.createElement("div");
     bubble.className = `bubble ${sender}`;
+    
+    // Используем переданное время или текущее
+    const timeToShow = messageTimestamp ? formatTimestamp(new Date(messageTimestamp)) : formatTimestamp();
     
     if (sender === "user") {
         const messageText = document.createElement("div");
@@ -155,7 +158,7 @@ function prependMessage(sender, text) {
         
         const timestamp = document.createElement("div");
         timestamp.className = "timestamp user";
-        timestamp.textContent = formatTimestamp();
+        timestamp.textContent = timeToShow;
         
         bubble.appendChild(messageText);
         bubble.appendChild(timestamp);
@@ -165,7 +168,7 @@ function prependMessage(sender, text) {
         
         const timestamp = document.createElement("div");
         timestamp.className = "timestamp";
-        timestamp.textContent = formatTimestamp();
+        timestamp.textContent = timeToShow;
         
         messageContainer.appendChild(bubble);
         messageContainer.appendChild(timestamp);
@@ -191,13 +194,12 @@ function autoResizeTextarea() {
     userInput.style.height = newHeight + 'px';
 }
 
-function formatTimestamp() {
-    const now = new Date();
-    return now.toLocaleDateString('en-US', { 
+function formatTimestamp(date = new Date()) {
+    return date.toLocaleDateString('en-US', { 
         month: 'long', 
         day: 'numeric',
         year: 'numeric'
-    }) + ' ' + now.toLocaleTimeString([], { 
+    }) + ' ' + date.toLocaleTimeString([], { 
         hour: 'numeric', 
         minute: '2-digit',
         hour12: true 
@@ -346,7 +348,7 @@ function setLoadingState(loading) {
     userInput.disabled = loading;
     sendButton.disabled = loading;
     
-    // Изменяем иконку кнопки при загрузке
+    // Просто добавляем/убираем класс
     if (loading) {
         sendButton.classList.add('loading');
     } else {
@@ -368,12 +370,15 @@ function getErrorMessage(error) {
     }
 }
 
-function renderMessage(sender, text, messageDate = null) {
+function renderMessage(sender, text, messageTimestamp = null) {
     const messageContainer = document.createElement("div");
     messageContainer.className = `message-container ${sender}`;
     
     const bubble = document.createElement("div");
     bubble.className = `bubble ${sender}`;
+    
+    // Используем переданное время или текущее
+    const timeToShow = messageTimestamp ? formatTimestamp(new Date(messageTimestamp)) : formatTimestamp();
     
     if (sender === "user") {
         // Для пользователя: текст + время внутри пузыря
@@ -382,7 +387,7 @@ function renderMessage(sender, text, messageDate = null) {
         
         const timestamp = document.createElement("div");
         timestamp.className = "timestamp user";
-        timestamp.textContent = formatTimestamp();
+        timestamp.textContent = timeToShow;
         
         bubble.appendChild(messageText);
         bubble.appendChild(timestamp);
@@ -393,7 +398,7 @@ function renderMessage(sender, text, messageDate = null) {
         
         const timestamp = document.createElement("div");
         timestamp.className = "timestamp";
-        timestamp.textContent = formatTimestamp();
+        timestamp.textContent = timeToShow;
         
         messageContainer.appendChild(bubble);
         messageContainer.appendChild(timestamp);
@@ -461,9 +466,9 @@ function loadChatHistory() {
         const messagesToShow = Math.min(MESSAGES_PER_LOAD, fullHistory.length);
         const recentMessages = fullHistory.slice(-messagesToShow);
         
-        recentMessages.forEach(({ sender, text }) => {
+        recentMessages.forEach(({ sender, text, timestamp }) => {
             if (sender && text && typeof text === 'string') {
-                renderMessage(sender, text);
+                renderMessage(sender, text, timestamp);
             }
         });
         
