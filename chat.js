@@ -1,7 +1,7 @@
 // Конфигурация
 const CONFIG = {
     MAX_MESSAGE_LENGTH: 1000,
-    WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/chat",
+    WEBHOOK_URL: "https://n8n.arrivedaliens.com/webhook/aa_chat",
     STORAGE_PREFIX: "secure_chat_",
     REQUEST_TIMEOUT: 30000,
     TYPING_SPEED: 10, // Скорость печати в миллисекундах между символами
