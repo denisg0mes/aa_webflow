@@ -44,21 +44,50 @@
     }, duration);
   }
 
-  function handleServerResponse(data, defaultSuccessMessage) {
+  /**
+   * Обработка ответа от сервера:
+   * - успех/ошибка определяем по data.success, если есть
+   * - текст берём из data.message, если есть
+   * - если success == true и message нет → используем дефолт "Thank you!"
+   * - если success == false и message нет → дефолт "Something went wrong..."
+   */
+  function handleServerResponse(data) {
+    // Текст по умолчанию
+    const defaultSuccess = 'Thank you!';
+    const defaultError = 'Something went wrong. Please try again.';
+
+    // Если сервер вернул просто строку — считаем успехом и показываем как есть
     if (typeof data === 'string') {
-      showToast(defaultSuccessMessage || 'Thank you!', false);
+      const message = data.trim() || defaultSuccess;
+      showToast(message, false);
       return;
     }
 
-    if (data.success === true) {
-      const message = data.message || defaultSuccessMessage || 'Thank you!';
+    // Если объект и явно success === false
+    if (data && data.success === false) {
+      const message =
+        (typeof data.message === 'string' && data.message.trim()) ||
+        defaultError;
+      showToast(message, true);
+      return;
+    }
+
+    // Если объект и success === true
+    if (data && data.success === true) {
+      const message =
+        (typeof data.message === 'string' && data.message.trim()) ||
+        defaultSuccess;
       showToast(message, false);
-    } else if (data.success === false) {
-      const errorMessage = data.message || 'Something went wrong. Please try again.';
-      showToast(errorMessage, true);
+      return;
+    }
+
+    // Если success не указан вообще:
+    // - если есть message — считаем успехом
+    // - иначе дефолтный успех
+    if (data && typeof data.message === 'string' && data.message.trim()) {
+      showToast(data.message.trim(), false);
     } else {
-      const message = data.message || defaultSuccessMessage || 'Thank you!';
-      showToast(message, false);
+      showToast(defaultSuccess, false);
     }
   }
 
@@ -67,14 +96,14 @@
   function initAAForm(container) {
     if (!container) return;
 
-    // защита от повторной инициализации (важно для Webflow + Ajax/модалок)
+    // Защита от повторной инициализации
     if (container.dataset.aaInitialized === 'true') {
       console.log('AA form already initialized, skip:', container);
       return;
     }
     container.dataset.aaInitialized = 'true';
 
-    const formType  = (container.dataset.formType || 'generic').toLowerCase();
+    const formType = (container.dataset.formType || 'generic').toLowerCase();
     const webhookUrl = container.dataset.webhook || '';
 
     if (!webhookUrl) {
@@ -82,21 +111,20 @@
       return;
     }
 
-    const formId    = container.dataset.formId || null;
-    const source    = container.dataset.source || formType;
+    const formId = container.dataset.formId || null;
+    const source = container.dataset.source || formType;
     const productId = container.dataset.productId || null;
 
-    // если чекбокса нет — не требуем согласия
     const checkboxContainer = container.querySelector('.checkbox-container');
-    const requireConsent    = checkboxContainer
+    const requireConsent = checkboxContainer
       ? container.dataset.requireConsent === 'false'
         ? false
         : true
       : false;
 
-    // поля: .field[data-field="name|email|message|..."]
+    // Собираем поля .field[data-field]
     const fieldWrappers = container.querySelectorAll('.field[data-field]');
-    const fieldsConfig = {}; // fieldName -> { wrapper, input, required }
+    const fieldsConfig = {};
 
     fieldWrappers.forEach((fieldEl) => {
       const input = fieldEl.querySelector('.input');
@@ -117,7 +145,9 @@
       };
     });
 
-    const checkbox      = container.querySelector('.form-checkbox, #agreementCheckbox');
+    const checkbox = container.querySelector(
+      '.form-checkbox, #agreementCheckbox'
+    );
     const checkboxError = container.querySelector('.checkbox-error');
 
     const submitButton =
@@ -130,8 +160,9 @@
     }
 
     const originalButtonText = submitButton.textContent.trim() || 'Submit';
-    const loadingTextAttr    = submitButton.dataset.loadingText;
+    const loadingTextAttr = submitButton.dataset.loadingText;
 
+    // Текст на кнопке во время отправки можно чуть отличать по типу формы
     let defaultLoadingText = 'Sending...';
     if (formType === 'newsletter') defaultLoadingText = 'Subscribing...';
 
@@ -148,7 +179,7 @@
       if (!input || !label) return;
 
       const isFocused = input === document.activeElement;
-      const hasValue  = input.value.trim() !== '';
+      const hasValue = input.value.trim() !== '';
 
       if (isFocused || hasValue) {
         label.classList.add('active');
@@ -161,9 +192,9 @@
       const field = fieldsConfig[fieldName];
       if (!field) return;
 
-      const fieldEl      = field.wrapper;
+      const fieldEl = field.wrapper;
       const errorMessage = fieldEl.querySelector('.error-message');
-      const input        = field.input;
+      const input = field.input;
 
       if (errorMessage && input) {
         errorMessage.textContent = message;
@@ -176,9 +207,9 @@
       const field = fieldsConfig[fieldName];
       if (!field) return;
 
-      const fieldEl      = field.wrapper;
+      const fieldEl = field.wrapper;
       const errorMessage = fieldEl.querySelector('.error-message');
-      const input        = field.input;
+      const input = field.input;
 
       if (errorMessage && input) {
         errorMessage.classList.remove('show');
@@ -203,9 +234,9 @@
       const field = fieldsConfig[fieldName];
       if (!field) return true;
 
-      const value    = field.input.value.trim();
+      const value = field.input.value.trim();
       const required = field.required;
-      const key      = fieldName.toLowerCase();
+      const key = fieldName.toLowerCase();
 
       if (!required && !value) {
         hideFieldError(fieldName);
@@ -314,9 +345,9 @@
 
     /* ====== отправка ====== */
 
-    function submitFormData(payload, defaultSuccessMessage) {
+    function submitFormData(payload) {
       const controller = new AbortController();
-      const timeoutId  = setTimeout(() => controller.abort(), 15000);
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       return fetch(webhookUrl, {
         method: 'POST',
@@ -346,7 +377,7 @@
         })
         .then((data) => {
           console.log('Success:', data);
-          handleServerResponse(data, defaultSuccessMessage);
+          handleServerResponse(data);
           resetForm();
         })
         .catch((error) => {
@@ -375,9 +406,9 @@
     /* ====== инициализация полей ====== */
 
     Object.keys(fieldsConfig).forEach((fieldName) => {
-      const field   = fieldsConfig[fieldName];
+      const field = fieldsConfig[fieldName];
       const fieldEl = field.wrapper;
-      const input   = field.input;
+      const input = field.input;
 
       input.addEventListener('focus', function () {
         updateLabel(fieldEl);
@@ -436,25 +467,14 @@
         timestamp: new Date().toISOString(),
         agreedToTerms: !!isChecked,
         productId: productId || null,
-        name:    values.name    || '',
-        email:   values.email   || '',
+        name: values.name || '',
+        email: values.email || '',
         message: values.message || '',
       };
 
-      let defaultSuccessMessage = 'Thank you!';
-      if (formType === 'newsletter') {
-        defaultSuccessMessage =
-          'Thank you for subscribing! Check your email for confirmation.';
-      } else if (
-        formType === 'contact' ||
-        formType === 'product-inquiry'
-      ) {
-        defaultSuccessMessage = 'Thank you! Your message has been sent.';
-      }
-
       console.log('AA form payload:', payload);
 
-      submitFormData(payload, defaultSuccessMessage);
+      submitFormData(payload);
     });
 
     console.log('AA form initialized:', { formType, formId, webhookUrl });
