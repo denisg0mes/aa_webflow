@@ -391,7 +391,6 @@ blockquote {
 }
 .vertical-forms {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   gap: 2px;
@@ -415,6 +414,7 @@ blockquote {
 }
 
 textarea.input {
+  height: 200px;
   padding: 31px 20px 8px 16px;
   resize: vertical;
 }
