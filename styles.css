@@ -406,6 +406,11 @@ blockquote {
   outline: none;
 }
 
+textarea.input {
+  padding: 28px 20px 8px 16px;
+  resize: vertical;
+}
+
 .input::placeholder {
   color: transparent;
 }
