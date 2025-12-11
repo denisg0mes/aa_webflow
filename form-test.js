@@ -192,9 +192,9 @@
         input.classList.add('error');
       }
 
-      // Дополнительно: только для поля message трогаем .form-background
+      // Дополнительно: только для поля message трогаем ближайший .form-background
       if (fieldName.toLowerCase() === 'message') {
-        const background = fieldEl.querySelector('.form-background');
+        const background = fieldEl.closest('.form-background');
         if (background) {
           background.classList.add('error');
         }
@@ -214,9 +214,8 @@
         input.classList.remove('error');
       }
 
-      // Снимаем подсветку с .form-background только для message
       if (fieldName.toLowerCase() === 'message') {
-        const background = fieldEl.querySelector('.form-background');
+        const background = fieldEl.closest('.form-background');
         if (background) {
           background.classList.remove('error');
         }
