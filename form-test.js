@@ -46,49 +46,48 @@
 
   /**
    * Обработка ответа от сервера:
-   * - успех/ошибка определяем по data.success, если есть
-   * - текст берём из data.message, если есть
-   * - если success == true и message нет → используем дефолт "Thank you!"
-   * - если success == false и message нет → дефолт "Something went wrong..."
+   * - возвращает true, если считаем кейс успешным (можно ресетить форму)
+   * - возвращает false, если считаем кейс неуспешным (оставляем данные в форме)
    */
   function handleServerResponse(data) {
-    // Текст по умолчанию
     const defaultSuccess = 'Thank you!';
     const defaultError = 'Something went wrong. Please try again.';
 
-    // Если сервер вернул просто строку — считаем успехом и показываем как есть
+    // Сервер вернул просто строку — считаем успехом и показываем как есть
     if (typeof data === 'string') {
       const message = data.trim() || defaultSuccess;
       showToast(message, false);
-      return;
+      return true;
     }
 
-    // Если объект и явно success === false
+    // Явный неуспех
     if (data && data.success === false) {
       const message =
         (typeof data.message === 'string' && data.message.trim()) ||
         defaultError;
       showToast(message, true);
-      return;
+      return false;
     }
 
-    // Если объект и success === true
+    // Явный успех
     if (data && data.success === true) {
       const message =
         (typeof data.message === 'string' && data.message.trim()) ||
         defaultSuccess;
       showToast(message, false);
-      return;
+      return true;
     }
 
-    // Если success не указан вообще:
-    // - если есть message — считаем успехом
-    // - иначе дефолтный успех
+    // success не указан:
+    // если есть message — считаем успехом
     if (data && typeof data.message === 'string' && data.message.trim()) {
       showToast(data.message.trim(), false);
-    } else {
-      showToast(defaultSuccess, false);
+      return true;
     }
+
+    // вообще ничего внятного — дефолтный успех
+    showToast(defaultSuccess, false);
+    return true;
   }
 
   /* ========= ИНИЦИАЛИЗАЦИЯ ОДНОЙ ФОРМЫ ========= */
@@ -96,7 +95,7 @@
   function initAAForm(container) {
     if (!container) return;
 
-    // Защита от повторной инициализации
+    // защита от повторной инициализации
     if (container.dataset.aaInitialized === 'true') {
       console.log('AA form already initialized, skip:', container);
       return;
@@ -122,7 +121,6 @@
         : true
       : false;
 
-    // Собираем поля .field[data-field]
     const fieldWrappers = container.querySelectorAll('.field[data-field]');
     const fieldsConfig = {};
 
@@ -162,7 +160,6 @@
     const originalButtonText = submitButton.textContent.trim() || 'Submit';
     const loadingTextAttr = submitButton.dataset.loadingText;
 
-    // Текст на кнопке во время отправки можно чуть отличать по типу формы
     let defaultLoadingText = 'Sending...';
     if (formType === 'newsletter') defaultLoadingText = 'Subscribing...';
 
@@ -377,8 +374,15 @@
         })
         .then((data) => {
           console.log('Success:', data);
-          handleServerResponse(data);
-          resetForm();
+          const shouldReset = handleServerResponse(data);
+
+          if (shouldReset) {
+            resetForm();
+          } else {
+            // Ошибка бизнес-логики: оставляем данные, просто возвращаем кнопку в норму
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+          }
         })
         .catch((error) => {
           console.error('Error:', error);
