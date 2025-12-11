@@ -538,7 +538,7 @@ textarea.input {
   line-height: 22px;
   cursor: pointer;
 }
-.blackbg .checkbox-label {
+.blackbg .checkbox-label, .blackbg .checkbox-label a {
   color: #fff;
 }
 
