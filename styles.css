@@ -462,7 +462,7 @@ textarea.input {
 }
 
 .error-message.show {
-  margin: 8px 0 0 16px;
+  margin: 8px 0 8px 0;
   max-height: 50px;
   opacity: 1;
   transform: translateY(0);
