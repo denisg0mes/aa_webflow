@@ -53,14 +53,12 @@
     const defaultSuccess = 'Thank you!';
     const defaultError = 'Something went wrong. Please try again.';
 
-    // Сервер вернул просто строку — считаем успехом и показываем как есть
     if (typeof data === 'string') {
       const message = data.trim() || defaultSuccess;
       showToast(message, false);
       return true;
     }
 
-    // Явный неуспех
     if (data && data.success === false) {
       const message =
         (typeof data.message === 'string' && data.message.trim()) ||
@@ -69,7 +67,6 @@
       return false;
     }
 
-    // Явный успех
     if (data && data.success === true) {
       const message =
         (typeof data.message === 'string' && data.message.trim()) ||
@@ -78,14 +75,11 @@
       return true;
     }
 
-    // success не указан:
-    // если есть message — считаем успехом
     if (data && typeof data.message === 'string' && data.message.trim()) {
       showToast(data.message.trim(), false);
       return true;
     }
 
-    // вообще ничего внятного — дефолтный успех
     showToast(defaultSuccess, false);
     return true;
   }
@@ -95,7 +89,6 @@
   function initAAForm(container) {
     if (!container) return;
 
-    // защита от повторной инициализации
     if (container.dataset.aaInitialized === 'true') {
       console.log('AA form already initialized, skip:', container);
       return;
@@ -198,6 +191,14 @@
         errorMessage.classList.add('show');
         input.classList.add('error');
       }
+
+      // Дополнительно: только для поля message трогаем .form-background
+      if (fieldName.toLowerCase() === 'message') {
+        const background = fieldEl.querySelector('.form-background');
+        if (background) {
+          background.classList.add('error');
+        }
+      }
     }
 
     function hideFieldError(fieldName) {
@@ -211,6 +212,14 @@
       if (errorMessage && input) {
         errorMessage.classList.remove('show');
         input.classList.remove('error');
+      }
+
+      // Снимаем подсветку с .form-background только для message
+      if (fieldName.toLowerCase() === 'message') {
+        const background = fieldEl.querySelector('.form-background');
+        if (background) {
+          background.classList.remove('error');
+        }
       }
     }
 
@@ -379,7 +388,6 @@
           if (shouldReset) {
             resetForm();
           } else {
-            // Ошибка бизнес-логики: оставляем данные, просто возвращаем кнопку в норму
             submitButton.textContent = originalButtonText;
             submitButton.disabled = false;
           }
