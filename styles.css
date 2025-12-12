@@ -941,6 +941,66 @@ body.modal-open { overflow: hidden; }
 }
 
 /* ============================= */
+/*            LANDING            */
+/* ============================= */
+
+.logo-landingpage {
+  z-index: 10;
+  background-color: #fff;
+  border-radius: 100px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 84px;
+  padding-left: 12px;
+  padding-right: 30px;
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  column-gap: 20px;
+
+  /* анимация */
+  transition:
+    padding-right 0.35s ease,
+    column-gap 0.35s ease,
+    background-color 0.35s ease;
+}
+
+/* текстовая часть — должна уметь "сжиматься" */
+.logo-landingpage .h2-logo {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 500px;        /* больше ширины текста */
+  margin-left: 4px;
+  transition:
+    opacity 0.25s ease,
+    max-width 0.35s ease,
+    margin-left 0.35s ease,
+    transform 0.35s ease;
+}
+
+/* компактное состояние при скролле */
+body.logo-compact .logo-landingpage {
+  padding-right: 12px;   /* поджим справа, форма ближе к кругу */
+  column-gap: 0;
+}
+
+body.logo-compact .logo-landingpage .h2-logo {
+  opacity: 0;
+  max-width: 0;
+  margin-left: 0;
+  transform: translateX(6px); /* лёгкий уезд текста внутрь при исчезновении */
+}
+
+/* на случай reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .logo-landingpage,
+  .logo-landingpage .h2-logo {
+    transition: none;
+  }
+}
+
+/* ============================= */
 /*             Mobile            */
 /* ============================= */
 
