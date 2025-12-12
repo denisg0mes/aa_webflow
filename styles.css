@@ -958,6 +958,7 @@ body.modal-open { overflow: hidden; }
   top: 30px;
   left: 30px;
   column-gap: 20px;
+  cursor: pointer;
 
   /* анимация */
   transition:
