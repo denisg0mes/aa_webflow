@@ -1001,6 +1001,79 @@ body.logo-compact .logo-landingpage .h2-logo {
   }
 }
 
+
+/*-------------CTA FORMw BUTTON-------------*/
+
+.cta-button {
+  z-index: 10;
+  background-color: var(--colors--white);
+  border-radius: 100px;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  height: 76px;
+  padding-left: 12px;
+  padding-right: 30px;
+
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+
+  column-gap: 20px;
+
+  cursor: pointer;
+  transition:
+    padding-right 0.35s ease,
+    column-gap 0.35s ease,
+    transform 0.35s ease,
+    opacity 0.35s ease;
+}
+
+/* стрелка просто как есть */
+.cta-button .cta-arrow svg {
+  display: block;
+  height: 52px;
+  width: auto;
+}
+
+/* текст — чтобы его можно было сжать и скрыть */
+.cta-button .h2-logo {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 300px; /* больше реальной ширины текста */
+  margin-left: 4px;
+  transition:
+    opacity 0.25s ease,
+    max-width 0.35s ease,
+    margin-left 0.35s ease,
+    transform 0.35s ease;
+}
+
+/* состояние: CTA “спрятан” у якоря */
+body.cta-hidden .cta-button {
+  padding-right: 12px;
+  column-gap: 0;
+  transform: scale(0.85);
+  opacity: 0;
+  pointer-events: none; /* чтобы не кликался, когда скрыт */
+}
+
+body.cta-hidden .cta-button .h2-logo {
+  opacity: 0;
+  max-width: 0;
+  margin-left: 0;
+  transform: translateX(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-button,
+  .cta-button .h2-logo {
+    transition: none;
+  }
+}
+
 /* ============================= */
 /*             Mobile            */
 /* ============================= */
