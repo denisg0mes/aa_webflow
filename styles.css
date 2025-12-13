@@ -961,7 +961,10 @@ body.modal-open { overflow: hidden; }
   transform: translateY(0);
 }
 
-
+/*-----SPLINE-------*/
+.pointer-off {
+  pointer-events: none;
+}
 
 .logo-landingpage {
   z-index: 10;
