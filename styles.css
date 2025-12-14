@@ -1020,6 +1020,7 @@ body.modal-open { overflow: hidden; }
 
 .logo-landingpage .logo svg {
   height: 100%;
+  width: auto;
   display: block;
 }
 
@@ -1037,6 +1038,8 @@ body.modal-open { overflow: hidden; }
   justify-content: flex-start;
   align-items: center;
   height: 84px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   padding-left: 12px;
   padding-right: 30px;
   position: fixed;
@@ -1220,6 +1223,7 @@ body.cta-hidden .cta-button .h2-logo {
   
   /* Landing-logo */
   .logo-landingpage {
+    height: 66px
     padding-right: 12px;
     column-gap: 0;
     grid-column-gap: 0;
@@ -1229,9 +1233,7 @@ body.cta-hidden .cta-button .h2-logo {
   .logo-landingpage .h2-logo {
     display: none; 
   }
-  .logo-landingpage .logo {
-    height: 66px
-  }
+
 
 
   /* Landing-CTA */
