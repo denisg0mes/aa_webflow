@@ -947,15 +947,29 @@ body.modal-open { overflow: hidden; }
 
 /*----------STONE----------*/
 
- .stone-seq-trigger{
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
+.stone-seq-trigger{
+    width: 100%;
+    height: 100vh;           /* важно: высота блока задана */
+    overflow: hidden;        /* по желанию */
+  }
+
+  .stone-seq-embed{
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* на всякий: Webflow обёртка w-embed иногда имеет inline-block/auto */
+  .stone-seq-embed.w-embed{
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
   .stone-seq{
-    position: absolute;
-    inset: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;      /* НЕ absolute */
   }
 
   .stone-seq-canvas{
