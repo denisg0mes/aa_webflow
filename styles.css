@@ -944,8 +944,46 @@ body.modal-open { overflow: hidden; }
 /*            LANDING            */
 /* ============================= */
 
-.data-video-scrub-section{
-    overscroll-behavior: contain;
+
+/*----------STONE----------*/
+
+.stone-seq-scroll{
+    height: 300vh;
+  }
+
+  .stone-seq-sticky{
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .stone-seq{
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .stone-seq-canvas{
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .stone-seq-loader{
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    pointer-events: none;
+  }
+
+  .stone-seq.is-ready .stone-seq-loader{
+    display: none;
   }
 
 /*----------SCROLL ANIMATIONS----------*/
