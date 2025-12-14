@@ -1012,14 +1012,14 @@ body.modal-open { overflow: hidden; }
   transform: translateY(0);
 }
 
-/*-----SPLINE-------*/
+/*-----LOGO-------*/
+
 .pointer-off {
   pointer-events: none;
 }
 
 .logo-landingpage .logo svg {
-  width: 77px;
-  height: auto;
+  height: 100%;
   display: block;
 }
 
@@ -1229,9 +1229,10 @@ body.cta-hidden .cta-button .h2-logo {
   .logo-landingpage .h2-logo {
     display: none; 
   }
-  .logo-landingpage .logo svg {
-    width: 52px;
+  .logo-landingpage .logo {
+    height: 66px
   }
+
 
   /* Landing-CTA */
   .cta-button {
