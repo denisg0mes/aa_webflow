@@ -1074,6 +1074,16 @@ body.logo-compact .logo-landingpage .h2-logo {
   }
 }
 
+@media (max-width: 767px) {
+  .logo-landingpage {
+    padding-right: 12px;
+    column-gap: 0;
+    grid-column-gap: 0;
+  }
+  .logo-landingpage .h2-logo {
+    display: none; 
+  }
+}
 
 /*-------------CTA FORMw BUTTON-------------*/
 
