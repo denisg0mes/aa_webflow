@@ -1103,6 +1103,8 @@ body.logo-compact .logo-landingpage .h2-logo {
   height: 76px;
   padding-left: 12px;
   padding-right: 30px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 
   position: fixed;
   bottom: 30px;
@@ -1121,8 +1123,13 @@ body.logo-compact .logo-landingpage .h2-logo {
 /* стрелка просто как есть */
 .cta-button .cta-arrow svg {
   display: block;
-  height: 52px;
   width: auto;
+  height: 100%;
+}
+.cta-button .cta-arrow {
+  display: flex;
+  height: 100%;
+  align-items: center;
 }
 
 /* текст — чтобы его можно было сжать и скрыть */
@@ -1234,13 +1241,11 @@ body.cta-hidden .cta-button .h2-logo {
     display: none; 
   }
 
-
-
   /* Landing-CTA */
   .cta-button {
     bottom: 16px;
     right: 12px;
-    padding-right: 20px;
+    padding: 8px 16px 8px 8px;
     column-gap: 16px;
     height: 66px;
   }
