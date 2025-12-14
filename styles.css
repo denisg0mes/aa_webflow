@@ -944,6 +944,10 @@ body.modal-open { overflow: hidden; }
 /*            LANDING            */
 /* ============================= */
 
+[data-video-scrub-section]{
+    touch-action: none;
+  }
+
 /*----------SCROLL ANIMATIONS----------*/
 
 .reveal-on-scroll {
