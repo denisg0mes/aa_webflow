@@ -1232,6 +1232,7 @@ body.cta-hidden .cta-button .h2-logo {
   .logo-landingpage {
     height: 66px;
     padding: 8px;
+    padding-right: 8px;
     column-gap: 0;
     grid-column-gap: 0;
     top: 16px;
@@ -1245,7 +1246,8 @@ body.cta-hidden .cta-button .h2-logo {
   .cta-button {
     bottom: 16px;
     right: 12px;
-    padding: 8px 16px 8px 8px;
+    padding: 8px;
+    padding-right: 16px;
     column-gap: 16px;
     height: 60px;
   }
