@@ -1079,9 +1079,18 @@ body.logo-compact .logo-landingpage .h2-logo {
     padding-right: 12px;
     column-gap: 0;
     grid-column-gap: 0;
+    top: 30px;
+    left: 12px;
   }
   .logo-landingpage .h2-logo {
     display: none; 
+  }
+  .cta-button {
+    bottom: 30px;
+    right: 12px;
+    padding-right: 20px;
+    column-gap: 16px;
+    height: 60px;
   }
 }
 
