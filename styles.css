@@ -944,9 +944,7 @@ body.modal-open { overflow: hidden; }
 /*            LANDING            */
 /* ============================= */
 
-.data-video-scrub-section,
-  [data-video-scrub-section] {
-    touch-action: none;
+.data-video-scrub-section{
     overscroll-behavior: contain;
   }
 
