@@ -1074,26 +1074,6 @@ body.logo-compact .logo-landingpage .h2-logo {
   }
 }
 
-@media (max-width: 767px) {
-  .logo-landingpage {
-    padding-right: 12px;
-    column-gap: 0;
-    grid-column-gap: 0;
-    top: 30px;
-    left: 12px;
-  }
-  .logo-landingpage .h2-logo {
-    display: none; 
-  }
-  .cta-button {
-    bottom: 30px;
-    right: 12px;
-    padding-right: 20px;
-    column-gap: 16px;
-    height: 60px;
-  }
-}
-
 /*-------------CTA FORMw BUTTON-------------*/
 
 .cta-button {
@@ -1225,4 +1205,26 @@ body.cta-hidden .cta-button .h2-logo {
   .cover-image {
     height: 150px;
   }
+  
+  /* Landing-logo */
+  .logo-landingpage {
+    padding-right: 12px;
+    column-gap: 0;
+    grid-column-gap: 0;
+    top: 30px;
+    left: 12px;
+  }
+  .logo-landingpage .h2-logo {
+    display: none; 
+  }
+
+  /* Landing-CTA */
+  .cta-button {
+    bottom: 30px;
+    right: 12px;
+    padding-right: 20px;
+    column-gap: 16px;
+    height: 60px;
+  }
+  
 }
