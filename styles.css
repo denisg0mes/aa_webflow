@@ -947,20 +947,15 @@ body.modal-open { overflow: hidden; }
 
 /*----------STONE----------*/
 
-.stone-seq-scroll{
-    height: 300vh;
-  }
-
-  .stone-seq-sticky{
-    position: sticky;
-    top: 0;
+ .stone-seq-trigger{
+    position: relative;
     height: 100vh;
+    overflow: hidden;
   }
 
   .stone-seq{
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
   }
 
   .stone-seq-canvas{
