@@ -1219,7 +1219,7 @@ body.cta-hidden .cta-button .h2-logo {
   .horizontal-forms {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 0;
   }
   .horizontal-forms .submit-button {
     width: 100%;
