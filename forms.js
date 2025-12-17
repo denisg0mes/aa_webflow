@@ -1,4 +1,170 @@
 (function () {
+  /* ========= ATTRIBUTION + PATH TRACKING ========= */
+
+  const AA_STORAGE_KEYS = {
+    firstTouch: 'aa_first_touch',
+    lastTouch: 'aa_last_touch',
+    path: 'aa_path',
+    sessionId: 'aa_session_id',
+  };
+
+  function aaNowISO() {
+    return new Date().toISOString();
+  }
+
+  function aaSafeParseJSON(str) {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function aaGetSessionId() {
+    let sid = localStorage.getItem(AA_STORAGE_KEYS.sessionId);
+    if (!sid) {
+      sid =
+        'sid_' +
+        Math.random().toString(16).slice(2) +
+        '_' +
+        Date.now().toString(16);
+      localStorage.setItem(AA_STORAGE_KEYS.sessionId, sid);
+    }
+    return sid;
+  }
+
+  function aaGetQueryParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name) || '';
+  }
+
+  function aaGetUTM() {
+    return {
+      utm_source: aaGetQueryParam('utm_source'),
+      utm_medium: aaGetQueryParam('utm_medium'),
+      utm_campaign: aaGetQueryParam('utm_campaign'),
+      utm_content: aaGetQueryParam('utm_content'),
+      utm_term: aaGetQueryParam('utm_term'),
+    };
+  }
+
+  function aaGetClickIds() {
+    return {
+      gclid: aaGetQueryParam('gclid'),
+      wbraid: aaGetQueryParam('wbraid'),
+      gbraid: aaGetQueryParam('gbraid'),
+      fbclid: aaGetQueryParam('fbclid'),
+    };
+  }
+
+  function aaGetReferrer() {
+    return document.referrer || '';
+  }
+
+  function aaGetPageLocation() {
+    return window.location.href;
+  }
+
+  function aaGetPagePath() {
+    return window.location.pathname + window.location.search;
+  }
+
+  function aaHasAnyAttribution(utm, clickIds, referrer) {
+    const utmHas = Object.keys(utm).some((k) => !!utm[k]);
+    const clickHas = Object.keys(clickIds).some((k) => !!clickIds[k]);
+    const refHas = !!referrer;
+    return utmHas || clickHas || refHas;
+  }
+
+  function aaSaveAttribution() {
+    const utm = aaGetUTM();
+    const clickIds = aaGetClickIds();
+    const referrer = aaGetReferrer();
+
+    const payload = {
+      ts: aaNowISO(),
+      page_location: aaGetPageLocation(),
+      page_path: aaGetPagePath(),
+      referrer,
+      utm,
+      click_ids: clickIds,
+    };
+
+    const existingFirst = aaSafeParseJSON(
+      localStorage.getItem(AA_STORAGE_KEYS.firstTouch)
+    );
+
+    if (!existingFirst && aaHasAnyAttribution(utm, clickIds, referrer)) {
+      localStorage.setItem(AA_STORAGE_KEYS.firstTouch, JSON.stringify(payload));
+    }
+
+    if (aaHasAnyAttribution(utm, clickIds, referrer)) {
+      localStorage.setItem(AA_STORAGE_KEYS.lastTouch, JSON.stringify(payload));
+    } else {
+      const existingLast = aaSafeParseJSON(
+        localStorage.getItem(AA_STORAGE_KEYS.lastTouch)
+      );
+      if (!existingLast) {
+        localStorage.setItem(AA_STORAGE_KEYS.lastTouch, JSON.stringify(payload));
+      }
+    }
+  }
+
+  function aaTrackPath() {
+    const entry = {
+      ts: aaNowISO(),
+      page_location: aaGetPageLocation(),
+      page_path: aaGetPagePath(),
+    };
+
+    let arr = aaSafeParseJSON(localStorage.getItem(AA_STORAGE_KEYS.path));
+    if (!Array.isArray(arr)) arr = [];
+
+    const last = arr[arr.length - 1];
+    if (!last || last.page_location !== entry.page_location) {
+      arr.push(entry);
+      if (arr.length > 25) arr = arr.slice(arr.length - 25);
+      localStorage.setItem(AA_STORAGE_KEYS.path, JSON.stringify(arr));
+    }
+  }
+
+  function aaGetAttributionBundle() {
+    let first = aaSafeParseJSON(localStorage.getItem(AA_STORAGE_KEYS.firstTouch));
+    let last = aaSafeParseJSON(localStorage.getItem(AA_STORAGE_KEYS.lastTouch));
+    let path = aaSafeParseJSON(localStorage.getItem(AA_STORAGE_KEYS.path));
+
+    if (!first) {
+      first = {
+        ts: aaNowISO(),
+        page_location: aaGetPageLocation(),
+        page_path: aaGetPagePath(),
+        referrer: aaGetReferrer(),
+        utm: aaGetUTM(),
+        click_ids: aaGetClickIds(),
+      };
+    }
+
+    if (!last) last = first;
+    if (!Array.isArray(path)) path = [];
+
+    return {
+      session_id: aaGetSessionId(),
+      first_touch: first,
+      last_touch: last,
+      path,
+    };
+  }
+
+  function aaFireGAEvent(eventName, params) {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', eventName, params || {});
+    }
+  }
+
+  // capture attribution + path on every page load
+  aaSaveAttribution();
+  aaTrackPath();
+
   /* ========= ВАЛИДАЦИЯ ========= */
 
   function isValidEmail(email) {
@@ -350,7 +516,7 @@
 
     /* ====== отправка ====== */
 
-    function submitFormData(payload) {
+    function submitFormData(payload, gaMeta) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
@@ -385,6 +551,18 @@
           const shouldReset = handleServerResponse(data);
 
           if (shouldReset) {
+            // GA4 conversion on success only (no PII)
+            if (gaMeta && gaMeta.session_id) {
+              aaFireGAEvent('generate_lead', {
+                source: gaMeta.source || '',
+                form_type: gaMeta.formType || '',
+                form_id: gaMeta.formId || '',
+                session_id: gaMeta.session_id || '',
+                landing_path: gaMeta.landing_path || '',
+                page_location: aaGetPageLocation(),
+              });
+            }
+
             resetForm();
           } else {
             submitButton.textContent = originalButtonText;
@@ -470,6 +648,7 @@
       submitButton.textContent = loadingText;
 
       const values = collectFieldValues();
+      const attribution = aaGetAttributionBundle();
 
       const payload = {
         formType,
@@ -478,14 +657,34 @@
         timestamp: new Date().toISOString(),
         agreedToTerms: !!isChecked,
         productId: productId || null,
+
+        // user fields (only to n8n / Notion)
         name: values.name || '',
         email: values.email || '',
         message: values.message || '',
+
+        // attribution (to n8n / Notion)
+        session_id: attribution.session_id,
+        first_touch: attribution.first_touch,
+        last_touch: attribution.last_touch,
+        path: attribution.path,
+      };
+
+      // GA metadata (no PII)
+      const gaMeta = {
+        source,
+        formType,
+        formId,
+        session_id: attribution.session_id,
+        landing_path:
+          attribution.first_touch && attribution.first_touch.page_path
+            ? attribution.first_touch.page_path
+            : '',
       };
 
       console.log('AA form payload:', payload);
 
-      submitFormData(payload);
+      submitFormData(payload, gaMeta);
     });
 
     console.log('AA form initialized:', { formType, formId, webhookUrl });
