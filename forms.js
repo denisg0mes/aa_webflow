@@ -161,6 +161,34 @@
     }
   }
 
+  /* ========= META PIXEL HELPERS ========= */
+
+  function aaMakeMetaEventId(prefix, sessionId) {
+    const safePrefix = typeof prefix === 'string' && prefix ? prefix : 'aa';
+    const sid = typeof sessionId === 'string' && sessionId ? sessionId : 'nosid';
+    return safePrefix + '_' + sid + '_' + Date.now().toString(16);
+  }
+
+  function aaFireMetaEvent(eventName, params, options) {
+    if (typeof window.fbq !== 'function') return;
+
+    const evName = typeof eventName === 'string' ? eventName : '';
+    if (!evName) return;
+
+    const evParams = params && typeof params === 'object' ? params : {};
+    const evOptions = options && typeof options === 'object' ? options : undefined;
+
+    try {
+      if (evOptions) {
+        window.fbq('track', evName, evParams, evOptions);
+      } else {
+        window.fbq('track', evName, evParams);
+      }
+    } catch (e) {
+      console.warn('Meta Pixel track error:', e);
+    }
+  }
+
   // capture attribution + path on every page load
   aaSaveAttribution();
   aaTrackPath();
@@ -562,6 +590,20 @@
                 page_location: aaGetPageLocation(),
               });
             }
+
+            // Meta Pixel Lead (success only, no PII)
+            const metaEventId = aaMakeMetaEventId('aa_lead', gaMeta && gaMeta.session_id ? gaMeta.session_id : '');
+            aaFireMetaEvent(
+              'Lead',
+              {
+                source: gaMeta && gaMeta.source ? gaMeta.source : '',
+                form_type: gaMeta && gaMeta.formType ? gaMeta.formType : '',
+                form_id: gaMeta && gaMeta.formId ? gaMeta.formId : '',
+                landing_path: gaMeta && gaMeta.landing_path ? gaMeta.landing_path : '',
+                page_location: aaGetPageLocation(),
+              },
+              { eventID: metaEventId }
+            );
 
             resetForm();
           } else {
