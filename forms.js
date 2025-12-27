@@ -147,8 +147,15 @@
     if (!last) last = first;
     if (!Array.isArray(path)) path = [];
 
+    const sid = aaGetSessionId();
+
     return {
-      session_id: aaGetSessionId(),
+      // для n8n/Notion (как было)
+      session_id: sid,
+
+      // дубликат (может быть удобнее дальше)
+      aa_session_id: sid,
+
       first_touch: first,
       last_touch: last,
       path,
@@ -580,19 +587,27 @@
 
           if (shouldReset) {
             // GA4 conversion on success only (no PII)
+            // IMPORTANT: do NOT use reserved GA param names like session_id
             if (gaMeta && gaMeta.session_id) {
               aaFireGAEvent('generate_lead', {
                 source: gaMeta.source || '',
                 form_type: gaMeta.formType || '',
                 form_id: gaMeta.formId || '',
-                session_id: gaMeta.session_id || '',
+
+                // <-- ключевой фикс
+                aa_session_id: gaMeta.session_id || '',
+
                 landing_path: gaMeta.landing_path || '',
                 page_location: aaGetPageLocation(),
               });
             }
 
             // Meta Pixel Lead (success only, no PII)
-            const metaEventId = aaMakeMetaEventId('aa_lead', gaMeta && gaMeta.session_id ? gaMeta.session_id : '');
+            const metaEventId = aaMakeMetaEventId(
+              'aa_lead',
+              gaMeta && gaMeta.session_id ? gaMeta.session_id : ''
+            );
+
             aaFireMetaEvent(
               'Lead',
               {
